@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main app class="grey lighten-4 d-flex align-center">
+    <v-main app class="grey lighten-4 d-flex">
       <v-container>
         <v-layout align-center justify-center>
           <v-card

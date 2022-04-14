@@ -27,13 +27,13 @@
       <v-toolbar-title class="text-h6 white--text pl-0">
         <v-btn
           depressed
-          color="red lighten-3"
+          color="red lighten-4"
           class="black--text text-capitalize"
         >
           <v-icon left>
             mdi-plus
           </v-icon>
-          Open Ticket
+          Buka Tiket
         </v-btn>
       </v-toolbar-title>
       <v-btn
@@ -54,7 +54,7 @@ export default {
     return {
       items: [
         { title: 'Rank Board', icon: 'mdi-home', url: '/' },
-        { title: 'Profil', icon: 'mdi-account', url: '#' },
+        { title: 'Profil', icon: 'mdi-account', url: '/profile' },
         { title: 'About', icon: 'mdi-information', url: '/about' }
       ]
     }

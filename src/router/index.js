@@ -5,6 +5,7 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import LoginLayout from '@/layouts/LoginLayout.vue'
 import Login from '@/views/Login.vue'
 import RankBoard from '@/views/RankBoard.vue'
+import Profile from '@/views/Profile.vue'
 import PageNotFound from '@/views/PageNotFound.vue'
 
 Vue.use(VueRouter)
@@ -12,13 +13,18 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Root',
+    name: 'root',
     component: AppLayout,
     children: [
       {
-        path: '/home',
+        path: '',
         name: 'home',
         component: RankBoard
+      },
+      {
+        path: '/profile',
+        name: 'profile',
+        component: Profile
       },
       {
         path: '/about',
