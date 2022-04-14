@@ -1,27 +1,50 @@
 <template>
-    <span>
-        <v-navigation-drawer app v-model="drawer" class="brown lighten-2" dark disable-resize-watcher>
-            <v-list>
-                <template v-for="(item, index) in items">
-                    <v-list-tile :key="index">
-                        <v-list-tile-content>
-                            {{item.title}}
-                        </v-list-tile-content>
-                    </v-list-tile>
-                    <v-divider :key="`divider-${index}`"></v-divider>
-                </template>
-            </v-list>
-        </v-navigation-drawer>
-        <v-toolbar app color="brown darken-4" dark>
-            <v-toolbar-side-icon class="hidden-md-and-up" @click="drawer = !drawer"></v-toolbar-side-icon>
-            <v-spacer class="hidden-md-and-up"></v-spacer>
-            <v-toolbar-title>{{appTitle}}</v-toolbar-title>
-            <v-btn flat class="hidden-sm-and-down">Menu</v-btn>
-            <v-spacer class="hidden-sm-and-down"></v-spacer>
-            <v-btn flat class="hidden-sm-and-down">SIGN IN</v-btn>
-            <v-btn color="brown lighten-3" class="hidden-sm-and-down">JOIN</v-btn>
-        </v-toolbar>
-    </span>
+    <v-app-bar
+      flat
+      color="rgba(0, 0, 0, 0)"
+    >
+      <v-menu transition="scroll-y-transition">
+        <template v-slot:activator="{ on, attrs }">
+            <v-app-bar-nav-icon
+              color="white"
+              v-bind="attrs"
+              v-on="on"
+            ></v-app-bar-nav-icon>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="(item, index) in items"
+            :key="index"
+            :to="item.url"
+            link
+          >
+            <v-list-item-icon><v-icon>{{ item.icon }}</v-icon></v-list-item-icon>
+            <v-list-item-title v-text=item.title></v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+      <v-spacer></v-spacer>
+      <v-toolbar-title class="text-h6 white--text pl-0">
+        <v-btn
+          depressed
+          color="red lighten-3"
+          class="black--text text-capitalize"
+        >
+          <v-icon left>
+            mdi-plus
+          </v-icon>
+          Open Ticket
+        </v-btn>
+      </v-toolbar-title>
+      <v-btn
+        class="ml-2"
+        color="white"
+        icon
+        title="Log out"
+      >
+        <v-icon>mdi-power</v-icon>
+      </v-btn>
+    </v-app-bar>
 </template>
 
 <script>
@@ -29,12 +52,10 @@ export default {
   name: 'AppNavigation',
   data () {
     return {
-      appTitle: 'Meal Prep',
-      drawer: false,
       items: [
-        { title: 'Menu' },
-        { title: 'Sign In' },
-        { title: 'Join' }
+        { title: 'Rank Board', icon: 'mdi-home', url: '/' },
+        { title: 'Profil', icon: 'mdi-account', url: '#' },
+        { title: 'About', icon: 'mdi-information', url: '/about' }
       ]
     }
   }
