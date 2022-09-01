@@ -1,86 +1,88 @@
 <template>
   <v-main>
     <v-container>
-      <div class="ticket">
-        <h1>Request new Ticket here</h1>
-      </div>
-      <form>
+      <v-form
+        ref="form"
+        v-model="valid"
+        lazy-validation
+      >
         <v-text-field
           v-model="name"
-          :error-messages="nameErrors"
           :counter="10"
+          :rules="nameRules"
           label="Name"
           required
-          @input="$v.name.$touch()"
-          @blur="$v.name.$touch()"
         ></v-text-field>
+
         <v-text-field
           v-model="email"
-          :error-messages="emailErrors"
+          :rules="emailRules"
           label="E-mail"
           required
-          @input="$v.email.$touch()"
-          @blur="$v.email.$touch()"
         ></v-text-field>
+
         <v-select
           v-model="select"
           :items="items"
-          :error-messages="selectErrors"
+          :rules="[v => !!v || 'Item is required']"
           label="Item"
           required
-          @change="$v.select.$touch()"
-          @blur="$v.select.$touch()"
         ></v-select>
+
         <v-checkbox
           v-model="checkbox"
-          :error-messages="checkboxErrors"
-          label="Saya bersedia dihubungi oleh BPS Provinsi Kalimantan Tengah untuk program ?"
+          :rules="[v => !!v || 'You must agree to continue!']"
+          label="Do you agree?"
           required
-          @change="$v.checkbox.$touch()"
-          @blur="$v.checkbox.$touch()"
         ></v-checkbox>
 
         <v-btn
+          :disabled="!valid"
+          color="success"
           class="mr-4"
-          @click="submit"
+          @click="validate"
         >
-          submit
+          Validate
         </v-btn>
-        <v-btn @click="clear">
-          clear
+
+        <v-btn
+          color="error"
+          class="mr-4"
+          @click="reset"
+        >
+          Reset Form
         </v-btn>
-      </form>
+
+        <v-btn
+          color="warning"
+          @click="resetValidation"
+        >
+          Reset Validation
+        </v-btn>
+      </v-form>
     </v-container>
   </v-main>
 </template>
 
 <script>
-import useVuelidate from '@vuelidate/core'
-import { required, maxLength, email } from '@vuelidate/validators'
-
 export default {
-  setup () {
-    return { v$: useVuelidate() }
-  },
-  validations: {
-    name: { required, maxLength: maxLength(25) },
-    email: { required, email },
-    select: { required },
-    checkbox: {
-      checked (val) {
-        return val
+
+  methods: {
+    numberOnly (evt) {
+      evt = (evt) || window.event
+      var charCode = (evt.which) ? evt.which : evt.keyCode
+      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+        evt.preventDefault()
+      } else {
+        return true
       }
+    },
+    validate () {
+      this.$refs.form.validate()
+    },
+    reset () {
+      this.$refs.form.reset()
     }
-  },
-  data: () => ({
-    name: '',
-    email: '',
-    select: null,
-    items: [
-      'Konsultasi',
-      'Permohonan Data'
-    ],
-    checkbox: false
-  })
+  }
 }
 </script>

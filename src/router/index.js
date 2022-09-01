@@ -15,7 +15,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'root',
+    // name: 'root',
     component: GuestLayout,
     children: [
       {
@@ -27,7 +27,7 @@ const routes = [
   },
   {
     path: '/h/',
-    name: 'admin',
+    // name: 'admin',
     component: AppLayout,
     children: [
       {
@@ -52,7 +52,7 @@ const routes = [
   },
   {
     path: '/auth',
-    name: 'auth',
+    // name: 'auth',
     component: LoginLayout,
     children: [
       {
