@@ -2,10 +2,12 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 // import Home from '../views/Home.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
+import GuestLayout from '@/layouts/GuestLayout.vue'
 import LoginLayout from '@/layouts/LoginLayout.vue'
 import Login from '@/views/Login.vue'
 import RankBoard from '@/views/RankBoard.vue'
 import Profile from '@/views/Profile.vue'
+import Ticket from '@/views/Ticket.vue'
 import PageNotFound from '@/views/PageNotFound.vue'
 
 Vue.use(VueRouter)
@@ -14,6 +16,18 @@ const routes = [
   {
     path: '/',
     name: 'root',
+    component: GuestLayout,
+    children: [
+      {
+        path: '',
+        name: 'ticket',
+        component: Ticket
+      }
+    ]
+  },
+  {
+    path: '/h/',
+    name: 'admin',
     component: AppLayout,
     children: [
       {
@@ -22,12 +36,12 @@ const routes = [
         component: RankBoard
       },
       {
-        path: '/profile',
+        path: 'profile',
         name: 'profile',
         component: Profile
       },
       {
-        path: '/about',
+        path: 'about',
         name: 'about',
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
@@ -37,12 +51,13 @@ const routes = [
     ]
   },
   {
-    path: '/login',
-    name: 'login',
+    path: '/auth',
+    name: 'auth',
     component: LoginLayout,
     children: [
       {
-        path: '',
+        path: 'login',
+        name: 'login',
         component: Login
       }
     ]
