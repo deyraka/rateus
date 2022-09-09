@@ -8,6 +8,7 @@ import Login from '@/views/Login.vue'
 import RankBoard from '@/views/RankBoard.vue'
 import Profile from '@/views/Profile.vue'
 import Ticket from '@/views/Ticket.vue'
+import Tracking from '@/views/Tracking.vue'
 import PageNotFound from '@/views/PageNotFound.vue'
 
 Vue.use(VueRouter)
@@ -22,6 +23,11 @@ const routes = [
         path: '',
         name: 'ticket',
         component: Ticket
+      },
+      {
+        path: 'tracking',
+        name: 'tracking',
+        component: Tracking
       }
     ]
   },
