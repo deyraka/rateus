@@ -7,6 +7,7 @@ import LoginLayout from '@/layouts/LoginLayout.vue'
 import Login from '@/views/Login.vue'
 import RankBoard from '@/views/RankBoard.vue'
 import Profile from '@/views/Profile.vue'
+import GuestHome from '@/views/GuestHome.vue'
 import Ticket from '@/views/Ticket.vue'
 import Tracking from '@/views/Tracking.vue'
 import PageNotFound from '@/views/PageNotFound.vue'
@@ -21,6 +22,11 @@ const routes = [
     children: [
       {
         path: '',
+        name: 'guesthome',
+        component: GuestHome
+      },
+      {
+        path: 'ticket',
         name: 'ticket',
         component: Ticket
       },
