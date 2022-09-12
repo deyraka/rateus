@@ -13,107 +13,30 @@
         dense
       >
         <v-timeline-item
-          color="success"
+          v-for="(item, i) in items"
+          :key="i"
+          :color="i==0 ? 'success' : 'grey'"
           icon="mdi-check"
-          icon-color="white"
-          large
+          :large="i==0 ? true : false"
         >
           <div class="text-caption font-weight-light font-italic">
-            09/09/2022, 10.30
+            {{item.timestamp}}
           </div>
           <div>
-            Grasela Novita T.
+            {{item.user}}
             <v-icon
               right color="blue" size="15px"
-              class="ml-n1 mt-n1"
+              class="mt-n1"
+              v-if="item.verified==true"
             >
               mdi-check-decagram
             </v-icon>
           </div>
           <v-chip
             label
-            color="success"
+            :color="i==0 ? 'success' : 'grey'"
           >
-            Data sedang diproses
-          </v-chip>
-        </v-timeline-item>
-
-        <v-timeline-item
-          color="grey"
-          icon="mdi-check"
-          icon-color="white"
-          small
-        >
-          <div class="text-caption font-weight-light font-italic">
-            5/09/2022, 08.30
-          </div>
-          <div>
-            Grasela Novita T.
-            <v-icon
-              right color="blue" size="15px"
-              class="ml-n1 mt-n1"
-            >
-              mdi-check-decagram
-            </v-icon>
-          </div>
-          <div>
-            <v-chip
-              label
-              style="overflow-x: auto;overflow-y: hidden;white-space: nowrap;"
-            >
-              Konfirmasi data kepada subject matter
-            </v-chip>
-          </div>
-          <!-- <v-responsive>
-            <v-card color="grey">
-              <v-card-text>
-                This card will always be 16:9 (unless you put more stuff in it)
-              </v-card-text>
-            </v-card>
-          </v-responsive> -->
-        </v-timeline-item>
-
-        <v-timeline-item
-          color="grey"
-          icon="mdi-check"
-          icon-color="white"
-          small
-        >
-          <div class="text-caption font-weight-light font-italic">
-            5/09/2022, 08.30
-          </div>
-          <div>
-            Grasela Novita T.
-            <v-icon
-              right color="blue" size="15px"
-              class="ml-n1 mt-n1"
-            >
-              mdi-check-decagram
-            </v-icon>
-          </div>
-          <v-chip
-            label
-          >
-            Merespon ticket
-          </v-chip>
-        </v-timeline-item>
-
-        <v-timeline-item
-          color="grey"
-          icon="mdi-check"
-          icon-color="white"
-          small
-        >
-          <div class="text-caption font-weight-light font-italic">
-            5/09/2022, 08.30
-          </div>
-          <div>
-            Pengunjung
-          </div>
-          <v-chip
-            label
-          >
-            Ticket berhasil dibuat
+            {{item.desc}}
           </v-chip>
         </v-timeline-item>
       </v-timeline>
@@ -123,6 +46,39 @@
 
 <script>
 export default {
-
+  data: () => ({
+    items: [
+      {
+        timestamp: '12/9/22 08.30',
+        user: 'Grasela Trifosa N.',
+        verified: true,
+        desc: 'Data sedang diproses'
+      },
+      {
+        timestamp: '11/9/22 14.30',
+        user: 'Grasela Trifosa N.',
+        verified: true,
+        desc: 'Konfirmasi data ke subject matter'
+      },
+      {
+        timestamp: '11/9/22 11.30',
+        user: 'Grasela Trifosa N.',
+        verified: true,
+        desc: 'Memproses permintaan data'
+      },
+      {
+        timestamp: '11/9/22 08.30',
+        user: 'Grasela Trifosa N.',
+        verified: true,
+        desc: 'Merespon tiket'
+      },
+      {
+        timestamp: '11/9/22 08.30',
+        user: 'Guest',
+        verified: false,
+        desc: 'Tiket berhasil diajukan'
+      }
+    ]
+  })
 }
 </script>
