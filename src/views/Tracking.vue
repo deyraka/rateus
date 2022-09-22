@@ -23,16 +23,17 @@
             {{item.timestamp}}
           </div>
           <div>
-            {{item.user}}
+            {{item.user}}&nbsp;
             <v-icon
               right color="blue" size="15px"
-              class="mt-n1"
+              class="mt-n1 ml-n1"
               v-if="item.verified==true"
             >
               mdi-check-decagram
             </v-icon>
           </div>
           <v-chip
+            class="overflow-x-auto"
             label
             :color="i==0 ? 'success' : 'grey'"
           >
