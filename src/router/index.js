@@ -7,6 +7,7 @@ import LoginLayout from '@/layouts/LoginLayout.vue'
 import Login from '@/views/Login.vue'
 import RankBoard from '@/views/RankBoard.vue'
 import Profile from '@/views/Profile.vue'
+import ListGuest from '@/views/ListGuest.vue'
 import GuestHome from '@/views/GuestHome.vue'
 import Ticket from '@/views/Ticket.vue'
 import Tracking from '@/views/Tracking.vue'
@@ -51,6 +52,11 @@ const routes = [
         path: 'profile',
         name: 'profile',
         component: Profile
+      },
+      {
+        path: 'list-guest',
+        name: 'list-guest',
+        component: ListGuest
       },
       {
         path: 'about',

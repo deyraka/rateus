@@ -31,22 +31,74 @@
           </v-btn>
         </v-row>
         <v-row justify="center">
-          <v-col cols="12" md="6">
-            <div>Nomor tiket : xxxxx</div>
-            <div>Nama : Guest1</div>
-            <div>Tanggal tiket : 22/09/2022</div>
-            <div>Permohonan : Data PDRB Tahun 2010-2022</div>
+          <v-col cols="12" md="12"
+            v-for="(info, i) in detail"
+            :key="i"
+          >
+            <v-simple-table
+              fixed-header
+              height="300px"
+            >
+              <template v-slot:default>
+                <!-- <thead>
+                  <tr>
+                    <th class="text-left">
+                      Name
+                    </th>
+                    <th class="text-left">
+                      Calories
+                    </th>
+                  </tr>
+                </thead> -->
+                <tbody
+                  v-for="(info, i) in customDetail"
+                    :key="i"
+                >
+                  <tr>
+                    <td>No Tiket</td>
+                    <td>: {{ info.noticket }}</td>
+                  </tr>
+                  <tr>
+                    <td>Status</td>
+                    <td>:&nbsp;
+                      <v-chip v-if="info.isopen" class="mt-n1" :color="info.isopen ? 'success' : 'red'" small>
+                        open
+                      </v-chip>
+                      <v-chip v-else class="mt-n1" :color="info.isopen ? 'success' : 'red'" small>
+                        closed
+                      </v-chip>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Tanggal</td>
+                    <td>: {{ info.tanggal }}</td>
+                  </tr>
+                  <tr>
+                    <td>Nama</td>
+                    <td>: {{ info.nama }}</td>
+                  </tr>
+                  <tr>
+                    <td>No HP</td>
+                    <td>: {{ info.nohp}}</td>
+                  </tr>
+                  <tr>
+                    <td>Perihal</td>
+                    <td>: {{ info.perihal }}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="12" md="8">
+      <v-col cols="12" md="6">
         <v-card-text class="py-0">
           <v-timeline
             align-top
             dense
           >
             <v-timeline-item
-              v-for="(item, i) in items"
+              v-for="(item, i) in progress"
               :key="i"
               :color="i==0 ? 'success' : 'grey'"
               icon="mdi-check"
@@ -83,7 +135,17 @@
 <script>
 export default {
   data: () => ({
-    items: [
+    detail: [
+      {
+        noticket: 'XYZ120',
+        isopen: true,
+        tanggal: '25/09/2022',
+        nama: 'Citra Kirana',
+        nohp: '081234567890',
+        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha'
+      }
+    ],
+    progress: [
       {
         timestamp: '12/9/22 08.30',
         user: 'Grasela Trifosa N.',
@@ -115,6 +177,13 @@ export default {
         desc: 'Tiket berhasil diajukan'
       }
     ]
-  })
+  }),
+  computed: {
+    customDetail () {
+      return this.detail.map(info => {
+        return { ...info, nohp: info.nohp.substring(0, 4) + 'xxx' + info.nohp.substring(info.nohp.length - 3) }
+      })
+    }
+  }
 }
 </script>

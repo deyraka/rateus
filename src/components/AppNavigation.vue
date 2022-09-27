@@ -40,6 +40,7 @@
         class="ml-2"
         color="white"
         icon
+        to="/auth/login"
         title="Log out"
       >
         <v-icon>mdi-power</v-icon>
@@ -54,6 +55,7 @@ export default {
     return {
       items: [
         { title: 'Rank Board', icon: 'mdi-home', url: '/h/' },
+        { title: 'Daftar Pengunjung', icon: 'mdi-list-status', url: '/h/list-guest' },
         { title: 'Profil', icon: 'mdi-account', url: '/h/profile' },
         { title: 'About', icon: 'mdi-information', url: '/h/about' }
       ]
