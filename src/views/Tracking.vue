@@ -23,7 +23,7 @@
             small
             dark
             fab
-            to="tracking"
+            to="#"
           >
             <v-icon dark>
               mdi-magnify
@@ -61,11 +61,8 @@
                   <tr>
                     <td>Status</td>
                     <td>:&nbsp;
-                      <v-chip v-if="info.isopen" class="mt-n1" :color="info.isopen ? 'success' : 'red'" small>
-                        open
-                      </v-chip>
-                      <v-chip v-else class="mt-n1" :color="info.isopen ? 'success' : 'red'" small>
-                        closed
+                      <v-chip :color="getColor(info.status)" small>
+                        {{getStatus(info.status)}}
                       </v-chip>
                     </td>
                   </tr>
@@ -138,7 +135,7 @@ export default {
     detail: [
       {
         noticket: 'XYZ120',
-        isopen: true,
+        status: '1',
         tanggal: '25/09/2022',
         nama: 'Citra Kirana',
         nohp: '081234567890',
@@ -183,6 +180,18 @@ export default {
       return this.detail.map(info => {
         return { ...info, nohp: info.nohp.substring(0, 4) + 'xxx' + info.nohp.substring(info.nohp.length - 3) }
       })
+    }
+  },
+  methods: {
+    getColor (status) {
+      if (status === '0') return 'success'
+      if (status === '1') return 'primary'
+      else return 'red'
+    },
+    getStatus (status) {
+      if (status === '0') return 'open'
+      if (status === '1') return 'on progress'
+      else return 'closed'
     }
   }
 }

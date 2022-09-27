@@ -49,6 +49,11 @@ const routes = [
         component: RankBoard
       },
       {
+        path: 'ticket',
+        name: 'openticket',
+        component: Ticket
+      },
+      {
         path: 'profile',
         name: 'profile',
         component: Profile

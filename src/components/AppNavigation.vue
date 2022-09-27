@@ -29,6 +29,7 @@
           depressed
           color="red lighten-4"
           class="black--text text-capitalize"
+          to="/h/ticket"
         >
           <v-icon left>
             mdi-plus

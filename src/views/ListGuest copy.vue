@@ -10,11 +10,10 @@
               type="list-item-two-line: sentences"
             >
               <v-data-table
-                :headers="detailHeaders"
-                :items="details"
-                :single-expand="singleExpand"
+                :headers="dessertHeaders"
+                :items="desserts"
                 :expanded.sync="expanded"
-                item-key="noticket"
+                item-key="names"
                 show-expand
                 class="elevation-1"
                 :search="search"
@@ -22,7 +21,6 @@
                 <template v-slot:top>
                   <v-toolbar flat>
                     <v-toolbar-title>Daftar Pengunjung</v-toolbar-title>
-                    <v-spacer></v-spacer>
                     <v-spacer></v-spacer>
                     <v-text-field
                       v-model="search"
@@ -32,6 +30,15 @@
                       hide-details
                     ></v-text-field>
                   </v-toolbar>
+                </template>
+                <template v-slot:item.isopen="{ item }">
+                  <v-chip
+                    :color="getColor(item.isopen)"
+                    dark
+                    small
+                  >
+                    {{ item.isopen }}
+                  </v-chip>
                 </template>
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length">
@@ -121,22 +128,21 @@ export default {
     ],
     search: '',
     expanded: [],
-    singleExpand: false,
-    detailHeaders: [
+    dessertHeaders: [
       {
         text: 'Nomor WA',
         align: 'start',
         sortable: false,
         value: 'nohp'
       },
-      { text: 'Tiket - Status', value: this.namingStatus(this.status) },
+      { text: 'Tiket - Status', value: 'isopen' },
       { text: 'Tanggal', value: 'tanggal' },
       { text: '', value: 'data-table-expand' }
     ],
-    details: [
+    desserts: [
       {
         noticket: 'XYZ120',
-        status: '1',
+        isopen: true,
         tanggal: '25/09/2022',
         nama: 'Citra Kirana',
         nohp: '0811520011',
@@ -144,7 +150,7 @@ export default {
       },
       {
         noticket: 'VIW432',
-        status: '1',
+        isopen: false,
         tanggal: '20/09/2022',
         nama: 'Eca Syahrun',
         nohp: '081234567890',
@@ -152,7 +158,7 @@ export default {
       },
       {
         noticket: 'OHQ648',
-        status: '0',
+        isopen: true,
         tanggal: '19/09/2022',
         nama: 'Andre Taulani',
         nohp: '08967834562',
@@ -160,7 +166,7 @@ export default {
       },
       {
         noticket: 'CPQ157',
-        status: '2',
+        isopen: true,
         tanggal: '17/09/2022',
         nama: 'Budi Doremi',
         nohp: '08115378654',
@@ -168,7 +174,7 @@ export default {
       },
       {
         noticket: 'SGR953',
-        status: '2',
+        isopen: true,
         tanggal: '16/09/2022',
         nama: 'Mahalini',
         nohp: '081367451289',
@@ -176,7 +182,7 @@ export default {
       },
       {
         noticket: 'ASF246',
-        status: '0',
+        isopen: false,
         tanggal: '15/09/2022',
         nama: 'Keisya Levronka',
         nohp: '085686792746',
@@ -184,7 +190,7 @@ export default {
       },
       {
         noticket: 'NLK567',
-        status: '1',
+        isopen: false,
         tanggal: '12/09/2022',
         nama: 'Anya Geraldine',
         nohp: '08524563789',
@@ -192,7 +198,7 @@ export default {
       },
       {
         noticket: 'GHJ867',
-        status: '2',
+        isopen: true,
         tanggal: '10/09/2022',
         nama: 'Wendy Cagur',
         nohp: '08539678254',
@@ -200,15 +206,16 @@ export default {
       }
     ]
   }),
+  methods: {
+    getColor (isopenstatus) {
+      if (isopenstatus) return 'success'
+      else return 'red'
+    }
+  },
   computed: {
-    namingStatus (status) {
-      if (status === '0') return 'open'
-      if (status === '1') return 'on progress'
-      else return 'closed'
-    },
-    customDetails () {
-      return this.details.map(info => {
-        return { ...info, nohp: this.namingStatus(info.status) }
+    customDetail () {
+      return this.detail.map(info => {
+        return { ...info, nohp: info.nohp.substring(0, 4) + 'xxx' + info.nohp.substring(info.nohp.length - 3) }
       })
     }
   }
