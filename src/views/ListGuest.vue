@@ -42,58 +42,9 @@
                     {{ item.status }}
                   </v-chip>
                 </template>
-                <template v-slot:expanded-item="{ headers, item }">
+                <template v-slot:expanded-item="{ headers }">
                   <td :colspan="headers.length">
-                    <v-row>
-                      <v-col
-                        cols="12"
-                        sm="3"
-                      >
-                        <v-btn
-                          icon
-                          color="pink"
-                          :to="chatSiCantik(item.nohp, item.nama, item.noticket, item.perihal)"
-                        >
-                          <v-icon>mdi-heart</v-icon>
-                        </v-btn>
-                      </v-col>
-
-                      <v-col
-                        cols="12"
-                        sm="3"
-                      >
-                        <v-btn
-                          icon
-                          color="indigo"
-                        >
-                          <v-icon>mdi-star</v-icon>
-                        </v-btn>
-                      </v-col>
-
-                      <v-col
-                        cols="12"
-                        sm="3"
-                      >
-                        <v-btn
-                          icon
-                          color="green"
-                        >
-                          <v-icon>mdi-cached</v-icon>
-                        </v-btn>
-                      </v-col>
-
-                      <v-col
-                        cols="12"
-                        sm="3"
-                      >
-                        <v-btn
-                          icon
-                          color="deep-orange"
-                        >
-                          <v-icon>mdi-thumb-up</v-icon>
-                        </v-btn>
-                      </v-col>
-                    </v-row>
+                    check
                   </td>
                 </template>
               </v-data-table>
