@@ -79,7 +79,7 @@
         </v-row>
       </v-col>
       <v-col cols="12" md="6">
-        <v-card-text class="py-0">
+        <!-- <v-card-text class="py-0">
           <v-timeline
             align-top
             dense
@@ -113,14 +113,20 @@
               </v-chip>
             </v-timeline-item>
           </v-timeline>
-        </v-card-text>
+        </v-card-text> -->
+        <Timeline :progress="progress" />
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import Timeline from '@/components/Timeline.vue'
+
 export default {
+  components: {
+    Timeline
+  },
   data: () => ({
     detail: [
       {

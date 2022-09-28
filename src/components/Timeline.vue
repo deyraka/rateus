@@ -1,6 +1,6 @@
 <template>
-   <v-card-text class="py-0">
-        <!-- <v-timeline
+   <v-card-text>
+        <v-timeline
         align-top
         dense
         >
@@ -32,8 +32,8 @@
             {{item.desc}}
             </v-chip>
         </v-timeline-item>
-        </v-timeline> -->
-        <div>{{progress}}</div>
+        </v-timeline>
+        <!-- <div>{{progress}}</div> -->
     </v-card-text>
 </template>
 
@@ -41,7 +41,7 @@
 export default {
   name: 'Timeline',
   props: {
-    progress: String
+    progress: []
   }
 }
 </script>

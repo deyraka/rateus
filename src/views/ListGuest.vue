@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col cols="12" md="7">
+      <v-col cols="12" md="10">
         <v-row justify="center">
           <v-col cols="12" md="12">
             <v-skeleton-loader
@@ -20,18 +20,31 @@
                 :search="search"
               >
                 <template v-slot:top>
-                  <v-toolbar flat>
-                    <v-toolbar-title>Daftar Pengunjung</v-toolbar-title>
-                    <v-spacer></v-spacer>
-                    <v-spacer></v-spacer>
-                    <v-text-field
-                      v-model="search"
-                      append-icon="mdi-magnify"
-                      label="Search"
-                      single-line
-                      hide-details
-                    ></v-text-field>
-                  </v-toolbar>
+                  <v-row justify="center">
+                    <v-toolbar
+                      rounded
+                      flat
+                      min-height="96"
+                      class="mb-3 pt-5"
+                      color="#81D4FA"
+                      light
+                    >
+                      <v-row justify="center">
+                        <v-col cols="12" md="6">
+                          <v-toolbar-title>Daftar Pengunjung</v-toolbar-title>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            v-model="search"
+                            append-icon="mdi-magnify"
+                            label="Search"
+                            single-line
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-toolbar>
+                  </v-row>
                 </template>
                 <template v-slot:item.status="{ item }">
                   <v-chip
@@ -53,16 +66,25 @@
                         <div class="text-caption font-weight-thin font-italic text--disabled">Request: {{item.perihal}}</div>
                       </v-col>
                     </v-row>
-                    <v-row class="mb-2" justify="start">
+                    <v-row class="mb-2 px-3" justify="start">
                       <v-btn
                         title="Close this ticket"
                         fab x-small dark
                         color="red"
-                        @click="chatSiCantik(item.nohp, item.nama, item.noticket, item.perihal)"
+                        @click="closeTicket(item.noticket)"
                       >
                         <v-icon>mdi-close-circle-outline</v-icon>
                       </v-btn>
                       <v-spacer></v-spacer>
+                      <v-btn
+                        title="Send survei rating link to guest"
+                        class="ml-2"
+                        fab x-small dark
+                        color="warning"
+                        @click="askRating(item.noticket)"
+                      >
+                        <v-icon>mdi-link-variant</v-icon>
+                      </v-btn>
                       <v-btn
                         title="Take this ticket and chat him/her"
                         class="ml-2"
@@ -139,14 +161,21 @@
     <v-dialog
       v-model="timelineModal"
       max-width="500"
-      max-height="350"
+      max-height="300"
+      scrollable
     >
       <v-card>
         <v-card-title v-bind="choosenTicket" class="text-h5">
           Timeline of : {{choosenTicket}}
         </v-card-title>
         <v-card-text>
-          <Timeline :progress="choosenTicket"/>
+          <v-skeleton-loader
+            boilerplate= true
+            elevation="2"
+            type="date-picker"
+          >
+            <Timeline :progress="progress"/>
+          </v-skeleton-loader>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -167,10 +196,10 @@
 import Timeline from '@/components/Timeline.vue'
 
 export default {
+  components: {
+    Timeline
+  },
   data: () => ({
-    components: {
-      Timeline
-    },
     timelineModal: false,
     choosenTicket: '',
     progress: [
@@ -317,6 +346,12 @@ export default {
       this.timelineModal = !this.timelineModal
       this.choosenTicket = noticket
       // alert('You will show timeline of ticket number : ' + noticket)
+    },
+    closeTicket (noticket) {
+      alert('Are you sure want to close this ticket number : ' + noticket + '?')
+    },
+    askRating (noticket) {
+      alert('Comming soon!')
     }
   },
   computed: {
