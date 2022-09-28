@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="7">
         <v-row justify="center">
           <v-col cols="12" md="12">
             <v-skeleton-loader
@@ -42,9 +42,55 @@
                     {{ item.status }}
                   </v-chip>
                 </template>
-                <template v-slot:expanded-item="{ headers }">
+                <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length">
-                    check
+                    <v-row class="mt-2" justify="start">
+                      <v-col>
+                        <div class="text-caption font-weight-thin font-italic text--disabled">Name: {{item.nama}}</div>
+                        <div class="text-caption font-weight-thin font-italic text--disabled">Nomor HP: {{item.nohp}}</div>
+                        <div class="text-caption font-weight-thin font-italic text--disabled">Date: {{item.tanggal}}</div>
+                        <div class="text-caption font-weight-thin font-italic text--disabled">Handled by: <strong class="primary--text">{{item.serveBy}}</strong></div>
+                        <div class="text-caption font-weight-thin font-italic text--disabled">Request: {{item.perihal}}</div>
+                      </v-col>
+                    </v-row>
+                    <v-row class="mb-2" justify="start">
+                      <v-btn
+                        title="Close this ticket"
+                        fab x-small dark
+                        color="red"
+                        @click="chatSiCantik(item.nohp, item.nama, item.noticket, item.perihal)"
+                      >
+                        <v-icon>mdi-close-circle-outline</v-icon>
+                      </v-btn>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        title="Take this ticket and chat him/her"
+                        class="ml-2"
+                        fab x-small dark
+                        color="success"
+                        @click="chatSiCantik(item.nohp, item.nama, item.noticket, item.perihal)"
+                      >
+                        <v-icon>mdi-whatsapp</v-icon>
+                      </v-btn>
+                      <v-btn
+                        title="Add progress"
+                        class="ml-2"
+                        fab x-small dark
+                        color="#81D4FA"
+                        @click="addProgress(item.noticket)"
+                      >
+                        <v-icon>mdi-progress-check</v-icon>
+                      </v-btn>
+                      <v-btn
+                        title="Show this ticket's timeline"
+                        class="ml-2"
+                        fab x-small dark
+                        color="pink lighten-4"
+                        @click="showTimeline(item.noticket)"
+                      >
+                        <v-icon>mdi-timeline-text</v-icon>
+                      </v-btn>
+                    </v-row>
                   </td>
                 </template>
               </v-data-table>
@@ -52,7 +98,7 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="12" md="6">
+      <!-- <v-col cols="12" md="4">
         <v-card-text class="py-0">
           <v-timeline
             align-top
@@ -88,14 +134,45 @@
             </v-timeline-item>
           </v-timeline>
         </v-card-text>
-      </v-col>
+      </v-col> -->
     </v-row>
+    <v-dialog
+      v-model="timelineModal"
+      max-width="500"
+      max-height="350"
+    >
+      <v-card>
+        <v-card-title v-bind="choosenTicket" class="text-h5">
+          Timeline of : {{choosenTicket}}
+        </v-card-title>
+        <v-card-text>
+          <Timeline :progress="choosenTicket"/>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="timelineModal = false"
+          >
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
+import Timeline from '@/components/Timeline.vue'
+
 export default {
   data: () => ({
+    components: {
+      Timeline
+    },
+    timelineModal: false,
+    choosenTicket: '',
     progress: [
       {
         timestamp: '12/9/22 08.30',
@@ -137,8 +214,9 @@ export default {
         sortable: false,
         value: 'nohp'
       },
+      { text: 'Nama', value: 'nama' },
+      { text: 'No Ticket', value: 'noticket' },
       { text: 'Tiket - Status', value: 'status' },
-      { text: 'Tanggal', value: 'tanggal' },
       { text: '', value: 'data-table-expand' }
     ],
     details: [
@@ -148,7 +226,8 @@ export default {
         tanggal: '25/09/2022',
         nama: 'Citra Kirana',
         nohp: '0811520011',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha'
+        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
+        serveBy: 'Grasela Trifosa N.'
       },
       {
         noticket: 'VIW432',
@@ -156,7 +235,8 @@ export default {
         tanggal: '20/09/2022',
         nama: 'Eca Syahrun',
         nohp: '081234567890',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha'
+        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
+        serveBy: 'Grasela Trifosa N.'
       },
       {
         noticket: 'OHQ648',
@@ -164,7 +244,8 @@ export default {
         tanggal: '19/09/2022',
         nama: 'Andre Taulani',
         nohp: '08967834562',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha'
+        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
+        serveBy: null
       },
       {
         noticket: 'CPQ157',
@@ -172,15 +253,17 @@ export default {
         tanggal: '17/09/2022',
         nama: 'Budi Doremi',
         nohp: '08115378654',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha'
+        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
+        serveBy: 'Grasela Trifosa N.'
       },
       {
         noticket: 'SGR953',
         status: '2',
         tanggal: '16/09/2022',
         nama: 'Mahalini',
-        nohp: '081367451289',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha'
+        nohp: '081290298414',
+        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
+        serveBy: 'Grasela Trifosa N.'
       },
       {
         noticket: 'ASF246',
@@ -188,7 +271,8 @@ export default {
         tanggal: '15/09/2022',
         nama: 'Keisya Levronka',
         nohp: '085686792746',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha'
+        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
+        serveBy: null
       },
       {
         noticket: 'NLK567',
@@ -196,7 +280,8 @@ export default {
         tanggal: '12/09/2022',
         nama: 'Anya Geraldine',
         nohp: '08524563789',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha'
+        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
+        serveBy: 'Grasela Trifosa N.'
       },
       {
         noticket: 'GHJ867',
@@ -204,7 +289,8 @@ export default {
         tanggal: '10/09/2022',
         nama: 'Wendy Cagur',
         nohp: '08539678254',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha'
+        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
+        serveBy: 'Grasela Trifosa N.'
       }
     ]
   }),
@@ -220,8 +306,17 @@ export default {
       else return 'red'
     },
     chatSiCantik (nohp, nama, noticket, perihal) {
-      var msg = 'Terima kasih ' + nama + ' sudah menghubungi SiCantik\nNo Tiket Anda : ' + noticket + '\n' + 'Perihal : ' + perihal
-      window.open('wa.me/62' + nohp.substring('2') + '?text=' + encodeURI(msg))
+      var msg = 'Terima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNo Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_'
+      alert('You have taken this ticket!')
+      window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
+    },
+    addProgress (noticket) {
+      alert('You will add progress for ticket number : ' + noticket)
+    },
+    showTimeline (noticket) {
+      this.timelineModal = !this.timelineModal
+      this.choosenTicket = noticket
+      // alert('You will show timeline of ticket number : ' + noticket)
     }
   },
   computed: {
