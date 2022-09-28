@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col cols="12" md="4">
+      <v-col cols="12" md="6">
         <v-row justify="center">
           <v-col cols="10" md="8">
             <v-text-field
@@ -40,16 +40,6 @@
               height="300px"
             >
               <template v-slot:default>
-                <!-- <thead>
-                  <tr>
-                    <th class="text-left">
-                      Name
-                    </th>
-                    <th class="text-left">
-                      Calories
-                    </th>
-                  </tr>
-                </thead> -->
                 <tbody
                   v-for="(info, i) in customDetail"
                     :key="i"

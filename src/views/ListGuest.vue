@@ -11,8 +11,8 @@
             >
               <v-data-table
                 :headers="detailHeaders"
-                :items="details"
-                :single-expand="singleExpand"
+                :items="customDetails"
+                single-expand
                 :expanded.sync="expanded"
                 item-key="noticket"
                 show-expand
@@ -33,9 +33,67 @@
                     ></v-text-field>
                   </v-toolbar>
                 </template>
+                <template v-slot:item.status="{ item }">
+                  <v-chip
+                    :color="getColor(item.status)"
+                    dark
+                    small
+                  >
+                    {{ item.status }}
+                  </v-chip>
+                </template>
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length">
-                    More info about {{ item.name }}
+                    <v-row>
+                      <v-col
+                        cols="12"
+                        sm="3"
+                      >
+                        <v-btn
+                          icon
+                          color="pink"
+                          :to="chatSiCantik(item.nohp, item.nama, item.noticket, item.perihal)"
+                        >
+                          <v-icon>mdi-heart</v-icon>
+                        </v-btn>
+                      </v-col>
+
+                      <v-col
+                        cols="12"
+                        sm="3"
+                      >
+                        <v-btn
+                          icon
+                          color="indigo"
+                        >
+                          <v-icon>mdi-star</v-icon>
+                        </v-btn>
+                      </v-col>
+
+                      <v-col
+                        cols="12"
+                        sm="3"
+                      >
+                        <v-btn
+                          icon
+                          color="green"
+                        >
+                          <v-icon>mdi-cached</v-icon>
+                        </v-btn>
+                      </v-col>
+
+                      <v-col
+                        cols="12"
+                        sm="3"
+                      >
+                        <v-btn
+                          icon
+                          color="deep-orange"
+                        >
+                          <v-icon>mdi-thumb-up</v-icon>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
                   </td>
                 </template>
               </v-data-table>
@@ -121,7 +179,6 @@ export default {
     ],
     search: '',
     expanded: [],
-    singleExpand: false,
     detailHeaders: [
       {
         text: 'Nomor WA',
@@ -129,7 +186,7 @@ export default {
         sortable: false,
         value: 'nohp'
       },
-      { text: 'Tiket - Status', value: this.namingStatus(this.status) },
+      { text: 'Tiket - Status', value: 'status' },
       { text: 'Tanggal', value: 'tanggal' },
       { text: '', value: 'data-table-expand' }
     ],
@@ -200,15 +257,26 @@ export default {
       }
     ]
   }),
-  computed: {
+  methods: {
     namingStatus (status) {
       if (status === '0') return 'open'
       if (status === '1') return 'on progress'
       else return 'closed'
     },
+    getColor (status) {
+      if (status === 'open') return 'success'
+      if (status === 'on progress') return 'primary'
+      else return 'red'
+    },
+    chatSiCantik (nohp, nama, noticket, perihal) {
+      var msg = 'Terima kasih ' + nama + ' sudah menghubungi SiCantik\nNo Tiket Anda : ' + noticket + '\n' + 'Perihal : ' + perihal
+      window.open('wa.me/62' + nohp.substring('2') + '?text=' + encodeURI(msg))
+    }
+  },
+  computed: {
     customDetails () {
-      return this.details.map(info => {
-        return { ...info, nohp: this.namingStatus(info.status) }
+      return this.details.map(item => {
+        return { ...item, status: this.namingStatus(item.status) }
       })
     }
   }

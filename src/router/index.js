@@ -44,7 +44,7 @@ const routes = [
     component: AppLayout,
     children: [
       {
-        path: '',
+        path: 'home',
         name: 'home',
         component: RankBoard
       },
