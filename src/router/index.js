@@ -10,6 +10,7 @@ import Profile from '@/views/Profile.vue'
 import ListGuest from '@/views/ListGuest.vue'
 import GuestHome from '@/views/GuestHome.vue'
 import Ticket from '@/views/Ticket.vue'
+import Rating from '@/views/Rating.vue'
 import Tracking from '@/views/Tracking.vue'
 import PageNotFound from '@/views/PageNotFound.vue'
 
@@ -35,6 +36,12 @@ const routes = [
         path: 'tracking',
         name: 'tracking',
         component: Tracking
+      },
+      {
+        path: 'rating/:noticket',
+        name: 'rating',
+        component: Rating,
+        props: true
       }
     ]
   },

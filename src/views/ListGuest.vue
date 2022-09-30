@@ -56,63 +56,71 @@
                   </v-chip>
                 </template>
                 <template v-slot:expanded-item="{ headers, item }">
-                  <td :colspan="headers.length">
-                    <v-row class="mt-2" justify="start">
-                      <v-col>
-                        <div class="text-caption font-weight-thin font-italic text--disabled">Name: {{item.nama}}</div>
-                        <div class="text-caption font-weight-thin font-italic text--disabled">Nomor HP: {{item.nohp}}</div>
-                        <div class="text-caption font-weight-thin font-italic text--disabled">Date: {{item.tanggal}}</div>
-                        <div class="text-caption font-weight-thin font-italic text--disabled">Handled by: <strong class="primary--text">{{item.serveBy}}</strong></div>
-                        <div class="text-caption font-weight-thin font-italic text--disabled">Request: {{item.perihal}}</div>
-                      </v-col>
-                    </v-row>
-                    <v-row class="mb-2 px-3" justify="start">
-                      <v-btn
-                        title="Close this ticket"
-                        fab x-small dark
-                        color="red"
-                        @click="closeTicket(item.noticket)"
-                      >
-                        <v-icon>mdi-close-circle-outline</v-icon>
-                      </v-btn>
-                      <v-spacer></v-spacer>
-                      <v-btn
-                        title="Send survei rating link to guest"
-                        class="ml-2"
-                        fab x-small dark
-                        color="warning"
-                        @click="askRating(item.noticket)"
-                      >
-                        <v-icon>mdi-link-variant</v-icon>
-                      </v-btn>
-                      <v-btn
-                        title="Take this ticket and chat him/her"
-                        class="ml-2"
-                        fab x-small dark
-                        color="success"
-                        @click="chatSiCantik(item.nohp, item.nama, item.noticket, item.perihal)"
-                      >
-                        <v-icon>mdi-whatsapp</v-icon>
-                      </v-btn>
-                      <v-btn
-                        title="Add progress"
-                        class="ml-2"
-                        fab x-small dark
-                        color="#81D4FA"
-                        @click="addProgress(item.noticket)"
-                      >
-                        <v-icon>mdi-progress-check</v-icon>
-                      </v-btn>
-                      <v-btn
-                        title="Show this ticket's timeline"
-                        class="ml-2"
-                        fab x-small dark
-                        color="pink lighten-4"
-                        @click="showTimeline(item.noticket)"
-                      >
-                        <v-icon>mdi-timeline-text</v-icon>
-                      </v-btn>
-                    </v-row>
+                  <td :colspan="headers.length" class="px-1">
+                    <v-card color="grey darken-3 mb-1 pb-1 px-2">
+                      <v-row class="mt-2" justify="start">
+                        <v-col>
+                          <div class="text-caption font-weight-thin font-italic text--disabled">Name: {{item.nama}}</div>
+                          <div class="text-caption font-weight-thin font-italic text--disabled">Nomor HP: {{item.nohp}}</div>
+                          <div class="text-caption font-weight-thin font-italic text--disabled">Date: {{item.tanggal}}</div>
+                          <div class="text-caption font-weight-thin font-italic text--disabled">Handled by: <strong class="primary--text">{{item.serveBy}}</strong></div>
+                          <div class="text-caption font-weight-thin font-italic text--disabled">Request: {{item.perihal}}</div>
+                        </v-col>
+                      </v-row>
+                      <v-row class="mb-2 px-3" justify="start">
+                        <v-btn
+                          title="Close this ticket"
+                          fab x-small dark
+                          color="red"
+                          @click="closeTicket(item.noticket)"
+                        >
+                          <v-icon>mdi-close-circle-outline</v-icon>
+                        </v-btn>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          title="Send survei rating link to guest"
+                          class="ml-2"
+                          fab x-small dark
+                          color="warning"
+                          @click="askRating(item.noticket)"
+                        >
+                          <v-icon>mdi-link-variant</v-icon>
+                        </v-btn>
+                        <v-tooltip bottom color="success">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              class="ml-2"
+                              fab x-small dark
+                              color="success"
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="chatSiCantik(item.nohp, item.nama, item.noticket, item.perihal)"
+                            >
+                              <v-icon>mdi-whatsapp</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Take this ticket and chat him/her</span>
+                        </v-tooltip>
+                        <v-btn
+                          title="Add progress"
+                          class="ml-2"
+                          fab x-small dark
+                          color="#81D4FA"
+                          @click="showAddProgress(item.noticket)"
+                        >
+                          <v-icon>mdi-progress-check</v-icon>
+                        </v-btn>
+                        <v-btn
+                          title="Show this ticket's timeline"
+                          class="ml-2"
+                          fab x-small dark
+                          color="pink lighten-4"
+                          @click="showTimeline(item.noticket)"
+                        >
+                          <v-icon>mdi-timeline-text</v-icon>
+                        </v-btn>
+                      </v-row>
+                    </v-card>
                   </td>
                 </template>
               </v-data-table>
@@ -120,44 +128,8 @@
           </v-col>
         </v-row>
       </v-col>
-      <!-- <v-col cols="12" md="4">
-        <v-card-text class="py-0">
-          <v-timeline
-            align-top
-            dense
-          >
-            <v-timeline-item
-              v-for="(item, i) in progress"
-              :key="i"
-              :color="i==0 ? 'success' : 'grey'"
-              icon="mdi-check"
-              :large="i==0 ? true : false"
-            >
-              <div class="text-caption font-weight-light font-italic">
-                {{item.timestamp}}
-              </div>
-              <div>
-                {{item.user}}&nbsp;
-                <v-icon
-                  right color="blue" size="15px"
-                  class="mt-n1 ml-n1"
-                  v-if="item.verified==true"
-                >
-                  mdi-check-decagram
-                </v-icon>
-              </div>
-              <v-chip
-                class="overflow-x-auto"
-                label
-                :color="i==0 ? 'success' : 'grey'"
-              >
-                {{item.desc}}
-              </v-chip>
-            </v-timeline-item>
-          </v-timeline>
-        </v-card-text>
-      </v-col> -->
     </v-row>
+    <!-- dialog untuk time line -->
     <v-dialog
       v-model="timelineModal"
       max-width="500"
@@ -189,18 +161,53 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- dialog untuk addProgress -->
+    <v-dialog
+      v-model="addProgressModal"
+      max-width="500"
+      max-height="300"
+      scrollable
+    >
+      <v-card>
+        <v-card-title v-bind="choosenTicket" class="text-h5">
+          Add Progress Ticket Number : {{choosenTicket}}
+        </v-card-title>
+        <v-card-text>
+          <v-skeleton-loader
+            boilerplate= true
+            elevation="2"
+            type="date-picker"
+          >
+            <AddProgress />
+          </v-skeleton-loader>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="addProgressModal = false"
+          >
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import Timeline from '@/components/Timeline.vue'
+import AddProgress from '@/components/AddProgress.vue'
 
 export default {
   components: {
-    Timeline
+    Timeline,
+    AddProgress
   },
   data: () => ({
     timelineModal: false,
+    addProgressModal: false,
     choosenTicket: '',
     progress: [
       {
@@ -347,11 +354,16 @@ export default {
       this.choosenTicket = noticket
       // alert('You will show timeline of ticket number : ' + noticket)
     },
+    showAddProgress (noticket) {
+      this.addProgressModal = !this.addProgressModal
+      this.choosenTicket = noticket
+    },
     closeTicket (noticket) {
       alert('Are you sure want to close this ticket number : ' + noticket + '?')
     },
     askRating (noticket) {
-      alert('Comming soon!')
+      // alert('Comming soon!')
+      this.$router.push({ name: 'rating', params: { noticket } })
     }
   },
   computed: {
