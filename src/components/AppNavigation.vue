@@ -23,6 +23,7 @@
           </v-list-item>
         </v-list>
       </v-menu>
+      <span>Hi, {{userLogedIn}}</span>
       <v-spacer></v-spacer>
       <v-toolbar-title class="text-h6 white--text pl-0">
         <v-btn
@@ -54,6 +55,7 @@ export default {
   name: 'AppNavigation',
   data () {
     return {
+      userLogedIn: '',
       items: [
         { title: 'Rank Board', icon: 'mdi-home', url: '/h/home' },
         { title: 'Daftar Pengunjung', icon: 'mdi-list-status', url: '/h/list-guest' },
@@ -61,6 +63,10 @@ export default {
         { title: 'About', icon: 'mdi-information', url: '/h/about' }
       ]
     }
+  },
+
+  created () {
+    return (this.userLogedIn = this.$store.getters.commonToken)
   }
 }
 </script>

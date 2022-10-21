@@ -330,6 +330,7 @@ export default {
       }
     ]
   }),
+
   methods: {
     namingStatus (status) {
       if (status === '0') return 'open'

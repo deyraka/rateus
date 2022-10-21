@@ -18,12 +18,14 @@
           <v-card-text class="text--primary">
             <v-form>
                 <v-text-field
+                  v-model="email"
                   prepend-icon="mdi-account"
                   name="login"
                   label="Email"
                   type="text"
                 ></v-text-field>
                 <v-text-field
+                  v-model="password"
                   id="password"
                   prepend-icon="mdi-lock"
                   name="password"
@@ -37,7 +39,7 @@
             <v-btn
               color="red lighten-3"
               class="black--text"
-              to="/h/"
+              @click="login()"
             >
               <v-icon left>
                 mdi-login-variant
@@ -53,11 +55,48 @@
 
 <script>
 import Header from '../components/Header.vue'
+import axios from 'axios'
 
 export default {
   name: 'Login',
   components: {
     Header
+  },
+  data: () => ({
+    email: '',
+    password: ''
+  }),
+
+  methods: {
+    login () {
+      axios.post('http://localhost:8000/api/login', {
+        email: this.email,
+        password: this.password
+      })
+        .then(function (response) {
+          console.log(response)
+          this.$store.dispatch('renewLoginStatus', true)
+          this.$store.dispatch('renewToken', response.data.token_type)
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+        .finally(function () {
+          this.$router.push({
+            name: 'list-guest'
+            // params: { keyword: this.form.search },
+          })
+        })
+      // Send a POST request
+      // axios({
+      //   method: 'post',
+      //   url: 'localhost:8000/api/login',
+      //   data: {
+      //     email: this.email,
+      //     password: this.password
+      //   }
+      // })
+    }
   }
 
 }
