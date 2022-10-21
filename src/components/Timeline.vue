@@ -19,7 +19,7 @@
             <v-icon
                 right color="blue" size="15px"
                 class="mt-n1 ml-n1"
-                v-if="item.verified==true"
+                v-if="item.verified==1"
             >
                 mdi-check-decagram
             </v-icon>

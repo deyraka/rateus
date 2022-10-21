@@ -41,10 +41,10 @@
             md="8"
           >
             <v-textarea
-              v-model="necessity"
-              :rules="necessityRules"
+              v-model="advice"
+              :rules="adviceRules"
               :counter="500"
-              label="Saran / Masukan"
+              label="Kritik dan Saran"
               rows="3"
               prepend-icon="mdi-comment"
               hint="(Masukan Anda sangat berarti bagi kami)"
@@ -82,40 +82,14 @@ export default {
   name: 'Rating',
   props: ['noticket'],
   data: () => ({
-    justify: [
-      'start',
-      'center',
-      'end',
-      'space-around',
-      'space-between'
-    ],
     valid: true,
-    name: '',
-    nameRules: [
-      v => !!v || 'Nama lengkap harus diisi',
-      v => (v && v.length <= 25) || 'Name must be less than 25 characters'
-    ],
     rating: 0,
-    select: null,
-    jobItems: [
-      'ASN/PNS/TNI/POLRI',
-      'Karyawan Swasta',
-      'Wiraswasta',
-      'Mahasiswa',
-      'Siswa (SMP/SMA)',
-      'Lainnya'
-    ],
-    institution: '',
-    institutionRules: [
-      v => !!v || 'Asal is required',
-      v => (v && v.length <= 150) || 'Keperluan must be less than 150 characters'
-    ],
-    necessity: '',
-    necessityRules: [
+    advice: '',
+    adviceRules: [
       v => !!v || 'Keperluan is required',
-      v => (v && v.length <= 500) || 'Keperluan must be less than 500 characters'
-    ],
-    checkbox: false
+      v => (v && v.length <= 500) || 'Kritik dan saran must be less than 500 characters'
+    ]
+    // checkbox: false
   }),
 
   methods: {

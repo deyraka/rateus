@@ -142,31 +142,31 @@ export default {
       {
         timestamp: '12/9/22 08.30',
         user: 'Grasela Trifosa N.',
-        verified: true,
+        verified: 1,
         desc: 'Data sedang diproses'
       },
       {
         timestamp: '11/9/22 14.30',
         user: 'Grasela Trifosa N.',
-        verified: true,
+        verified: 1,
         desc: 'Konfirmasi data ke subject matter'
       },
       {
         timestamp: '11/9/22 11.30',
         user: 'Grasela Trifosa N.',
-        verified: true,
+        verified: 1,
         desc: 'Memproses permintaan data'
       },
       {
         timestamp: '11/9/22 08.30',
         user: 'Grasela Trifosa N.',
-        verified: true,
+        verified: 1,
         desc: 'Merespon tiket'
       },
       {
         timestamp: '11/9/22 08.30',
         user: 'Guest',
-        verified: false,
+        verified: 0,
         desc: 'Tiket berhasil diajukan'
       }
     ]
