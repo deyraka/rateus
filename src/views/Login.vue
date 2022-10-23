@@ -74,19 +74,20 @@ export default {
         password: this.password
       })
         .then(function (response) {
-          console.log(response)
-          this.$store.dispatch('renewLoginStatus', true)
-          this.$store.dispatch('renewToken', response.data.token_type)
+          if (response.status === 200) {
+            console.log(response)
+            this.$store.dispatch('renewLoginStatus', true)
+            this.$store.dispatch('renewToken', response.data.token_type)
+            this.$router.push({
+              name: 'list-guest'
+              // params: { keyword: this.form.search },
+            })
+          }
         })
         .catch(function (error) {
           console.log(error)
         })
-        .finally(function () {
-          this.$router.push({
-            name: 'list-guest'
-            // params: { keyword: this.form.search },
-          })
-        })
+        .finally(function () {})
       // Send a POST request
       // axios({
       //   method: 'post',
