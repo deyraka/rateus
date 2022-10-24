@@ -70,16 +70,22 @@ export default {
   methods: {
     login () {
       const vm = this
-      axios.post('http://localhost:8000/api/login', {
+      //  for baseUrl checkout file main.js in root dir
+      axios.post('login', {
         email: this.email + '@bps.go.id',
         password: this.password
       })
         .then(function (response) {
           if (response.status === 200) {
             console.log(response)
-            vm.$store.dispatch('renewLoginStatus', 'true')
-            vm.$store.dispatch('renewToken', response.data.access_token)
-            vm.$store.dispatch('renewUser', response.data)
+            vm.$store.dispatch('userAuth/renewUserInfo',
+              {
+                name: response.data.name,
+                id: response.data.user_id
+              }
+            )
+            // vm.$store.dispatch('renewLoginStatus', 'true')
+            vm.$store.dispatch('userAuth/renewToken', response.data.access_token)
             vm.$router.push({
               name: 'list-guest'
               // params: { keyword: this.form.search },
@@ -90,15 +96,6 @@ export default {
           console.log(error)
         })
         .finally(function () {})
-      // Send a POST request
-      // axios({
-      //   method: 'post',
-      //   url: 'localhost:8000/api/login',
-      //   data: {
-      //     email: this.email,
-      //     password: this.password
-      //   }
-      // })
     }
   }
 

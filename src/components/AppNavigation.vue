@@ -23,7 +23,7 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <span>Hi,</span>
+      <span>Hi, {{ $store.state.userAuth.user.name }}</span>
       <v-spacer></v-spacer>
       <v-toolbar-title class="text-h6 white--text pl-0">
         <v-btn
@@ -57,7 +57,8 @@ export default {
   name: 'AppNavigation',
   data () {
     return {
-      isUserLogedIn: {},
+      // isUserLogedIn: [],
+      tokens: this.$store.getters['userAuth/activeToken'],
       items: [
         { title: 'Rank Board', icon: 'mdi-home', url: '/h/home' },
         { title: 'Daftar Pengunjung', icon: 'mdi-list-status', url: '/h/list-guest' },
@@ -67,21 +68,29 @@ export default {
     }
   },
 
-  created () {
-    return (this.userLogedIn = this.$store.getters.commonUser)
-  },
+  // created () {
+  //   return (this.userLogedIn = this.$store.getters.activeUser)
+  // },
 
   methods: {
     logout () {
       const vm = this
-      const token = this.$store.getters.commonToken
-      axios.post('http://localhost:8000/api/login', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      var config = {
+        method: 'post',
+        url: 'logout',
+        headers: {
+          Authorization: 'Bearer ' + this.tokens
+        }
+      }
+      // axios.post('logout', {
+      //   headers: { 'Authorization': 'Bearer $(this.tokens)' }
+      // })
+      axios(config)
         .then(function (response) {
           if (response.status === 200) {
             console.log(response)
-            vm.$store.reset() // really easy
+            // vm.$store.reset() // really easy
+            vm.$store.dispatch('userAuth/logout')
             vm.$router.push({
               name: 'login'
               // params: { keyword: this.form.search },
@@ -90,6 +99,7 @@ export default {
         })
         .catch(function (error) {
           console.log(error)
+          console.log(config)
         })
         .finally(function () {})
     }

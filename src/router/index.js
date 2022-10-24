@@ -13,6 +13,7 @@ import Ticket from '@/views/Ticket.vue'
 import Rating from '@/views/Rating.vue'
 import Tracking from '@/views/Tracking.vue'
 import PageNotFound from '@/views/PageNotFound.vue'
+import store from '../store'
 
 Vue.use(VueRouter)
 
@@ -25,22 +26,26 @@ const routes = [
       {
         path: '',
         name: 'guesthome',
-        component: GuestHome
+        component: GuestHome,
+        meta: { guest: true }
       },
       {
         path: 'ticket',
         name: 'ticket',
-        component: Ticket
+        component: Ticket,
+        meta: { guest: true }
       },
       {
         path: 'tracking',
         name: 'tracking',
-        component: Tracking
+        component: Tracking,
+        meta: { guest: true }
       },
       {
         path: 'rating/:noticket',
         name: 'rating',
         component: Rating,
+        meta: { guest: true },
         props: true
       }
     ]
@@ -69,7 +74,8 @@ const routes = [
       {
         path: 'list-guest',
         name: 'list-guest',
-        component: ListGuest
+        component: ListGuest,
+        meta: { requiresAuth: true }
       },
       {
         path: 'about',
@@ -85,6 +91,7 @@ const routes = [
     path: '/auth',
     // name: 'auth',
     component: LoginLayout,
+    meta: { guest: true },
     children: [
       {
         path: 'login',
@@ -106,21 +113,37 @@ const router = new VueRouter({
   routes
 })
 
-// router.beforeEach((to, from, next) => {
-//   if (to.matched.some(record => record.meta.requiresAuth)) {
-//     // this route requires auth, check if logged in
-//     // if not, redirect to login page.
-//     if (!auth.loggedIn()) {
-//       next({
-//         path: '/auth/login',
-//         query: { redirect: to.fullPath }
-//       })
-//     } else {
-//       next()
-//     }
-//   } else {
-//     next() // make sure to always call next()!
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // this route requires auth, check if user is authenticated
+    // if not, redirect to login page.
+    if (store.getters['userAuth/isAuthenticated']) {
+      next()
+    } else {
+      next({
+        path: '/auth/login',
+        query: { redirect: to.fullPath }
+      })
+    }
+  } else {
+    next() // make sure to always call next()!
+  }
+})
+router.beforeEach((to, from, next) => {
+  // this route requires no auth (alias guest), then check if user is authenticated
+  // if yes, redirect to admin homepage. If no, redirect to destination route
+  if (to.matched.some((record) => record.meta.guest)) {
+    if (store.getters['userAuth/isAuthenticated']) {
+      next({
+        path: '/h/list-guest',
+        query: { redirect: to.fullPath }
+      })
+    } else {
+      next()
+    }
+  } else {
+    next() // make sure to always call next()!
+  }
+})
 
 export default router
