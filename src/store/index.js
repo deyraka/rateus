@@ -6,7 +6,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     isLoggedIn: false,
-    token: ''
+    token: '',
+    user: {}
   },
   mutations: {
     setLoginStatus: function (state, key) {
@@ -14,6 +15,9 @@ export default new Vuex.Store({
     },
     setToken: function (state, key) {
       return (state.token = key)
+    },
+    setUser: function (state, usrObj) {
+      return (state.user = usrObj)
     }
   },
   actions: {
@@ -22,6 +26,9 @@ export default new Vuex.Store({
     },
     renewToken (state, val) {
       state.commit('setToken', val)
+    },
+    renewUser (state, val) {
+      state.commit('setUser', val)
     }
   },
   getters: {
@@ -30,6 +37,9 @@ export default new Vuex.Store({
     },
     commonToken: (state) => {
       return state.token
+    },
+    commonUser: (state) => {
+      return state.user
     }
   },
   modules: {

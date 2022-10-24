@@ -69,16 +69,18 @@ export default {
 
   methods: {
     login () {
+      const vm = this
       axios.post('http://localhost:8000/api/login', {
-        email: this.email,
+        email: this.email + '@bps.go.id',
         password: this.password
       })
         .then(function (response) {
           if (response.status === 200) {
             console.log(response)
-            this.$store.dispatch('renewLoginStatus', true)
-            this.$store.dispatch('renewToken', response.data.token_type)
-            this.$router.push({
+            vm.$store.dispatch('renewLoginStatus', 'true')
+            vm.$store.dispatch('renewToken', response.data.access_token)
+            vm.$store.dispatch('renewUser', response.data)
+            vm.$router.push({
               name: 'list-guest'
               // params: { keyword: this.form.search },
             })

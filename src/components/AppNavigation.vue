@@ -23,7 +23,7 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <span>Hi, {{userLogedIn}}</span>
+      <span>Hi,</span>
       <v-spacer></v-spacer>
       <v-toolbar-title class="text-h6 white--text pl-0">
         <v-btn
@@ -42,7 +42,7 @@
         class="ml-2"
         color="white"
         icon
-        to="/auth/login"
+        @click="logout()"
         title="Log out"
       >
         <v-icon>mdi-power</v-icon>
@@ -51,11 +51,13 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'AppNavigation',
   data () {
     return {
-      userLogedIn: '',
+      isUserLogedIn: {},
       items: [
         { title: 'Rank Board', icon: 'mdi-home', url: '/h/home' },
         { title: 'Daftar Pengunjung', icon: 'mdi-list-status', url: '/h/list-guest' },
@@ -66,8 +68,33 @@ export default {
   },
 
   created () {
-    return (this.userLogedIn = this.$store.getters.commonToken)
+    return (this.userLogedIn = this.$store.getters.commonUser)
+  },
+
+  methods: {
+    logout () {
+      const vm = this
+      const token = this.$store.getters.commonToken
+      axios.post('http://localhost:8000/api/login', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(function (response) {
+          if (response.status === 200) {
+            console.log(response)
+            vm.$store.reset() // really easy
+            vm.$router.push({
+              name: 'login'
+              // params: { keyword: this.form.search },
+            })
+          }
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+        .finally(function () {})
+    }
   }
+
 }
 </script>
 
