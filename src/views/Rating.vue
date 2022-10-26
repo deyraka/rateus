@@ -78,6 +78,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'Rating',
   props: ['noticket'],
@@ -96,8 +98,29 @@ export default {
     validate () {
       if (this.rating === '') {
         alert('Tolong isi rating untuk menilai kualitas layanan kami')
+      } else {
+        const vm = this // `this` cannot be accessed inside .then .catch or .finnaly. So, we need helper in this case we named it 'vm'
+        //  for baseUrl checkout file main.js in root dir
+        axios.post('ratings', {
+          ticket_id: this.noticket,
+          star: this.rating,
+          comment: this.advice
+        })
+          .then(function (response) {
+            if (response.status === 200) {
+              console.log(response)
+            }
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+          .finally(function () {
+            vm.$router.push({
+              name: 'guesthome'
+            })
+          })
+        // this.$refs.form.validate()
       }
-      this.$refs.form.validate()
     },
     reset () {
       this.rating = ''
