@@ -19,18 +19,23 @@
             <v-form>
                 <v-text-field
                   v-model="email"
+                  :rules="emailRules"
                   prepend-icon="mdi-account"
                   name="login"
                   label="Email"
                   type="text"
+                  placeholder="(email bps, tanpa `@bps.go.id`)"
+                  @keydown.enter="login()"
                 ></v-text-field>
                 <v-text-field
                   v-model="password"
+                  :rules="passwordRules"
                   id="password"
                   prepend-icon="mdi-lock"
                   name="password"
                   label="Password"
                   type="password"
+                  @keydown.enter="login()"
                 ></v-text-field>
             </v-form>
             <p class="text-lowercase text-caption">forgot password? <a href="#" class="white--text">click here</a></p>
@@ -64,7 +69,13 @@ export default {
   },
   data: () => ({
     email: '',
-    password: ''
+    emailRules: [
+      v => !!v || 'E-mail is required'
+    ],
+    password: '',
+    passwordRules: [
+      v => !!v || 'Password is required'
+    ]
   }),
 
   methods: {

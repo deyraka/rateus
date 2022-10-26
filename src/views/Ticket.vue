@@ -5,6 +5,7 @@
         ref="form"
         v-model="valid"
         lazy-validation
+        @submit.prevent="validate"
       >
         <v-row>
           <v-col
@@ -54,6 +55,8 @@
             <v-select
               v-model="select"
               :items="jobItems"
+              item-text="state"
+              item-value="val"
               :rules="[v => !!v || 'Pekerjaan harus terisi']"
               label="Pekerjaan"
               prepend-icon="mdi-briefcase"
@@ -120,6 +123,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data: () => ({
     valid: true,
@@ -135,12 +140,12 @@ export default {
     ],
     select: null,
     jobItems: [
-      'ASN/PNS/TNI/POLRI',
-      'Karyawan Swasta',
-      'Wiraswasta',
-      'Mahasiswa',
-      'Siswa (SMP/SMA)',
-      'Lainnya'
+      { state: 'ASN/PNS/TNI/POLRI', val: 'ASN/PNS/TNI/POLRI' },
+      { state: 'Karyawan Swasta', val: 'Karyawan Swasta' },
+      { state: 'Wiraswasta', val: 'Wiraswasta' },
+      { state: 'Mahasiswa', val: 'Mahasiswa' },
+      { state: 'Siswa (SMP/SMA)', val: 'Siswa (SMP/SMA)' },
+      { state: 'Lainnya', val: 'Lainnya' }
     ],
     institution: '',
     institutionRules: [
@@ -158,6 +163,30 @@ export default {
   methods: {
     validate () {
       this.$refs.form.validate()
+      const vm = this // `this` cannot be accessed inside .then .catch or .finnaly. So, we need helper in this case we named it 'vm'
+      //  for baseUrl checkout file main.js in root dir
+      axios.post('tickets', {
+        name: this.name,
+        nohp: this.nohp,
+        job: this.select,
+        institution: this.institution,
+        necessity: this.necessity,
+        bersedia: this.checkbox,
+        status: 0
+      })
+        .then(function (response) {
+          if (response.status === 200) {
+            console.log(response)
+          }
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+        .finally(function () {
+          vm.$router.push({
+            name: 'guesthome'
+          })
+        })
     },
     reset () {
       this.$refs.form.reset()

@@ -89,19 +89,23 @@ export default {
         .then(function (response) {
           if (response.status === 200) {
             console.log(response)
-            // vm.$store.reset() // really easy
-            vm.$store.dispatch('userAuth/logout')
-            vm.$router.push({
-              name: 'login'
-              // params: { keyword: this.form.search },
-            })
+            // vm.$store.dispatch('userAuth/logout')
+            // vm.$router.push({
+            //   name: 'login'
+            //   // params: { keyword: this.form.search },
+            // })
           }
         })
         .catch(function (error) {
           console.log(error)
           console.log(config)
         })
-        .finally(function () {})
+        .finally(function () {
+          vm.$store.dispatch('userAuth/logout')
+          vm.$router.push({
+            name: 'login'
+          })
+        })
     }
   }
 

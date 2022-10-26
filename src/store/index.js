@@ -8,7 +8,7 @@ Vue.use(Vuex)
 // Create store
 export default new Vuex.Store({
   modules: {
-    userAuth: auth
+    userAuth: auth // name of module. you can give any name you want
   },
   plugins: [createPersistedState()]
 })
