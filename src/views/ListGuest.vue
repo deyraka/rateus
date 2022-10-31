@@ -178,7 +178,7 @@
             elevation="2"
             type="date-picker"
           >
-            <AddProgress />
+            <AddProgress :noticket="choosenTicket"/>
           </v-skeleton-loader>
         </v-card-text>
         <v-card-actions>
