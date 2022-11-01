@@ -68,24 +68,37 @@
                         </v-col>
                       </v-row>
                       <v-row class="mb-2 px-3" justify="start">
-                        <v-btn
-                          title="Close this ticket"
-                          fab x-small dark
-                          color="red"
-                          @click="closeTicket(item.noticket)"
-                        >
-                          <v-icon>mdi-close-circle-outline</v-icon>
-                        </v-btn>
+                        <v-tooltip bottom color="red">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              v-if="item.status === 'on progress'"
+                              fab x-small dark
+                              color="red"
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="closeTicket(item.noticket)"
+                            >
+                              <v-icon>mdi-close-circle-outline</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Close this ticket</span>
+                        </v-tooltip>
                         <v-spacer></v-spacer>
-                        <v-btn
-                          title="Send survei rating link to guest"
-                          class="ml-2"
-                          fab x-small dark
-                          color="warning"
-                          @click="askRating(item.noticket)"
-                        >
-                          <v-icon>mdi-link-variant</v-icon>
-                        </v-btn>
+                        <v-tooltip bottom color="warning">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              class="ml-2"
+                              fab x-small dark
+                              color="warning"
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="askRating(item.noticket)"
+                            >
+                              <v-icon>mdi-link-variant</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Send survei rating link to guest</span>
+                        </v-tooltip>
                         <v-tooltip bottom color="success">
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -101,24 +114,36 @@
                           </template>
                           <span>Take this ticket and chat him/her</span>
                         </v-tooltip>
-                        <v-btn
-                          title="Add progress"
-                          class="ml-2"
-                          fab x-small dark
-                          color="#81D4FA"
-                          @click="showAddProgress(item.noticket)"
-                        >
-                          <v-icon>mdi-progress-check</v-icon>
-                        </v-btn>
-                        <v-btn
-                          title="Show this ticket's timeline"
-                          class="ml-2"
-                          fab x-small dark
-                          color="pink lighten-4"
-                          @click="showTimeline(item.noticket)"
-                        >
-                          <v-icon>mdi-timeline-text</v-icon>
-                        </v-btn>
+                        <v-tooltip bottom color="#81D4FA">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              class="ml-2"
+                              fab x-small dark
+                              color="#81D4FA"
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="showAddProgress(item.noticket)"
+                            >
+                              <v-icon>mdi-progress-check</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Add ticket's progress</span>
+                        </v-tooltip>
+                        <v-tooltip bottom color="pink lighten-4">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              class="ml-2"
+                              fab x-small dark
+                              color="pink lighten-4"
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="showTimeline(item.noticket)"
+                            >
+                              <v-icon>mdi-timeline-text</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Show ticket's timeline</span>
+                        </v-tooltip>
                       </v-row>
                     </v-card>
                   </td>
@@ -199,6 +224,11 @@
 <script>
 import Timeline from '@/components/Timeline.vue'
 import AddProgress from '@/components/AddProgress.vue'
+import axios from 'axios'
+
+// window.setTimeout(function () { // untuk sementara. sambil mempelajari websocket. karena reload every 5 seconds ini bukan best pratice!!!
+//   window.location.reload()
+// }, 30000)
 
 export default {
   components: {
@@ -206,6 +236,7 @@ export default {
     AddProgress
   },
   data: () => ({
+    details: [],
     timelineModal: false,
     addProgressModal: false,
     choosenTicket: '',
@@ -252,10 +283,11 @@ export default {
       },
       { text: 'Nama', value: 'nama' },
       { text: 'No Ticket', value: 'noticket' },
-      { text: 'Tiket - Status', value: 'status' },
+      { text: 'Status', value: 'status' },
+      { text: 'Petugas', value: 'serveBy' },
       { text: '', value: 'data-table-expand' }
     ],
-    details: [
+    dummy: [
       {
         noticket: 'XYZ120',
         status: '1',
@@ -331,11 +363,33 @@ export default {
     ]
   }),
 
+  mounted () {
+    // var vm = this
+    var config = {
+      method: 'get',
+      url: 'listguests',
+      headers: {
+        Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken']
+      }
+    }
+    axios(config)
+      .then((response) => {
+        this.details = response.data.details
+        console.log(response)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+  },
+
   methods: {
     namingStatus (status) {
-      if (status === '0') return 'open'
-      if (status === '1') return 'on progress'
+      if (status === 0) return 'open'
+      if (status === 1) return 'on progress'
       else return 'closed'
+    },
+    reformatDate (date) {
+      return new Date(date)
     },
     getColor (status) {
       if (status === 'open') return 'success'
@@ -370,7 +424,7 @@ export default {
   computed: {
     customDetails () {
       return this.details.map(item => {
-        return { ...item, status: this.namingStatus(item.status) }
+        return { ...item, status: this.namingStatus(item.status), tanggal: this.reformatDate(item.tanggal) }
       })
     }
   }
