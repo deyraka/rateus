@@ -1,4 +1,4 @@
-<template>
+<template ref="lg">
   <v-container>
     <v-row justify="center">
       <v-col cols="12" md="10">
@@ -18,6 +18,8 @@
                 show-expand
                 class="elevation-1"
                 :search="search"
+                :loading="loading"
+                loading-text="Loading... Please wait"
               >
                 <template v-slot:top>
                   <v-row justify="center">
@@ -225,10 +227,16 @@
 import Timeline from '@/components/Timeline.vue'
 import AddProgress from '@/components/AddProgress.vue'
 import axios from 'axios'
+import Echo from 'laravel-echo'
 
-// window.setTimeout(function () { // untuk sementara. sambil mempelajari websocket. karena reload every 5 seconds ini bukan best pratice!!!
-//   window.location.reload()
-// }, 30000)
+window.Pusher = require('pusher-js')
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: '72b390d6913fa906ab84',
+  cluster: 'ap1',
+  forceTLS: true,
+  encrypted: false
+})
 
 export default {
   components: {
@@ -236,6 +244,7 @@ export default {
     AddProgress
   },
   data: () => ({
+    loading: true,
     details: [],
     timelineModal: false,
     addProgressModal: false,
@@ -286,8 +295,8 @@ export default {
       { text: 'Status', value: 'status' },
       { text: 'Petugas', value: 'serveBy' },
       { text: '', value: 'data-table-expand' }
-    ],
-    dummy: [
+    ]
+    /* dummy: [
       {
         noticket: 'XYZ120',
         status: '1',
@@ -360,11 +369,12 @@ export default {
         perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
         serveBy: 'Grasela Trifosa N.'
       }
-    ]
+    ] */
   }),
 
   mounted () {
     // var vm = this
+    /* this.loading = true
     var config = {
       method: 'get',
       url: 'listguests',
@@ -375,11 +385,25 @@ export default {
     axios(config)
       .then((response) => {
         this.details = response.data.details
+        this.loading = false
         console.log(response)
       })
       .catch((e) => {
         console.log(e)
+      }) */
+    const audio = new Audio('https://notificationsounds.com/storage/sounds/file-sounds-1325-smile.mp3')
+    window.Echo.channel('tickets-channel')
+      .listen('.tickets-created', (event) => {
+        this.loadData()
+        audio.play()
+        console.log(event)
+        // alert('sukses');
       })
+    // this.loadData()
+  },
+
+  created () {
+    return this.loadData()
   },
 
   methods: {
@@ -419,6 +443,25 @@ export default {
     askRating (noticket) {
       // alert('Comming soon!')
       this.$router.push({ name: 'rating', params: { noticket } })
+    },
+    loadData () {
+      this.loading = true
+      var config = {
+        method: 'get',
+        url: 'listguests',
+        headers: {
+          Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken']
+        }
+      }
+      axios(config)
+        .then((response) => {
+          this.details = response.data.details
+          this.loading = false
+          console.log(response)
+        })
+        .catch((e) => {
+          console.log(e)
+        })
     }
   },
   computed: {
@@ -428,5 +471,13 @@ export default {
       })
     }
   }
+  /* watch: {
+    window.Echo.channel('tickets-channel').listen('TicketCreated', (event) => {
+      console.log(event)
+      // alert('sukses');
+      this.$refs.lg.renewData()
+      // App.renewData()
+    })
+  } */
 }
 </script>

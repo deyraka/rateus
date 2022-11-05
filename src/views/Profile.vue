@@ -19,6 +19,7 @@
                     right
                     width="40px"
                     title="Edit Profile"
+                    @click="checkAndShowNotif()"
                   >
                     <v-icon color="blue lighten-2">mdi-pencil</v-icon>
                   </v-btn>
@@ -151,6 +152,54 @@ export default {
           iron: '8%'
         }
       ]
+    }
+  },
+  methods: {
+    playsound () {
+      alert('sound will played. it is okay?')
+      const audio = new Audio('https://notificationsounds.com/storage/sounds/file-sounds-1325-smile.mp3')
+      audio.play()
+    },
+    showNotification () {
+      // create a new notification
+      const notification = new Notification('JavaScript Notification API', {
+        body: 'This is a JavaScript Notification API demo'
+      })
+
+      // close the notification after 10 seconds
+      setTimeout(() => {
+        notification.close()
+      }, 10 * 1000)
+
+      // navigate to a URL when clicked
+      notification.addEventListener('click', () => {
+        window.open('https://www.javascripttutorial.net/web-apis/javascript-notification/', '_blank')
+      })
+    },
+    showError () {
+      console.log('You blocked the notifications')
+    },
+    checkAndShowNotif () {
+      // check notification permission
+      let granted = false
+
+      if (Notification.permission === 'granted') {
+        granted = true
+        console.log('notif granted')
+      } else if (Notification.permission !== 'denied') {
+        // let permission = await Notification.requestPermission();
+        Notification.requestPermission((permission) => {
+          console.log('notif permission requested')
+          if (permission === 'granted') {
+            granted = true
+            console.log('notif request granted')
+          }
+        })
+        // granted = permission === 'granted' ? true : false;
+      }
+
+      // show notification or error
+      granted ? this.showNotification() : this.showError()
     }
   }
 }
