@@ -205,7 +205,7 @@
             elevation="2"
             type="date-picker"
           >
-            <AddProgress :noticket="choosenTicket"/>
+            <AddProgress :noticket="choosenTicket" v-on:close-progress="closeAddprogressModal"/>
           </v-skeleton-loader>
         </v-card-text>
         <v-card-actions>
@@ -387,6 +387,10 @@ export default {
   },
 
   methods: {
+    closeAddprogressModal (v) {
+      this.addProgressModal = !this.addProgressModal
+      // alert(v)
+    },
     namingStatus (status) {
       if (status === 0) return 'open'
       if (status === 1) return 'on progress'

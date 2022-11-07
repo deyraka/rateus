@@ -62,9 +62,9 @@ export default {
   methods: {
     validate () {
       // this.$refs.form.validate()
-      // const vm = this // `this` cannot be accessed inside .then .catch or .finnaly. So, we need helper in this case we named it 'vm'
+      const vm = this // `this` cannot be accessed inside .then .catch or .finnaly. So, we need helper in this case we named it 'vm'
       //  for baseUrl checkout file main.js in root dir
-      alert(this.$store.getters['userAuth/activeToken'])
+      // alert(this.$store.getters['userAuth/activeToken'])
       axios.post('progresslogs', {
         ticket_id: this.noticket,
         user_id: this.$store.getters['userAuth/activeUserId'],
@@ -75,7 +75,8 @@ export default {
         .then(function (response) {
           if (response.status === 200) {
             console.log(response)
-            // this.$emit('addProgressModal', false)
+            // change AddProgressModal.value in parent Component using $emit
+            vm.$emit('close-progress', false)
           }
         })
         .catch(function (error) {
