@@ -164,12 +164,12 @@
       scrollable
     >
       <v-card>
-        <v-card-title v-bind="choosenTicket" class="text-h5">
+        <v-card-title v-model="choosenTicket" class="text-h5">
           Timeline of : {{choosenTicket}}
         </v-card-title>
         <v-card-text>
           <v-skeleton-loader
-            boilerplate= true
+            boilerplate
             elevation="2"
             type="date-picker"
           >
@@ -196,12 +196,12 @@
       scrollable
     >
       <v-card>
-        <v-card-title v-bind="choosenTicket" class="text-h5">
+        <v-card-title v-model="choosenTicket" class="text-h5">
           Add Progress Ticket Number : {{choosenTicket}}
         </v-card-title>
         <v-card-text>
           <v-skeleton-loader
-            boilerplate= true
+            boilerplate
             elevation="2"
             type="date-picker"
           >
@@ -373,33 +373,13 @@ export default {
   }),
 
   mounted () {
-    // var vm = this
-    /* this.loading = true
-    var config = {
-      method: 'get',
-      url: 'listguests',
-      headers: {
-        Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken']
-      }
-    }
-    axios(config)
-      .then((response) => {
-        this.details = response.data.details
-        this.loading = false
-        console.log(response)
-      })
-      .catch((e) => {
-        console.log(e)
-      }) */
-    const audio = new Audio('https://notificationsounds.com/storage/sounds/file-sounds-1325-smile.mp3')
+    // Code for listening/subscribe into channel websocket. So, it can automatically update if there is an event occure
     window.Echo.channel('tickets-channel')
       .listen('.tickets-created', (event) => {
         this.loadData()
-        audio.play()
+        this.checkAndShowNotif(event.ticket.name, event.ticket.noticket)
         console.log(event)
-        // alert('sukses');
       })
-    // this.loadData()
   },
 
   created () {
@@ -421,6 +401,26 @@ export default {
       else return 'red'
     },
     chatSiCantik (nohp, nama, noticket, perihal) {
+      alert('Kamu yakin akan melayani tiket ini? Keputusanmu tidak bisa dibatalkan lho ya.')
+      axios.put('tickets', {
+        noticket: this.noticket,
+        status: 1
+      },
+      { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
+      )
+        .then(function (response) {
+          if (response.status === 200) {
+            console.log(response)
+          }
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+        .finally(function () {
+          /* vm.$router.push({
+            name: 'guesthome'
+          }) */
+        })
       var msg = 'Terima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNo Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_'
       alert('You have taken this ticket!')
       window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
@@ -462,7 +462,61 @@ export default {
         .catch((e) => {
           console.log(e)
         })
+    },
+    /* Start
+     * Method to play sound and show Notification
+     */
+    playsound () {
+      // alert('sound will played. it is okay?')
+      const audio = new Audio('https://notificationsounds.com/storage/sounds/file-sounds-1325-smile.mp3')
+      audio.play()
+    },
+    showNotification (name, noticket) {
+      // create a new notification
+      const notification = new Notification('New Ticket SiCantik, no : ' + noticket, {
+        body: 'Hey, ada pengunjung baru, namanya ' + name
+      })
+
+      this.playsound()
+
+      // uncomment this code if you want close the notification automatically from windows notification after 10 seconds
+      // setTimeout(() => {
+      //   notification.close()
+      // }, 10 * 1000)
+
+      // navigate to a URL when clicked
+      notification.addEventListener('click', () => {
+        window.open('http://localhost:8080/h/list-guest', '_blank')
+      })
+    },
+    showError () {
+      console.log('You blocked the notifications')
+    },
+    checkAndShowNotif (name, noticket) {
+      // check notification permission
+      let granted = false
+
+      if (Notification.permission === 'granted') {
+        granted = true
+        console.log('notif granted')
+      } else if (Notification.permission !== 'denied') {
+        // let permission = await Notification.requestPermission();
+        Notification.requestPermission((permission) => {
+          console.log('notif permission requested')
+          if (permission === 'granted') {
+            granted = true
+            console.log('notif request granted')
+          }
+        })
+        // granted = permission === 'granted' ? true : false;
+      }
+
+      // show notification or error
+      granted ? this.showNotification(name, noticket) : this.showError()
     }
+    /* End off
+     * Method to playsound and show notification
+    */
   },
   computed: {
     customDetails () {

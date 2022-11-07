@@ -166,6 +166,8 @@ export default {
         body: 'This is a JavaScript Notification API demo'
       })
 
+      this.playsound()
+
       // close the notification after 10 seconds
       setTimeout(() => {
         notification.close()

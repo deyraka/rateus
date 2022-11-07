@@ -62,25 +62,29 @@ export default {
   methods: {
     validate () {
       // this.$refs.form.validate()
-      const vm = this // `this` cannot be accessed inside .then .catch or .finnaly. So, we need helper in this case we named it 'vm'
+      // const vm = this // `this` cannot be accessed inside .then .catch or .finnaly. So, we need helper in this case we named it 'vm'
       //  for baseUrl checkout file main.js in root dir
+      alert(this.$store.getters['userAuth/activeToken'])
       axios.post('progresslogs', {
         ticket_id: this.noticket,
         user_id: this.$store.getters['userAuth/activeUserId'],
         note: this.note
-      })
+      },
+      { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
+      )
         .then(function (response) {
           if (response.status === 200) {
             console.log(response)
+            // this.$emit('addProgressModal', false)
           }
         })
         .catch(function (error) {
           console.log(error)
         })
         .finally(function () {
-          vm.$router.push({
+          /* vm.$router.push({
             name: 'guesthome'
-          })
+          }) */
         })
     },
     reset () {
