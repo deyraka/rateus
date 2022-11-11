@@ -18,6 +18,7 @@
               label="Keterangan"
               prepend-icon="mdi-text"
               required
+              @keydown.enter="validate"
             ></v-text-field>
           </v-col>
         </v-row>
