@@ -69,11 +69,10 @@
                           <div class="text-caption font-weight-thin font-italic text--disabled">Request: {{item.perihal}}</div>
                         </v-col>
                       </v-row>
-                      <v-row class="mb-2 px-3" justify="start">
+                      <v-row class="mb-2 px-3" justify="start" v-if="item.serveBy !== null && item.status === 'on progress'">
                         <v-tooltip bottom color="red">
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
-                              v-if="item.status === 'on progress'"
                               fab x-small dark
                               color="red"
                               v-bind="attrs"
@@ -86,36 +85,6 @@
                           <span>Close this ticket</span>
                         </v-tooltip>
                         <v-spacer></v-spacer>
-                        <v-tooltip bottom color="warning">
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-btn
-                              class="ml-2"
-                              fab x-small dark
-                              color="warning"
-                              v-bind="attrs"
-                              v-on="on"
-                              @click="askRating(item.noticket)"
-                            >
-                              <v-icon>mdi-link-variant</v-icon>
-                            </v-btn>
-                          </template>
-                          <span>Send survei rating link to guest</span>
-                        </v-tooltip>
-                        <v-tooltip bottom color="success">
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-btn
-                              class="ml-2"
-                              fab x-small dark
-                              color="success"
-                              v-bind="attrs"
-                              v-on="on"
-                              @click="chatSiCantik(item.nohp, item.nama, item.noticket, item.perihal)"
-                            >
-                              <v-icon>mdi-whatsapp</v-icon>
-                            </v-btn>
-                          </template>
-                          <span>Take this ticket and chat him/her</span>
-                        </v-tooltip>
                         <v-tooltip bottom color="#81D4FA">
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -147,6 +116,40 @@
                           <span>Show ticket's timeline</span>
                         </v-tooltip>
                       </v-row>
+                      <v-row class="mb-2 px-3" justify="end" v-else-if="item.serveBy !== null && item.status === 'closed'">
+                        <v-tooltip bottom color="warning">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              class="ml-2"
+                              fab x-small dark
+                              color="warning"
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="askRating(item.noticket)"
+                            >
+                              <v-icon>mdi-link-variant</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Re-send survei rating link to guest</span>
+                        </v-tooltip>
+                      </v-row>
+                      <v-row class="mb-2 px-3" justify="end" v-else>
+                        <v-tooltip bottom color="success">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              class="ml-2"
+                              fab x-small dark
+                              color="success"
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="showChatConfirmation(item.nohp, item.nama, item.noticket, item.perihal)"
+                            >
+                              <v-icon>mdi-whatsapp</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Take this ticket and chat him/her</span>
+                        </v-tooltip>
+                      </v-row>
                     </v-card>
                   </td>
                 </template>
@@ -156,6 +159,45 @@
         </v-row>
       </v-col>
     </v-row>
+    <!-- dialog untuk confirm take order and chat -->
+    <v-dialog
+      v-model="takeChatModal"
+      max-width="500"
+      max-height="300"
+      scrollable
+    >
+      <v-card light>
+        <v-card-title v-model="choosenOrder" class="text-h5">
+          Confirmation of : {{choosenOrder.noticket}}
+        </v-card-title>
+        <v-card-text>
+          <v-skeleton-loader
+            boilerplate
+            elevation="2"
+            type="date-picker"
+          >
+            Anda yakin mau melayani pengguna data ini? Keputusan Anda tidak bisa dibatalkan ya.
+          </v-skeleton-loader>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            text
+            @click="chatSiCantik(choosenOrder.nohp, choosenOrder.nama, choosenOrder.noticket, choosenOrder.perihal)"
+          >
+            Ya, saya mengerti
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="takeChatModal = false"
+          >
+            Tidak, batalkan
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <!-- dialog untuk time line -->
     <v-dialog
       v-model="timelineModal"
@@ -246,9 +288,11 @@ export default {
   data: () => ({
     loading: true,
     details: [],
+    takeChatModal: false,
     timelineModal: false,
     addProgressModal: false,
     choosenTicket: '',
+    choosenOrder: {},
     progress: [
       {
         timestamp: '12/9/22 08.30',
@@ -404,8 +448,13 @@ export default {
       if (status === 'on progress') return 'primary'
       else return 'red'
     },
+    showChatConfirmation (nohp, nama, noticket, perihal, agreement) {
+      this.takeChatModal = !this.takeChatModal
+      this.choosenOrder = { nohp: nohp, nama: nama, noticket: noticket, perihal: perihal }
+      // this.choosenTicket = noticket
+    },
     chatSiCantik (nohp, nama, noticket, perihal) {
-      alert('Kamu yakin akan melayani tiket ini? Keputusanmu tidak bisa dibatalkan lho ya.')
+      // alert('Kamu yakin akan melayani tiket ini? Keputusanmu tidak bisa dibatalkan lho ya.')
       axios.put('tickets', {
         noticket: this.noticket,
         status: 1
