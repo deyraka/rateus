@@ -455,8 +455,7 @@ export default {
     },
     chatSiCantik (nohp, nama, noticket, perihal) {
       // alert('Kamu yakin akan melayani tiket ini? Keputusanmu tidak bisa dibatalkan lho ya.')
-      axios.put('tickets', {
-        noticket: this.noticket,
+      axios.put('tickets/' + noticket, {
         status: 1
       },
       { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
