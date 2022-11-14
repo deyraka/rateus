@@ -454,7 +454,7 @@ export default {
       // this.choosenTicket = noticket
     },
     chatSiCantik (nohp, nama, noticket, perihal) {
-      // alert('Kamu yakin akan melayani tiket ini? Keputusanmu tidak bisa dibatalkan lho ya.')
+      // Edit status ticket from 'open' become 'on progress'
       axios.put('tickets/' + noticket, {
         status: 1
       },
@@ -473,8 +473,28 @@ export default {
             name: 'guesthome'
           }) */
         })
-      var msg = 'Terima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNo Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_'
-      alert('You have taken this ticket!')
+      // Add progress logs ticket was handled by agent
+      axios.post('progresslogs', {
+        ticket_id: noticket,
+        user_id: this.$store.getters['userAuth/activeUserId'],
+        note: 'Merespon ticket'
+      },
+      { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
+      )
+        .then(function (response) {
+          if (response.status === 200) {
+            console.log(response)
+          }
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+        .finally(function () {
+          /* vm.$router.push({
+            name: 'guesthome'
+          }) */
+        })
+      var msg = 'Hi, kak. Kenalin saya ' + this.$store.getters['userAuth/activeUserName'] + '\nTerima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNo Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_' + '\n\nBoleh ceritakan lebih detail kak kebutuhan data yang dicari?'
       window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
     },
     addProgress (noticket) {
