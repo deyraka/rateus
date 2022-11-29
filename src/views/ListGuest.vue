@@ -270,6 +270,7 @@ import Timeline from '@/components/Timeline.vue'
 import AddProgress from '@/components/AddProgress.vue'
 import axios from 'axios'
 import Echo from 'laravel-echo'
+import Swal from 'sweetalert2'
 
 window.Pusher = require('pusher-js')
 window.Echo = new Echo({
@@ -449,9 +450,33 @@ export default {
       else return 'red'
     },
     showChatConfirmation (nohp, nama, noticket, perihal, agreement) {
-      this.takeChatModal = !this.takeChatModal
-      this.choosenOrder = { nohp: nohp, nama: nama, noticket: noticket, perihal: perihal }
+      /* this.takeChatModal = !this.takeChatModal
+      this.choosenOrder = { nohp: nohp, nama: nama, noticket: noticket, perihal: perihal } */
       // this.choosenTicket = noticket
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, saya mengerti!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'You have taken this ticket',
+            text: 'You will redirect into whatsapp to chat with the customer.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+              this.chatSiCantik(nohp, nama, noticket, perihal)
+              this.loadData()
+            }
+          })
+        }
+      })
     },
     chatSiCantik (nohp, nama, noticket, perihal) {
       // Edit status ticket from 'open' become 'on progress'
@@ -494,7 +519,7 @@ export default {
             name: 'guesthome'
           }) */
         })
-      var msg = 'Hi, kak. Kenalin saya ' + this.$store.getters['userAuth/activeUserName'] + '\nTerima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNo Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_' + '\n\nBoleh ceritakan lebih detail kak kebutuhan data yang dicari?'
+      var msg = 'Hi, kak. Kenalin saya ' + this.$store.getters['userAuth/activeUserName'] + '\nTerima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNomor Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_' + '\n\nBoleh ceritakan lebih detail kak kebutuhan data yang dicari?'
       window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
     },
     addProgress (noticket) {
