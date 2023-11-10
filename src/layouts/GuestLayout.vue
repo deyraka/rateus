@@ -10,6 +10,9 @@
             <v-card-text class="text--primary">
               <router-view />
             </v-card-text>
+            <!-- Footer Section -->
+            <v-divider></v-divider>
+            <Footer />
           </v-card>
         </v-layout>
       </v-container>
@@ -19,11 +22,13 @@
 
 <script>
 import Header from '../components/Header.vue'
+import Footer from '../components/Footer.vue'
 
 export default {
   name: 'GuestLayout',
   components: {
-    Header
+    Header,
+    Footer
   }
 }
 </script>

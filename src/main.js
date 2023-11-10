@@ -11,6 +11,12 @@ import axios from 'axios'
 axios.defaults.baseURL = 'http://localhost:8000/api/'
 // axios.defaults.baseURL = 'http://10.62.6.21:8000/api/'
 
+/* Ini base url untuk app vue.
+* hanya di akses ketika mengirimkan link survei kepuasan
+* don't forget change it with real domain before app release in production mode
+*/
+Vue.prototype.$appBaseUrl = 'http://localhost:8080/'
+
 Vue.config.productionTip = false
 
 new Vue({

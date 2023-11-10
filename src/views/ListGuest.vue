@@ -77,7 +77,7 @@
                               color="red"
                               v-bind="attrs"
                               v-on="on"
-                              @click="closeTicket(item.noticket)"
+                              @click="closeTicket(item.nohp, item.nama, item.noticket)"
                             >
                               <v-icon>mdi-close-circle-outline</v-icon>
                             </v-btn>
@@ -204,26 +204,32 @@
       max-width="500"
       max-height="300"
       scrollable
+      persistent
     >
       <v-card>
         <v-card-title v-model="choosenTicket" class="text-h5">
           Timeline of : {{choosenTicket}}
         </v-card-title>
         <v-card-text>
-          <v-skeleton-loader
-            boilerplate
-            elevation="2"
-            type="date-picker"
+          <div
+            v-if="loadingTL"
+            class="text-center"
           >
-            <Timeline :progress="progress"/>
-          </v-skeleton-loader>
+            <v-progress-circular
+              indeterminate
+              :size="50"
+              :value="75"
+              color="red lighten-4"
+            ></v-progress-circular>
+          </div>
+          <Timeline v-else :progress="progress"/>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
             color="red darken-1"
             text
-            @click="timelineModal = false"
+            @click="(timelineModal = false, loadingTL = true)"
           >
             Close
           </v-btn>
@@ -289,43 +295,13 @@ export default {
   data: () => ({
     loading: true,
     details: [],
+    loadingTL: true,
     takeChatModal: false,
     timelineModal: false,
     addProgressModal: false,
     choosenTicket: '',
     choosenOrder: {},
-    progress: [
-      {
-        timestamp: '12/9/22 08.30',
-        user: 'Grasela Trifosa N.',
-        verified: true,
-        desc: 'Data sedang diproses'
-      },
-      {
-        timestamp: '11/9/22 14.30',
-        user: 'Grasela Trifosa N.',
-        verified: true,
-        desc: 'Konfirmasi data ke subject matter'
-      },
-      {
-        timestamp: '11/9/22 11.30',
-        user: 'Grasela Trifosa N.',
-        verified: true,
-        desc: 'Memproses permintaan data'
-      },
-      {
-        timestamp: '11/9/22 08.30',
-        user: 'Grasela Trifosa N.',
-        verified: true,
-        desc: 'Merespon tiket'
-      },
-      {
-        timestamp: '11/9/22 08.30',
-        user: 'Guest',
-        verified: false,
-        desc: 'Tiket berhasil diajukan'
-      }
-    ],
+    progress: [],
     search: '',
     expanded: [],
     detailHeaders: [
@@ -341,80 +317,6 @@ export default {
       { text: 'Petugas', value: 'serveBy' },
       { text: '', value: 'data-table-expand' }
     ]
-    /* dummy: [
-      {
-        noticket: 'XYZ120',
-        status: '1',
-        tanggal: '25/09/2022',
-        nama: 'Citra Kirana',
-        nohp: '0811520011',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
-        serveBy: 'Grasela Trifosa N.'
-      },
-      {
-        noticket: 'VIW432',
-        status: '1',
-        tanggal: '20/09/2022',
-        nama: 'Eca Syahrun',
-        nohp: '081234567890',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
-        serveBy: 'Grasela Trifosa N.'
-      },
-      {
-        noticket: 'OHQ648',
-        status: '0',
-        tanggal: '19/09/2022',
-        nama: 'Andre Taulani',
-        nohp: '08967834562',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
-        serveBy: null
-      },
-      {
-        noticket: 'CPQ157',
-        status: '2',
-        tanggal: '17/09/2022',
-        nama: 'Budi Doremi',
-        nohp: '08115378654',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
-        serveBy: 'Grasela Trifosa N.'
-      },
-      {
-        noticket: 'SGR953',
-        status: '2',
-        tanggal: '16/09/2022',
-        nama: 'Mahalini',
-        nohp: '081290298414',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
-        serveBy: 'Grasela Trifosa N.'
-      },
-      {
-        noticket: 'ASF246',
-        status: '0',
-        tanggal: '15/09/2022',
-        nama: 'Keisya Levronka',
-        nohp: '085686792746',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
-        serveBy: null
-      },
-      {
-        noticket: 'NLK567',
-        status: '1',
-        tanggal: '12/09/2022',
-        nama: 'Anya Geraldine',
-        nohp: '08524563789',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
-        serveBy: 'Grasela Trifosa N.'
-      },
-      {
-        noticket: 'GHJ867',
-        status: '2',
-        tanggal: '10/09/2022',
-        nama: 'Wendy Cagur',
-        nohp: '08539678254',
-        perihal: 'Permohonan data PDRB series tahun 2000 - 2021 menurut lapangan usaha',
-        serveBy: 'Grasela Trifosa N.'
-      }
-    ] */
   }),
 
   mounted () {
@@ -498,7 +400,7 @@ export default {
             name: 'guesthome'
           }) */
         })
-      // Add progress logs ticket was handled by agent
+      // Add progress logs ticket was handled by agent then continue chat into whatsapp
       axios.post('progresslogs', {
         ticket_id: noticket,
         user_id: this.$store.getters['userAuth/activeUserId'],
@@ -528,14 +430,92 @@ export default {
     showTimeline (noticket) {
       this.timelineModal = !this.timelineModal
       this.choosenTicket = noticket
+      // get progress logs ticket based on ticket number
+      axios.get('progresslogs/showLogs/' + noticket)
+        .then((response) => {
+          /* if (response.status === 200) {
+            this.progress = response.data.logs
+            console.log(this.progress)
+          } */
+          this.progress = response.data.logs
+          this.loadingTL = false
+          console.log(response)
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+        .finally(function () {
+        })
       // alert('You will show timeline of ticket number : ' + noticket)
     },
     showAddProgress (noticket) {
       this.addProgressModal = !this.addProgressModal
       this.choosenTicket = noticket
     },
-    closeTicket (noticket) {
-      alert('Are you sure want to close this ticket number : ' + noticket + '?')
+    closeTicket (nohp, nama, noticket) {
+      Swal.fire({
+        title: 'Are you sure want to close this ticket?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, tutup ticket!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Edit status ticket from 'on progress' become 'closed'
+          axios.put('tickets/' + noticket, {
+            status: 9
+          },
+          { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
+          )
+            .then(function (response) {
+              if (response.status === 200) {
+                console.log(response)
+              }
+            })
+            .catch(function (error) {
+              console.log(error)
+            })
+            .finally(function () {
+            })
+          // Add progress logs ticket was closed by agent
+          axios.post('progresslogs', {
+            ticket_id: noticket,
+            user_id: this.$store.getters['userAuth/activeUserId'],
+            note: 'Permintaan telah dilayani dan ticket ditutup'
+          },
+          { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
+          )
+            .then(function (response) {
+              if (response.status === 200) {
+                console.log(response)
+              }
+            })
+            .catch(function (error) {
+              console.log(error)
+            })
+            .finally(function () {
+            })
+          Swal.fire({
+            title: 'You have closed this ticket',
+            text: 'You will redirect into whatsapp to send survei link for customer.',
+            icon: 'success',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            confirmButtonText: 'OK'
+          }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+              var msg = 'Hi, kak ' + nama + '\nTerima kasih sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nPermohonan Anda dengan nomor tiket: ' + noticket + ' sudah selesai.\n' + 'Sebagai bentuk komitmen kami untuk terus meningkatkan pelayanan, kami sangat mengharap feedback dari kakak. Tolong isi survei kepuasan layanan kami melalui link berikut y kak: \n\n' + this.$appBaseUrl + 'rating/' + noticket + '\n\nTerima kasih 🙏'
+              // I use link api.whatsapp.com instead of wa.me because there is a problem in redirect from wa.me for emoji shortcode
+              window.open('https://api.whatsapp.com/send/?phone=62' + nohp.substring('1') + '&text=' + encodeURI(msg) + '&type=phone_number&app_absent=0')
+              // window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
+              this.loadData()
+            }
+          })
+        }
+      })
     },
     askRating (noticket) {
       // alert('Comming soon!')

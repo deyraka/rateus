@@ -16,9 +16,13 @@
             </v-img> -->
             <Header />
             <AppNavigation />
+            <!-- Body Section -->
             <v-card-text class="text--primary">
               <router-view />
             </v-card-text>
+            <!-- Footer Section -->
+            <v-divider></v-divider>
+            <Footer />
           </v-card>
         </v-layout>
       </v-container>
@@ -29,12 +33,14 @@
 <script>
 import AppNavigation from '../components/AppNavigation.vue'
 import Header from '../components/Header.vue'
+import Footer from '../components/Footer.vue'
 
 export default {
   name: 'AppLayout',
   components: {
     AppNavigation,
-    Header
+    Header,
+    Footer
   }
 }
 </script>

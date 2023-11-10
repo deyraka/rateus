@@ -15,7 +15,7 @@
             {{item.timestamp}}
             </div>
             <div>
-            {{item.user}}&nbsp;
+            {{item.user===null ? 'Tamu' : item.user}}&nbsp;
             <v-icon
                 right color="blue" size="15px"
                 class="mt-n1 ml-n1"
