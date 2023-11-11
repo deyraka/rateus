@@ -29,14 +29,14 @@
                         <v-avatar size="140">
                             <img
                                 alt="user"
-                                src="https://images.pexels.com/photos/8523081/pexels-photo-8523081.jpeg"
+                                src="https://c.pxhere.com/photos/6f/bc/hands_compassion_help_old_care_support_assistance_empathy-891160.jpg!s2"
                             >
                         </v-avatar>
                     </v-avatar>
                 </div>
                 <v-card-title class="white--text mt-1 d-flex justify-center">
                     <p class="black--text">
-                        Grasella Novita Trifosa
+                        Name here
                     </p>
                 </v-card-title>
                 <v-card-text class="mt-n8 d-flex justify-center">
