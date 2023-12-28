@@ -13,10 +13,7 @@ import Ticket from '@/views/Ticket.vue'
 import Rating from '@/views/Rating.vue'
 import Tracking from '@/views/Tracking.vue'
 import PageNotFound from '@/views/PageNotFound.vue'
-<<<<<<< HEAD
 import TicketAdmin from '@/views/TicketAdmin.vue'
-=======
->>>>>>> master
 import store from '../store'
 
 Vue.use(VueRouter)
@@ -40,11 +37,7 @@ const routes = [
         meta: { guest: true }
       },
       {
-<<<<<<< HEAD
         path: 'tracking/:noticket',
-=======
-        path: 'tracking',
->>>>>>> master
         name: 'tracking',
         component: Tracking,
         meta: { guest: true }
@@ -72,14 +65,11 @@ const routes = [
       {
         path: 'ticket',
         name: 'openticket',
-<<<<<<< HEAD
         component: TicketAdmin
       },
       {
         path: 'admin-ticket',
         name: 'adminticket',
-=======
->>>>>>> master
         component: Ticket
       },
       {

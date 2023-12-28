@@ -31,7 +31,6 @@
           color="red lighten-4"
           class="black--text text-capitalize"
           to="/h/ticket"
-<<<<<<< HEAD
           title="Buka Ticket"
         >
           <v-icon>
@@ -51,14 +50,6 @@
           </v-icon>
         </v-btn>
 
-=======
-        >
-          <v-icon left>
-            mdi-plus
-          </v-icon>
-          Buka Tiket
-        </v-btn>
->>>>>>> master
       </v-toolbar-title>
       <v-btn
         class="ml-2"
@@ -70,32 +61,22 @@
         <v-icon>mdi-power</v-icon>
       </v-btn>
     </v-app-bar>
-<<<<<<< HEAD
-
-=======
->>>>>>> master
 </template>
 
 <script>
 import axios from 'axios'
-<<<<<<< HEAD
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
-=======
->>>>>>> master
 
 export default {
   name: 'AppNavigation',
   data () {
     return {
-<<<<<<< HEAD
       // cookiesDialog: false,
       // cookies: '',
       // token: '',
       loading: false,
 
-=======
->>>>>>> master
       // isUserLogedIn: [],
       tokens: this.$store.getters['userAuth/activeToken'],
       items: [
@@ -145,7 +126,6 @@ export default {
             name: 'login'
           })
         })
-<<<<<<< HEAD
     },
     // ubahToken () {
     //   // console.log(this.cookies)
@@ -335,9 +315,6 @@ export default {
       // }
     }
 
-=======
-    }
->>>>>>> master
   }
 
 }

@@ -10,7 +10,6 @@
         <v-row>
           <v-col
             cols="12"
-<<<<<<< HEAD
             md="12"
           >
             <div class="ticket">
@@ -178,8 +177,6 @@
         <v-row>
           <v-col
             cols="12"
-=======
->>>>>>> master
             md="4"
           >
             <div class="ticket">
@@ -288,17 +285,12 @@
           Reset Isian
         </v-btn>
       </v-form>
-<<<<<<< HEAD
     </v-container> -->
-=======
-    </v-container>
->>>>>>> master
   </v-main>
 </template>
 
 <script>
 import axios from 'axios'
-<<<<<<< HEAD
 function isValidPhoneNumber (value) {
   const phoneNumberRegex = /^(?:\+62|0)[0-9]{9,13}$/ // Format: +62 or 0 followed by 9 to 13 digits
   return phoneNumberRegex.test(value)
@@ -419,77 +411,6 @@ export default {
     },
     clearError (fieldName) {
       this.errorMessages[fieldName] = null
-=======
-
-export default {
-  data: () => ({
-    valid: true,
-    name: '',
-    nameRules: [
-      v => !!v || 'Nama lengkap harus diisi',
-      v => (v && v.length <= 25) || 'Name must be less than 25 characters'
-    ],
-    nohp: '',
-    nohpRules: [
-      v => !!v || 'Nomor Whatsapp harus diisi',
-      v => (v && v.length <= 12) || 'Nomor whatsapp must be less than 12 characters'
-    ],
-    select: null,
-    jobItems: [
-      { state: 'ASN/PNS/TNI/POLRI', val: 'ASN/PNS/TNI/POLRI' },
-      { state: 'Karyawan Swasta', val: 'Karyawan Swasta' },
-      { state: 'Wiraswasta', val: 'Wiraswasta' },
-      { state: 'Mahasiswa', val: 'Mahasiswa' },
-      { state: 'Siswa (SMP/SMA)', val: 'Siswa (SMP/SMA)' },
-      { state: 'Lainnya', val: 'Lainnya' }
-    ],
-    institution: '',
-    institutionRules: [
-      v => !!v || 'Asal is required',
-      v => (v && v.length <= 150) || 'Keperluan must be less than 150 characters'
-    ],
-    necessity: '',
-    necessityRules: [
-      v => !!v || 'Keperluan is required',
-      v => (v && v.length <= 500) || 'Keperluan must be less than 500 characters'
-    ],
-    checkbox: false
-  }),
-
-  methods: {
-    validate () {
-      this.$refs.form.validate()
-      const vm = this // `this` cannot be accessed inside .then .catch or .finnaly. So, we need helper in this case we named it 'vm'
-      //  for baseUrl checkout file main.js in root dir
-      axios.post('tickets', {
-        name: this.name,
-        nohp: this.nohp,
-        job: this.select,
-        institution: this.institution,
-        necessity: this.necessity,
-        bersedia: this.checkbox,
-        status: 0
-      })
-        .then(function (response) {
-          if (response.status === 200) {
-            console.log(response)
-          }
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
-        .finally(function () {
-          vm.$router.push({
-            name: 'guesthome'
-          })
-        })
-    },
-    reset () {
-      this.$refs.form.reset()
-    },
-    resetValidation () {
-      this.$refs.form.resetValidation()
->>>>>>> master
     },
     numberOnly (evt) {
       evt = (evt) || window.event
@@ -499,7 +420,6 @@ export default {
       } else {
         return true
       }
-<<<<<<< HEAD
     },
     reset () {
       this.$refs.form.resetValidation()
@@ -594,9 +514,6 @@ export default {
     //   this.$refs.form.resetValidation()
     // },
 
-=======
-    }
->>>>>>> master
   }
 }
 </script>

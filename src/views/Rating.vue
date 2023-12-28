@@ -99,11 +99,7 @@ export default {
       if (this.rating === '') {
         alert('Tolong isi rating untuk menilai kualitas layanan kami')
       } else {
-<<<<<<< HEAD
         // const vm = this // `this` cannot be accessed inside .then .catch or .finnaly. So, we need helper in this case we named it 'vm'
-=======
-        const vm = this // `this` cannot be accessed inside .then .catch or .finnaly. So, we need helper in this case we named it 'vm'
->>>>>>> master
         //  for baseUrl checkout file main.js in root dir
         axios.post('ratings', {
           ticket_id: this.noticket,
@@ -112,30 +108,18 @@ export default {
         })
           .then(function (response) {
             if (response.status === 200) {
-<<<<<<< HEAD
               // console.log(response)
               window.close()
-=======
-              console.log(response)
->>>>>>> master
             }
           })
           .catch(function (error) {
             console.log(error)
           })
-<<<<<<< HEAD
           // .finally(function () {
           //   vm.$router.push({
           //     name: 'guesthome'
           //   })
           // })
-=======
-          .finally(function () {
-            vm.$router.push({
-              name: 'guesthome'
-            })
-          })
->>>>>>> master
         // this.$refs.form.validate()
       }
     },

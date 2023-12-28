@@ -62,19 +62,11 @@
                     <v-card color="grey darken-3 mb-1 pb-1 px-2">
                       <v-row class="mt-2" justify="start">
                         <v-col>
-<<<<<<< HEAD
                           <div class="text-caption font-weight-thin font-italic text">Name: {{item.nama}}</div>
                           <div class="text-caption font-weight-thin font-italic text">Nomor HP: {{item.nohp}}</div>
                           <div class="text-caption font-weight-thin font-italic text">Date: {{item.tanggal}}</div>
                           <div class="text-caption font-weight-thin font-italic text">Handled by: <strong class="primary--text">{{item.serveBy}}</strong></div>
                           <div class="text-caption font-weight-thin font-italic text">Request: {{item.perihal}}</div>
-=======
-                          <div class="text-caption font-weight-thin font-italic text--disabled">Name: {{item.nama}}</div>
-                          <div class="text-caption font-weight-thin font-italic text--disabled">Nomor HP: {{item.nohp}}</div>
-                          <div class="text-caption font-weight-thin font-italic text--disabled">Date: {{item.tanggal}}</div>
-                          <div class="text-caption font-weight-thin font-italic text--disabled">Handled by: <strong class="primary--text">{{item.serveBy}}</strong></div>
-                          <div class="text-caption font-weight-thin font-italic text--disabled">Request: {{item.perihal}}</div>
->>>>>>> master
                         </v-col>
                       </v-row>
                       <v-row class="mb-2 px-3" justify="start" v-if="item.serveBy !== null && item.status === 'on progress'">
@@ -133,11 +125,7 @@
                               color="warning"
                               v-bind="attrs"
                               v-on="on"
-<<<<<<< HEAD
                               @click="askRating(item.nohp, item.nama,item.noticket)"
-=======
-                              @click="askRating(item.noticket)"
->>>>>>> master
                             >
                               <v-icon>mdi-link-variant</v-icon>
                             </v-btn>
@@ -145,7 +133,6 @@
                           <span>Re-send survei rating link to guest</span>
                         </v-tooltip>
                       </v-row>
-<<<<<<< HEAD
                       <v-row class="mb-2 px-3" justify="end" v-else-if="item.editable === '1'">
                         <v-tooltip bottom color="#e74c3c">
                           <template v-slot:activator="{ on, attrs }">
@@ -196,9 +183,6 @@
                           <span>Hapus tiket</span>
                         </v-tooltip>
                         <v-spacer></v-spacer>
-=======
-                      <v-row class="mb-2 px-3" justify="end" v-else>
->>>>>>> master
                         <v-tooltip bottom color="success">
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -212,11 +196,7 @@
                               <v-icon>mdi-whatsapp</v-icon>
                             </v-btn>
                           </template>
-<<<<<<< HEAD
                           <span>Take this ticket and chat</span>
-=======
-                          <span>Take this ticket and chat him/her</span>
->>>>>>> master
                         </v-tooltip>
                       </v-row>
                     </v-card>
@@ -228,7 +208,6 @@
         </v-row>
       </v-col>
     </v-row>
-<<<<<<< HEAD
 
     <!-- dialog untuk confirm take order and chat -->
     <v-dialog
@@ -313,8 +292,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-=======
->>>>>>> master
     <!-- dialog untuk confirm take order and chat -->
     <v-dialog
       v-model="takeChatModal"
@@ -433,11 +410,8 @@ import AddProgress from '@/components/AddProgress.vue'
 import axios from 'axios'
 import Echo from 'laravel-echo'
 import Swal from 'sweetalert2'
-<<<<<<< HEAD
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
-=======
->>>>>>> master
 
 window.Pusher = require('pusher-js')
 window.Echo = new Echo({
@@ -449,27 +423,17 @@ window.Echo = new Echo({
 })
 
 export default {
-<<<<<<< HEAD
-
-=======
->>>>>>> master
   components: {
     Timeline,
     AddProgress
   },
   data: () => ({
-<<<<<<< HEAD
     valid: true,
-=======
->>>>>>> master
     loading: true,
     details: [],
     loadingTL: true,
     takeChatModal: false,
-<<<<<<< HEAD
     editPengunjungDialog: false,
-=======
->>>>>>> master
     timelineModal: false,
     addProgressModal: false,
     choosenTicket: '',
@@ -477,7 +441,6 @@ export default {
     progress: [],
     search: '',
     expanded: [],
-<<<<<<< HEAD
     cookie_web: '',
     token_web: '',
     nohp: '',
@@ -491,8 +454,6 @@ export default {
       v => !!v || 'Keperluan harus diisi',
       v => (v && v.length <= 500) || 'Deskripsi Keperluan Maksimal 500 karakter'
     ],
-=======
->>>>>>> master
     detailHeaders: [
       {
         text: 'Nomor WA',
@@ -509,20 +470,13 @@ export default {
   }),
 
   mounted () {
-<<<<<<< HEAD
     // console.log(this.$store.getters['userAuth/activeUserId'])
-=======
->>>>>>> master
     // Code for listening/subscribe into channel websocket. So, it can automatically update if there is an event occure
     window.Echo.channel('tickets-channel')
       .listen('.tickets-created', (event) => {
         this.loadData()
-<<<<<<< HEAD
         this.checkAndShowNotif(event.ticket.email, event.ticket.noticket)
         // console.log(this.details)
-=======
-        this.checkAndShowNotif(event.ticket.name, event.ticket.noticket)
->>>>>>> master
         console.log(event)
       })
   },
@@ -541,7 +495,6 @@ export default {
       if (status === 1) return 'on progress'
       else return 'closed'
     },
-<<<<<<< HEAD
     numberOnly (evt) {
       evt = (evt) || window.event
       var charCode = (evt.which) ? evt.which : evt.keyCode
@@ -585,17 +538,12 @@ export default {
             name: 'guesthome'
           }) */
         })
-=======
-    reformatDate (date) {
-      return new Date(date)
->>>>>>> master
     },
     getColor (status) {
       if (status === 'open') return 'success'
       if (status === 'on progress') return 'primary'
       else return 'red'
     },
-<<<<<<< HEAD
     editPengunjung (noticket, nohp) {
       // this.nohp = this.details.nohp
       this.editPengunjungDialog = !this.editPengunjungDialog
@@ -608,8 +556,6 @@ export default {
       // }
       // console.log(this.choosenTicket)
     },
-=======
->>>>>>> master
     showChatConfirmation (nohp, nama, noticket, perihal, agreement) {
       /* this.takeChatModal = !this.takeChatModal
       this.choosenOrder = { nohp: nohp, nama: nama, noticket: noticket, perihal: perihal } */
@@ -696,7 +642,6 @@ export default {
             this.progress = response.data.logs
             console.log(this.progress)
           } */
-<<<<<<< HEAD
 
           const logs = response.data.logs
 
@@ -710,9 +655,6 @@ export default {
 
           // console.log(response.data.logs)
           // this.progress = response.data.logs
-=======
-          this.progress = response.data.logs
->>>>>>> master
           this.loadingTL = false
           console.log(response)
         })
@@ -727,7 +669,6 @@ export default {
       this.addProgressModal = !this.addProgressModal
       this.choosenTicket = noticket
     },
-<<<<<<< HEAD
     deleteTicket (noticket) {
       Swal.fire({
         title: 'Apa Anda yakin akan menghapus tiket ini?',
@@ -757,8 +698,6 @@ export default {
         }
       })
     },
-=======
->>>>>>> master
     closeTicket (nohp, nama, noticket) {
       Swal.fire({
         title: 'Are you sure want to close this ticket?',
@@ -824,18 +763,12 @@ export default {
         }
       })
     },
-<<<<<<< HEAD
     askRating (nohp, nama, noticket) {
       // alert('Comming soon!')
       // this.$router.push({ name: 'rating', params: { noticket } })
       var msg = 'Hi, kak ' + nama + '\nTerima kasih sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nPermohonan Anda dengan nomor tiket: ' + noticket + ' sudah selesai.\n' + 'Sebagai bentuk komitmen kami untuk terus meningkatkan pelayanan, kami sangat mengharap feedback dari kakak. Tolong isi survei kepuasan layanan kami melalui link berikut y kak: \n\n' + this.$appBaseUrl + 'rating/' + noticket + '\n\nTerima kasih 🙏'
       // I use link api.whatsapp.com instead of wa.me because there is a problem in redirect from wa.me for emoji shortcode
       window.open('https://api.whatsapp.com/send/?phone=62' + nohp.substring('1') + '&text=' + encodeURI(msg) + '&type=phone_number&app_absent=0')
-=======
-    askRating (noticket) {
-      // alert('Comming soon!')
-      this.$router.push({ name: 'rating', params: { noticket } })
->>>>>>> master
     },
     loadData () {
       this.loading = true
@@ -850,10 +783,7 @@ export default {
         .then((response) => {
           this.details = response.data.details
           this.loading = false
-<<<<<<< HEAD
           console.log('Load Data respose :')
-=======
->>>>>>> master
           console.log(response)
         })
         .catch((e) => {
@@ -870,7 +800,6 @@ export default {
     },
     showNotification (name, noticket) {
       // create a new notification
-<<<<<<< HEAD
       let notification
 
       if (noticket !== null || name !== null) {
@@ -886,11 +815,6 @@ export default {
           body: 'Jangan lupa cek ya! E-mailnya: ' + name
         })
       }
-=======
-      const notification = new Notification('New Ticket SiCantik, no : ' + noticket, {
-        body: 'Hey, ada pengunjung baru, namanya ' + name
-      })
->>>>>>> master
 
       this.playsound()
 
@@ -913,19 +837,11 @@ export default {
 
       if (Notification.permission === 'granted') {
         granted = true
-<<<<<<< HEAD
         // console.log('notif granted')
       } else if (Notification.permission !== 'denied') {
         // let permission = await Notification.requestPermission();
         Notification.requestPermission((permission) => {
           // console.log('notif permission requested')
-=======
-        console.log('notif granted')
-      } else if (Notification.permission !== 'denied') {
-        // let permission = await Notification.requestPermission();
-        Notification.requestPermission((permission) => {
-          console.log('notif permission requested')
->>>>>>> master
           if (permission === 'granted') {
             granted = true
             console.log('notif request granted')
