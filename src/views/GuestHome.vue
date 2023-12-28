@@ -3,9 +3,15 @@
     <v-row
       justify="center"
     >
+<<<<<<< HEAD
       <v-col cols="10" md="6">
         <v-text-field
           label="Masukkan Email/No.HP"
+=======
+      <v-col cols="10" md="3">
+        <v-text-field
+          label="Lacak Ticket Anda disini"
+>>>>>>> master
           class="mt-6 my-auto"
           solo
           rounded
@@ -15,23 +21,34 @@
           outline
           background-color="white"
           prepend-inner-icon="mdi-ticket"
+<<<<<<< HEAD
           v-model="phoneNumber"
         ></v-text-field>
       </v-col>
       <v-btn
         :disabled="isSearchDisabled"
+=======
+        ></v-text-field>
+      </v-col>
+      <v-btn
+>>>>>>> master
         color="#81D4FA"
         class="ml-n2 my-auto"
         small
         dark
         fab
+<<<<<<< HEAD
         @click="searchPhoneNumber"
+=======
+        to="tracking"
+>>>>>>> master
       >
         <v-icon dark>
           mdi-magnify
         </v-icon>
       </v-btn>
     </v-row>
+<<<<<<< HEAD
     <v-row v-if="statNumber===true">
       <v-container>
       <v-form
@@ -167,10 +184,28 @@
         </v-row>
         <v-row><br><br></v-row>
    </v-container>
+=======
+    <v-row justify="center">
+      <p>belum memiliki ticket? Ajukan ticket baru!</p>
+    </v-row>
+    <v-row justify="center">
+      <v-btn
+        rounded
+        color="#FFCDD2"
+        light
+        class="my-auto"
+        to="ticket"
+      >
+        Ajukan ticket baru
+      </v-btn>
+    </v-row>
+    <v-row><br><br></v-row>
+>>>>>>> master
   </v-container>
 </template>
 
 <script>
+<<<<<<< HEAD
 import axios from 'axios'
 export default {
   data: () => ({
@@ -328,6 +363,15 @@ export default {
         .catch(function (error) {
           console.log(error.response)
         })
+=======
+export default {
+  data: () => ({
+    marker: true
+  }),
+  methods: {
+    submitFunction () {
+      this.marker = !this.marker
+>>>>>>> master
     }
   }
 }
