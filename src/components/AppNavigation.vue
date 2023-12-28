@@ -31,11 +31,11 @@
           color="red lighten-4"
           class="black--text text-capitalize"
           to="/h/ticket"
+          title="Buka Ticket"
         >
-          <v-icon left>
+          <v-icon>
             mdi-plus
           </v-icon>
-          Buka Tiket
         </v-btn>
         <v-btn
           depressed
@@ -43,11 +43,11 @@
           @click="sinkron"
           :loading="loading"
           class="black--text text-capitalize ml-2"
+          title="Sinkronisasi"
         >
-          <v-icon left>
+          <v-icon>
             mdi-sync
           </v-icon>
-          Sinkronisasi
         </v-btn>
 
       </v-toolbar-title>

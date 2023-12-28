@@ -62,11 +62,11 @@
                     <v-card color="grey darken-3 mb-1 pb-1 px-2">
                       <v-row class="mt-2" justify="start">
                         <v-col>
-                          <div class="text-caption font-weight-thin font-italic text--disabled">Name: {{item.nama}}</div>
-                          <div class="text-caption font-weight-thin font-italic text--disabled">Nomor HP: {{item.nohp}}</div>
-                          <div class="text-caption font-weight-thin font-italic text--disabled">Date: {{item.tanggal}}</div>
-                          <div class="text-caption font-weight-thin font-italic text--disabled">Handled by: <strong class="primary--text">{{item.serveBy}}</strong></div>
-                          <div class="text-caption font-weight-thin font-italic text--disabled">Request: {{item.perihal}}</div>
+                          <div class="text-caption font-weight-thin font-italic text">Name: {{item.nama}}</div>
+                          <div class="text-caption font-weight-thin font-italic text">Nomor HP: {{item.nohp}}</div>
+                          <div class="text-caption font-weight-thin font-italic text">Date: {{item.tanggal}}</div>
+                          <div class="text-caption font-weight-thin font-italic text">Handled by: <strong class="primary--text">{{item.serveBy}}</strong></div>
+                          <div class="text-caption font-weight-thin font-italic text">Request: {{item.perihal}}</div>
                         </v-col>
                       </v-row>
                       <v-row class="mb-2 px-3" justify="start" v-if="item.serveBy !== null && item.status === 'on progress'">

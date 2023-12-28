@@ -3,7 +3,7 @@
     <v-row
       justify="center"
     >
-      <v-col cols="10" md="3">
+      <v-col cols="10" md="6">
         <v-text-field
           label="Masukkan Email/No.HP"
           class="mt-6 my-auto"
@@ -147,26 +147,26 @@
           Reset Isian
         </v-btn>
       </v-form>
-    </v-container>
+      </v-container>
 
     </v-row>
-    <v-row v-else-if="statNumber===false">
+   <v-container v-else-if="statNumber===false">
       <v-row justify="center">
-        <p>Anda belum pernah terdaftar</p>
-      </v-row>
-      <v-row justify="center">
-        <v-btn
-          rounded
-          color="#FFCDD2"
-          light
-          class="my-auto"
-          to="ticket"
-        >
-          Daftar Sekarang!
-        </v-btn>
-      </v-row>
-      <v-row><br><br></v-row>
-    </v-row>
+          <p>Anda belum pernah terdaftar</p>
+        </v-row>
+        <v-row justify="center">
+          <v-btn
+            rounded
+            color="#FFCDD2"
+            light
+            class="my-auto"
+            to="ticket"
+          >
+            Daftar Sekarang!
+          </v-btn>
+        </v-row>
+        <v-row><br><br></v-row>
+   </v-container>
   </v-container>
 </template>
 

@@ -33,7 +33,7 @@
       <v-btn
         :disabled="isSearchDisabled"
         color="#81D4FA"
-        class="ml-n2 my-auto"
+        class="ml-1 mt-3"
         small
         dark
         fab

@@ -75,7 +75,7 @@ export default {
       )
         .then(function (response) {
           if (response.status === 200) {
-            console.log(response)
+            // console.log(response)
             // change AddProgressModal.value in parent Component using $emit
             vm.$emit('close-progress', false)
           }
@@ -84,6 +84,8 @@ export default {
           console.log(error)
         })
         .finally(function () {
+          vm.note = ''
+
           /* vm.$router.push({
             name: 'guesthome'
           }) */
