@@ -41,6 +41,7 @@
           depressed
           color="green lighten-4"
           @click="sinkron"
+          to="/h/list-guest"
           :loading="loading"
           class="black--text text-capitalize ml-2"
           title="Sinkronisasi"

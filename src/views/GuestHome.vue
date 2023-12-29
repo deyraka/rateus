@@ -301,8 +301,16 @@ export default {
     validate () {
       this.$refs.form.validate()
       const vm = this
+      this.foundPhoneNumber = null
+      const clearVal = this.phoneNumber.replace(/\D/g, '')
+      let cleanPhoneNumber = ''
+      if (clearVal.startsWith('08')) {
+        cleanPhoneNumber = this.phoneNumber.replace(/-/g, '')
+      } else {
+        cleanPhoneNumber = this.phoneNumber
+      }
       axios.post('tickets', {
-        nohp: this.phoneNumber,
+        nohp: cleanPhoneNumber,
         customer_id: this.customer_id,
         name: this.name,
         email: this.email,
