@@ -25,7 +25,7 @@
           >
             <v-text-field
               v-model="name"
-              :counter="25"
+              :counter="50"
               label="Nama Lengkap"
               prepend-icon="mdi-face-man"
               required

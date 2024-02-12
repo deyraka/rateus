@@ -136,8 +136,9 @@ export default {
   },
   methods: {
     validate () {
-      if (this.rating === '') {
-        alert('Tolong isi rating untuk menilai kualitas layanan kami')
+      this.$refs.form.validate()
+      if (!this.rating || !this.advice) {
+        alert('Tolong isi rating dan kritik/saran untuk menilai kualitas layanan kami')
       } else {
         // const vm = this // `this` cannot be accessed inside .then .catch or .finnaly. So, we need helper in this case we named it 'vm'
         //  for baseUrl checkout file main.js in root dir

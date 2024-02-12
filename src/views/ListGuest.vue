@@ -117,7 +117,23 @@
                         </v-tooltip>
                       </v-row>
                       <v-row class="mb-2 px-3" justify="end" v-else-if="item.serveBy !== null && item.status === 'closed'">
-                        <v-tooltip bottom color="warning">
+                        <v-tooltip bottom color="#8e44ad" v-if="item.status_tiket !== 1">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              class="ml-2"
+                              fab x-small dark
+                              color="#8e44ad"
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="giveScore(item.noticket)"
+                            >
+                              <v-icon>mdi-star</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Beri Nilai</span>
+                        </v-tooltip>
+                        <v-spacer></v-spacer>
+                        <v-tooltip bottom color="warning" v-if="item.status_tiket !== 1">
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
                               class="ml-2"
@@ -208,6 +224,106 @@
         </v-row>
       </v-col>
     </v-row>
+        <!-- dialog untuk confirm take order and chat -->
+    <v-dialog
+      v-model="beriRating"
+      max-width="50%"
+      max-height="300"
+      scrollable
+      persistent
+    >
+    <v-card>
+      <v-container>
+      <v-row>
+        <v-col
+          cols="12"
+          md="12"
+        >
+          <div class="ticket">
+            <h2 class="text-center">Berikan nilai untuk pelayanan kami</h2>
+          </div>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+            <div class="yellow-card">
+              Pop up ini akan otomatis hilang dan tidak bisa diakses lagi, ketika Anda sudah mengirim penilaian. Kerahasiaan penilaian Anda terjamin.
+            </div>
+        </v-col>
+      </v-row>
+      <v-form
+        ref="form"
+        v-model="validRating"
+        lazy-validation
+        @submit.prevent="validate"
+      >
+        <v-row justify="center" class="text-center">
+          <v-col
+            cols="12"
+            md="8"
+          >
+            <v-rating
+              v-model="rating"
+              length="5"
+              color="orange"
+              background-color="orange lighten-3"
+              large
+              half-increments
+              hover
+            ></v-rating>
+            <div>
+              <span class="font-weight-bold">
+                ( {{ rating }} of 5)
+              </span>
+            </div>
+          </v-col>
+          <v-col
+            cols="12"
+            md="10"
+          >
+            <v-textarea
+              v-model="advice"
+              :rules="adviceRules"
+              :counter="500"
+              label="Kritik dan Saran"
+              rows="3"
+              prepend-icon="mdi-comment"
+              hint="(Masukan Anda sangat berarti bagi kami)"
+            ></v-textarea>
+          </v-col>
+          <v-col
+            cols="12"
+            md="12"
+          >
+            <v-btn
+              :disabled="!validRating"
+              color="success"
+              class="mr-2"
+              @click="giveRating(ratingTicket)"
+            >
+              Kirim
+            </v-btn>
+
+            <v-btn
+              color="warning"
+              class="mr-2"
+              @click="reset"
+            >
+              Reset Isian
+            </v-btn>
+            <v-btn
+              color="error"
+              class="mr-2"
+              @click="beriRating = false"
+            >
+             Batalkan
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-form>
+    </v-container>
+    </v-card>
+    </v-dialog>
 
     <!-- dialog untuk confirm take order and chat -->
     <v-dialog
@@ -275,7 +391,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            :disabled="!valid"
+            :disabled="!validRating"
             color="green darken-1"
             text
             @click="kirimPerbaikan(choosenTicket)"
@@ -429,11 +545,20 @@ export default {
   },
   data: () => ({
     valid: true,
+    validRating: true,
     loading: true,
     details: [],
+    rating: 0,
+    advice: '',
+    ratingTicket: '',
+    adviceRules: [
+      v => !!v || 'Kritik dan saran is required',
+      v => (v && v.length <= 500) || 'Kritik dan saran must be less than 500 characters'
+    ],
     loadingTL: true,
     takeChatModal: false,
     editPengunjungDialog: false,
+    beriRating: false,
     timelineModal: false,
     addProgressModal: false,
     choosenTicket: '',
@@ -477,7 +602,7 @@ export default {
         this.loadData()
         this.checkAndShowNotif(event.ticket.email, event.ticket.noticket)
         // console.log(this.details)
-        console.log(event)
+        // console.log(event)
       })
   },
 
@@ -543,6 +668,11 @@ export default {
       if (status === 'open') return 'success'
       if (status === 'on progress') return 'primary'
       else return 'red'
+    },
+    giveScore (noticket) {
+      // this.nohp = this.details.nohp
+      this.beriRating = !this.beriRating
+      this.ratingTicket = noticket
     },
     editPengunjung (noticket, nohp) {
       // this.nohp = this.details.nohp
@@ -828,6 +958,33 @@ export default {
         window.open('http://localhost:8080/h/list-guest', '_blank')
       })
     },
+    giveRating (noticket) {
+      this.$refs.form.validate()
+      if (!this.rating || !this.advice) {
+        alert('Tolong isi rating dan kritik/saran untuk menilai kualitas layanan kami')
+      } else {
+        // const vm = this // `this` cannot be accessed inside .then .catch or .finnaly. So, we need helper in this case we named it 'vm'
+        //  for baseUrl checkout file main.js in root dir
+        axios.post('ratings', {
+          ticket_id: noticket,
+          star: this.rating,
+          comment: this.advice
+        })
+          .then((response) => {
+            if (response.status === 200) {
+              this.beriRating = !this.beriRating
+            }
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      }
+    },
+    reset () {
+      this.rating = ''
+      this.advice = ''
+      this.$refs.form.reset()
+    },
     showError () {
       console.log('You blocked the notifications')
     },
@@ -874,3 +1031,12 @@ export default {
   } */
 }
 </script>
+<style scoped>
+.yellow-card {
+    background-color:#f1c40f;
+    color: black;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+</style>

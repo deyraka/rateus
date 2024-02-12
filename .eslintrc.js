@@ -3,6 +3,10 @@ module.exports = {
   env: {
     node: true
   },
+  //wahyu-change
+  globals: {
+    "YT": "readonly"
+  },
   extends: [
     'plugin:vue/essential',
     '@vue/standard'

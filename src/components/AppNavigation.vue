@@ -85,6 +85,7 @@ export default {
         { title: 'Daftar Pengunjung', icon: 'mdi-list-status', url: '/h/list-guest' },
         { title: 'Pengaturan Pengguna', icon: 'mdi-account-cog', url: '/h/pengguna' },
         { title: 'Profil', icon: 'mdi-account', url: '/h/profile' },
+        { title: 'Antrian', icon: 'mdi-account-supervisor', url: '/h/queue' },
         { title: 'About', icon: 'mdi-information', url: '/h/about' }
       ]
     }

@@ -167,6 +167,27 @@
         </v-row>
         <v-row><br><br></v-row>
    </v-container>
+   <v-container class="mt-5" v-else>
+      <v-row justify="center">
+          <h1>Formulir Permintaan/Konsultasi Data</h1>
+        </v-row>
+        <v-row class="mt-8">
+          <v-col>
+            <h3>1. Isikan nomor handphone atau email di kolom diatas terlebih dahulu, kemudian lakukan pencarian dengan menekan tombol <v-icon dark>mdi-magnify</v-icon></h3>
+          </v-col>
+        </v-row>
+        <v-row class="mt-5">
+          <v-col>
+            <h3>2. Jika nomor handphone Anda pernah terdaftar, maka akan muncul data diri Anda dan Anda tinggal isi keperluannya</h3>
+          </v-col>
+        </v-row>
+        <v-row class="mt-5">
+          <v-col>
+            <h3>3. Jika nomor handphone Anda BELUM pernah terdaftar, maka akan muncul tombol daftar sekarang. Silahkan klik tombol tersebut, dan isikan data diri Anda dengan benar.</h3>
+          </v-col>
+        </v-row>
+        <v-row><br><br></v-row>
+   </v-container>
   </v-container>
 </template>
 
