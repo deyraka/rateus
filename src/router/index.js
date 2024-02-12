@@ -14,7 +14,11 @@ import Rating from '@/views/Rating.vue'
 import Tracking from '@/views/Tracking.vue'
 import PageNotFound from '@/views/PageNotFound.vue'
 import TicketAdmin from '@/views/TicketAdmin.vue'
+import Queue from '@/views/Queue.vue'
 import store from '../store'
+import Dashboard from '@/views/Dashboard.vue'
+import Antri from '@/views/Antri.vue'
+import Reservasi from '@/views/Reservasi.vue'
 
 Vue.use(VueRouter)
 
@@ -48,6 +52,18 @@ const routes = [
         component: Rating,
         meta: { guest: true },
         props: true
+      },
+      {
+        path: 'reservasi',
+        name: 'reservasi',
+        component: Reservasi,
+        meta: { guest: true }
+      },
+      {
+        path: '/antri',
+        name: 'antri',
+        component: Antri,
+        meta: { requiresAuth: true }
       }
     ]
   },
@@ -84,6 +100,12 @@ const routes = [
         meta: { requiresAuth: true }
       },
       {
+        path: 'queue',
+        name: 'queue',
+        component: Queue,
+        meta: { requiresAuth: true }
+      },
+      {
         path: 'about',
         name: 'about',
         // route level code-splitting
@@ -105,6 +127,11 @@ const routes = [
         component: Login
       }
     ]
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: Dashboard
   },
   {
     path: '*',

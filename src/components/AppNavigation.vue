@@ -84,6 +84,7 @@ export default {
         { title: 'Rank Board', icon: 'mdi-home', url: '/h/home' },
         { title: 'Daftar Pengunjung', icon: 'mdi-list-status', url: '/h/list-guest' },
         { title: 'Profil', icon: 'mdi-account', url: '/h/profile' },
+        { title: 'Antrian', icon: 'mdi-account-supervisor', url: '/h/queue' },
         { title: 'About', icon: 'mdi-information', url: '/h/about' }
       ]
     }

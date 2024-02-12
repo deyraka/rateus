@@ -1,7 +1,7 @@
 <template>
   <v-container fill-height align-content="space-between">
     <v-row justify="center">
-      <v-col cols="10" md="3">
+      <v-col cols="10" md="6">
         <v-menu v-model="menu" :close-on-content-click="false" transition="scale-transition" offset-y min-width="290px">
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
@@ -69,7 +69,7 @@
          >
            <v-text-field
              v-model="name"
-             :counter="25"
+             :counter="50"
              :readonly = "isNameReadOnly"
              label="Nama Lengkap"
              prepend-icon="mdi-face-man"
@@ -205,7 +205,7 @@
          >
            <v-text-field
              v-model="name"
-             :counter="25"
+             :counter="50"
              label="Nama Lengkap"
              prepend-icon="mdi-face-man"
              required
