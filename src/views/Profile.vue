@@ -7,7 +7,7 @@
         >
             <v-card
                 light
-                width="80%"
+                width="60%"
                 class="mt-16 mx-auto elevation-12 rounded-lg"
             >
                 <v-card-actions class="mb-n16 mr-2 d-flex justify-end">
@@ -29,18 +29,18 @@
                         <v-avatar size="140">
                             <img
                                 alt="user"
-                                src="https://c.pxhere.com/photos/6f/bc/hands_compassion_help_old_care_support_assistance_empathy-891160.jpg!s2"
+                                src="https://community.bps.go.id/images/avatar/340058132.jpg"
                             >
                         </v-avatar>
                     </v-avatar>
                 </div>
                 <v-card-title class="white--text mt-1 d-flex justify-center">
                     <p class="black--text">
-                        Name here
+                      {{ $store.state.userAuth.user.name }}
                     </p>
                 </v-card-title>
                 <v-card-text class="mt-n8 d-flex justify-center">
-                    <p>(email@domain.com)</p>
+                    <p>({{ $store.state.userAuth.user.email }})</p>
                 </v-card-text>
                 <v-card-subtitle class="mt-n8 d-flex justify-center">
                     <v-rating

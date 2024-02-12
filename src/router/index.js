@@ -6,6 +6,7 @@ import GuestLayout from '@/layouts/GuestLayout.vue'
 import LoginLayout from '@/layouts/LoginLayout.vue'
 import Login from '@/views/Login.vue'
 import RankBoard from '@/views/RankBoard.vue'
+import Pengguna from '@/views/Pengguna.vue'
 import Profile from '@/views/Profile.vue'
 import ListGuest from '@/views/ListGuest.vue'
 import GuestHome from '@/views/GuestHome.vue'
@@ -71,6 +72,11 @@ const routes = [
         path: 'admin-ticket',
         name: 'adminticket',
         component: Ticket
+      },
+      {
+        path: 'pengguna',
+        name: 'pengguna',
+        component: Pengguna
       },
       {
         path: 'profile',
