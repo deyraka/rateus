@@ -16,7 +16,7 @@
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-              Tambah User
+              Tambah Pengguna
             </v-btn>
           </template>
           <v-card>
@@ -123,7 +123,7 @@ export default {
   }),
   computed: {
     formTitle () {
-      return this.editedIndex === -1 ? 'Tambah User' : 'Edit User'
+      return this.editedIndex === -1 ? 'Tambah Pengguna' : 'Edit Pengguna'
     }
   },
   watch: {
