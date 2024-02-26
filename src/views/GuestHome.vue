@@ -1,11 +1,15 @@
 <template>
    <v-container fill-height align-content="space-between">
+    <div v-if="loading" class="loading-overlay">
+      <!-- Gaya CSS untuk loading screen -->
+      <div class="loading-spinner"></div>
+    </div>
     <v-row
       justify="center"
     >
       <v-col cols="10" md="6">
         <v-text-field
-          label="Masukkan Email/No.HP"
+          label="Masukkan Email/No.HP yang memiliki WhatsApp"
           class="mt-6 my-auto"
           solo
           rounded
@@ -46,7 +50,7 @@
             md="4"
           >
             <div class="ticket">
-              <h2>Request new Ticket here</h2>
+              <h2>Buat Anda disini</h2>
             </div>
           </v-col>
         </v-row>
@@ -57,7 +61,7 @@
           >
             <v-text-field
               v-model="name"
-              :counter="25"
+              :counter="50"
               label="Nama Lengkap"
               prepend-icon="mdi-face-man"
               required
@@ -173,7 +177,7 @@
         </v-row>
         <v-row class="mt-8">
           <v-col>
-            <h3>1. Isikan nomor handphone atau email di kolom diatas terlebih dahulu, kemudian lakukan pencarian dengan menekan tombol <v-icon dark>mdi-magnify</v-icon></h3>
+            <h3>1. Isikan nomor handphone (PASTIKAN YANG MEMILIKI WHATSAPP) atau email di kolom diatas terlebih dahulu, kemudian lakukan pencarian dengan menekan tombol <v-icon dark>mdi-magnify</v-icon></h3>
           </v-col>
         </v-row>
         <v-row class="mt-5">
@@ -207,6 +211,7 @@ export default {
     necessity: '',
     phoneNumber: '',
     customer_id: '',
+    loading: false,
     necessityRules: [
       v => !!v || 'Keperluan is required',
       v => (v && v.length <= 500) || 'Keperluan must be less than 500 characters'
@@ -264,6 +269,7 @@ export default {
       } else {
         cleanPhoneNumber = this.phoneNumber
       }
+      this.loading = true
 
       axios.post('/checklog', { nohp: cleanPhoneNumber })
         .then(response => {
@@ -273,6 +279,8 @@ export default {
                 this.foundPhoneNumber = responseSearch.data.data
                 if (responseSearch.data.message === '200') {
                   this.statNumber = true
+                  this.loading = false
+
                   // Data ditemukan
                   this.customer_id = this.foundPhoneNumber.id
                   this.name = this.foundPhoneNumber.nama
@@ -295,6 +303,8 @@ export default {
                 } else {
                   // Data tidak ditemukan
                   this.statNumber = false
+                  this.loading = false
+
                   console.log('Data tidak ditemukan')
                 }
               })
@@ -302,9 +312,11 @@ export default {
                 console.log(error)
                 this.foundPhoneNumber = null
                 this.statNumber = false
+                this.loading = false
               })
           } else {
             // response.data.message !== 200
+            this.loading = false
             vm.$router.push({
               name: 'tracking',
               params: { noticket: response.data.data.noticket }
@@ -320,8 +332,8 @@ export default {
       this.necessity = ''
     },
     validate () {
+      this.loading = true
       this.$refs.form.validate()
-      const vm = this
       this.foundPhoneNumber = null
       const clearVal = this.phoneNumber.replace(/\D/g, '')
       let cleanPhoneNumber = ''
@@ -340,24 +352,69 @@ export default {
         bersedia: this.checkbox,
         status: 0
       })
-        .then(function (response) {
+        .then((response) => {
           if (response.status === 200) {
             axios.post('/checklog', { nohp: response.data.detail.nohp })
               .then(responseLog => {
-                vm.$router.push({
-                  name: 'tracking',
-                  params: { noticket: responseLog.data.data.noticket }
+                axios.post('/relayWhatsApp', {
+                  nohp: response.data.detail.nohp,
+                  noticket: responseLog.data.data.noticket,
+                  message: 'intro'
+                }, {
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
                 })
+                  .then(responseWhatsApp => {
+                    // console.log(responseWhatsApp)
+                    this.$router.push({
+                      name: 'tracking',
+                      params: { noticket: responseLog.data.data.noticket }
+                    })
+                  }).catch(errorWhatsApp => {
+                    this.loading = false
+                    console.log(errorWhatsApp)
+                  })
               })
               .catch(errorLog => {
+                this.loading = false
                 console.log(errorLog)
               })
           }
         })
-        .catch(function (error) {
+        .catch((error) => {
+          this.loading = false
           console.log(error.response)
         })
     }
   }
 }
 </script>
+<style scoped>
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loading-spinner {
+  border: 8px solid #f3f3f3; /* Warna latar belakang untuk spinner */
+  border-top: 8px solid #3498db; /* Warna untuk spinner */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite; /* Animasi spinner */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>

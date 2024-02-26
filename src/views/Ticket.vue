@@ -1,6 +1,10 @@
 <template>
   <v-main>
     <v-container>
+      <div v-if="loading" class="loading-overlay">
+      <!-- Gaya CSS untuk loading screen -->
+        <div class="loading-spinner"></div>
+      </div>
       <v-form
         ref="form"
         v-model="valid"
@@ -347,6 +351,7 @@ export default {
     jenisKelamin: '',
     phoneNumber: '',
     customer_id: '',
+    loading: false,
     errorMessages: {
       email: null
       // Tambahkan properti lainnya sesuai kebutuhan
@@ -364,7 +369,7 @@ export default {
     pendidikanItems: [
       { state: '<= SLTA', val: '1' },
       { state: 'D1/D2/D3', val: '2' },
-      { state: 'D4/D1', val: '3' },
+      { state: 'D4/S1', val: '3' },
       { state: 'S2/S3', val: '4' }
     ],
     jenisKelaminItem: [
@@ -437,6 +442,7 @@ export default {
       this.checkbox = ''
     },
     validate () {
+      this.loading = true
       this.$refs.form.validate()
       const vm = this
       // console.log(this.tahunLahir)
@@ -455,23 +461,39 @@ export default {
         .then((response) => {
           if (response.status === 200) {
             // console.log(response)
-            this.phoneNumber = ''
-            this.jenisKelamin = ''
-            this.tahunLahir = ''
-            this.email = ''
-            this.job = ''
-            this.necessity = ''
-            this.phoneNumber = ''
-            this.pendidikan = ''
-            this.pekerjaan = ''
-            this.checkbox = ''
-            vm.$router.push({
-              name: 'tracking',
-              params: { noticket: response.data.noticket }
+
+            axios.post('/relayWhatsApp', {
+              nohp: this.phoneNumber,
+              noticket: response.data.noticket,
+              message: 'intro'
+            }, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
             })
+              .then(responseWhatsApp => {
+                // console.log(responseWhatsApp)
+                this.phoneNumber = ''
+                this.jenisKelamin = ''
+                this.tahunLahir = ''
+                this.email = ''
+                this.job = ''
+                this.necessity = ''
+                this.phoneNumber = ''
+                this.pendidikan = ''
+                this.pekerjaan = ''
+                this.checkbox = ''
+                vm.$router.push({
+                  name: 'tracking',
+                  params: { noticket: response.data.noticket }
+                })
+              }).catch(errorWhatsApp => {
+                console.log(errorWhatsApp)
+              })
           }
         })
         .catch((error) => {
+          this.loading = false
           if (error.response && error.response.data && error.response.data.email) {
             // Terdapat kesalahan validasi email
             // this.errorMessages.email = error.response.data.email[0]
@@ -517,3 +539,31 @@ export default {
   }
 }
 </script>
+<style scoped>
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loading-spinner {
+  border: 8px solid #f3f3f3; /* Warna latar belakang untuk spinner */
+  border-top: 8px solid #3498db; /* Warna untuk spinner */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite; /* Animasi spinner */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>

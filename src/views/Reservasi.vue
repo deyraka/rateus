@@ -281,7 +281,6 @@ export default {
       this.createQueue = !this.createQueue
     },
     closeCard () {
-      // Logika untuk menutup atau menghilangkan card, misalnya dengan mengubah nilai alreadyRequest
       this.alreadyRequest = false
     }
   }

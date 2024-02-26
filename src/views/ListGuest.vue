@@ -600,7 +600,7 @@ export default {
     window.Echo.channel('tickets-channel')
       .listen('.tickets-created', (event) => {
         this.loadData()
-        this.checkAndShowNotif(event.ticket.email, event.ticket.noticket)
+        this.checkAndShowNotif(event.ticket.nama, event.ticket.noticket)
         // console.log(this.details)
         // console.log(event)
       })
@@ -691,8 +691,8 @@ export default {
       this.choosenOrder = { nohp: nohp, nama: nama, noticket: noticket, perihal: perihal } */
       // this.choosenTicket = noticket
       Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
+        title: 'Apa Anda yakin?',
+        text: 'Anda tidak dapat membatalkan aksi ini',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -701,8 +701,8 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           Swal.fire({
-            title: 'You have taken this ticket',
-            text: 'You will redirect into whatsapp to chat with the customer.',
+            title: 'Anda sudah mengambil tiket ini untuk dilayani',
+            text: 'Anda akan diarahkan ke WhatsApp menuju pengunjung.',
             icon: 'success',
             confirmButtonText: 'OK'
           }).then((result) => {
@@ -746,6 +746,14 @@ export default {
         .then(function (response) {
           if (response.status === 200) {
             console.log(response)
+
+            axios.post('/relayWhatsApp', { nohp: nohp, nama: nama, noticket: noticket, message: 'closeBot' })
+              .then(responseWhatsApp => {
+                var msg = 'Hi, kak. Kenalin saya ' + this.$store.getters['userAuth/activeUserName'] + '\nTerima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNomor Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_' + '\n\nBoleh ceritakan lebih detail kak kebutuhan data yang dicari?'
+                window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
+              }).catch(errorWhatsApp => {
+                console.log(errorWhatsApp)
+              })
           }
         })
         .catch(function (error) {
@@ -756,8 +764,8 @@ export default {
             name: 'guesthome'
           }) */
         })
-      var msg = 'Hi, kak. Kenalin saya ' + this.$store.getters['userAuth/activeUserName'] + '\nTerima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNomor Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_' + '\n\nBoleh ceritakan lebih detail kak kebutuhan data yang dicari?'
-      window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
+      // var msg = 'Hi, kak. Kenalin saya ' + this.$store.getters['userAuth/activeUserName'] + '\nTerima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNomor Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_' + '\n\nBoleh ceritakan lebih detail kak kebutuhan data yang dicari?'
+      // window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
     },
     addProgress (noticket) {
       alert('You will add progress for ticket number : ' + noticket)
@@ -830,8 +838,8 @@ export default {
     },
     closeTicket (nohp, nama, noticket) {
       Swal.fire({
-        title: 'Are you sure want to close this ticket?',
-        text: "You won't be able to revert this!",
+        title: 'Apa Anda yakin akan menutup tiket ini?',
+        text: 'Anda tidak bisa membatalkan kembali, jika aksi ini sudah dilakukan',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -883,11 +891,20 @@ export default {
           }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-              var msg = 'Hi, kak ' + nama + '\nTerima kasih sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nPermohonan Anda dengan nomor tiket: ' + noticket + ' sudah selesai.\n' + 'Sebagai bentuk komitmen kami untuk terus meningkatkan pelayanan, kami sangat mengharap feedback dari kakak. Tolong isi survei kepuasan layanan kami melalui link berikut y kak: \n\n' + this.$appBaseUrl + 'rating/' + noticket + '\n\nTerima kasih 🙏'
-              // I use link api.whatsapp.com instead of wa.me because there is a problem in redirect from wa.me for emoji shortcode
-              window.open('https://api.whatsapp.com/send/?phone=62' + nohp.substring('1') + '&text=' + encodeURI(msg) + '&type=phone_number&app_absent=0')
+              axios.post('/relayWhatsApp', { nohp: nohp, nama: nama, noticket: noticket })
+                .then(responseWhatsApp => {
+                  this.loadData()
+
+                  // var msg = 'Hi, kak. Kenalin saya ' + this.$store.getters['userAuth/activeUserName'] + '\nTerima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNomor Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_' + '\n\nBoleh ceritakan lebih detail kak kebutuhan data yang dicari?'
+                  // window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
+                }).catch(errorWhatsApp => {
+                  console.log(errorWhatsApp)
+                })
+              // var msg = 'Hi, kak ' + nama + '\nTerima kasih sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nPermohonan Anda dengan nomor tiket: ' + noticket + ' sudah selesai.\n' + 'Sebagai bentuk komitmen kami untuk terus meningkatkan pelayanan, kami sangat mengharap feedback dari kakak. Tolong isi survei kepuasan layanan kami melalui link berikut y kak: \n\n' + this.$appBaseUrl + 'rating/' + noticket + '\n\nTerima kasih 🙏'
+              // // I use link api.whatsapp.com instead of wa.me because there is a problem in redirect from wa.me for emoji shortcode
+              // window.open('https://api.whatsapp.com/send/?phone=62' + nohp.substring('1') + '&text=' + encodeURI(msg) + '&type=phone_number&app_absent=0')
               // window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
-              this.loadData()
+              // this.loadData()
             }
           })
         }
@@ -934,7 +951,7 @@ export default {
 
       if (noticket !== null || name !== null) {
         notification = new Notification('Hai! Ada update ticket terbaru ', {
-          body: 'Hey, ada pengunjung baru, dengan email ' + name
+          body: 'Hey, ada pengunjung baru, dengan nama ' + name
         })
       } else if (name !== null) {
         notification = new Notification('Hai! Ada update ticket terbaru ', {
@@ -942,7 +959,7 @@ export default {
         })
       } else {
         notification = new Notification('Hai! Ada update ticket terbaru ', {
-          body: 'Jangan lupa cek ya! E-mailnya: ' + name
+          body: 'Jangan lupa cek ya! Namanya: ' + name
         })
       }
 
@@ -955,7 +972,7 @@ export default {
 
       // navigate to a URL when clicked
       notification.addEventListener('click', () => {
-        window.open('http://localhost:8080/h/list-guest', '_blank')
+        window.open(this.$appBaseUrl + '/h/list-guest', '_blank')
       })
     },
     giveRating (noticket) {
