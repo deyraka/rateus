@@ -166,7 +166,22 @@
                           <span>Hapus tiket</span>
                         </v-tooltip>
                         <v-spacer></v-spacer>
-                        <v-tooltip bottom color="warning">
+                        <v-tooltip bottom color="info" v-if="item.status === 'postpone'">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              class="ml-2"
+                              fab x-small dark
+                              color="info"
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="openTicket(item.noticket)"
+                            >
+                              <v-icon>mdi-lock-open-outline</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Open Ticket</span>
+                        </v-tooltip>
+                        <v-tooltip bottom color="warning" v-if="item.status !== 'postpone'">
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
                               class="ml-2"
@@ -618,6 +633,7 @@ export default {
     namingStatus (status) {
       if (status === 0) return 'open'
       if (status === 1) return 'on progress'
+      if (status === 5) return 'postpone'
       else return 'closed'
     },
     numberOnly (evt) {
@@ -667,6 +683,7 @@ export default {
     getColor (status) {
       if (status === 'open') return 'success'
       if (status === 'on progress') return 'primary'
+      if (status === 'postpone') return 'blue-grey'
       else return 'red'
     },
     giveScore (noticket) {
@@ -907,6 +924,36 @@ export default {
               // this.loadData()
             }
           })
+        }
+      })
+    },
+    openTicket (noticket) {
+      Swal.fire({
+        title: 'Apa Anda yakin akan membuka tiket ini?',
+        text: 'Anda tidak bisa membatalkan kembali, jika aksi ini sudah dilakukan',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, buka ticket!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Edit status ticket from 'postpone' become 'open'
+          axios.put('tickets/' + noticket, {
+            status: 0
+          },
+          { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
+          )
+            .then(function (response) {
+              if (response.status === 200) {
+                console.log(response)
+              }
+            })
+            .catch(function (error) {
+              console.log(error)
+            })
+            .finally(function () {
+            })
         }
       })
     },

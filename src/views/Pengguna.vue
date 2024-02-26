@@ -3,7 +3,6 @@
       :headers="detailHeaders"
       :items="users"
       :items-per-page="10"
-      class="elevation-1"
   >
     <template v-slot:item.no="{ index }">
       <tr>{{ ++index }}</tr>
@@ -27,16 +26,22 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="12" md="12">
+                    <v-text-field
+                      v-model="editedItem.email"
+                      label="Email BPS"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="12" md="12">
                     <v-text-field
                       v-model="editedItem.name"
                       label="Nama Lengkap"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="12" md="12">
                     <v-text-field
-                      v-model="editedItem.email"
-                      label="Email"
+                      v-model="editedItem.password"
+                      label="Password (nip panjang)"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -73,6 +78,12 @@
           </v-card>
         </v-dialog>
       </v-toolbar>
+      <v-overlay :value="overlay">
+          <v-progress-circular
+            indeterminate
+            size="64"
+          ></v-progress-circular>
+        </v-overlay>
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
@@ -119,7 +130,8 @@ export default {
     defaultItem: {
       name: '',
       email: ''
-    }
+    },
+    overlay: false
   }),
   computed: {
     formTitle () {
@@ -132,6 +144,11 @@ export default {
     },
     dialogDelete (val) {
       val || this.closeDelete()
+    },
+    overlay (val) {
+      val && setTimeout(() => {
+        this.overlay = false
+      }, 3000)
     }
   },
   created () {
@@ -261,6 +278,7 @@ export default {
         })
         this.dialog = false
       }
+      this.overlay = true
     }
   }
 }
