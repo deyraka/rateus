@@ -11,8 +11,8 @@ import axios from 'axios'
 
 // CHANGE THIS
 
-axios.defaults.baseURL = 'http://localhost:8000/api/'
-// axios.defaults.baseURL = 'http://10.62.0.4:8000/api/'
+// axios.defaults.baseURL = 'http://localhost:8000/api/'
+axios.defaults.baseURL = 'http://10.62.0.4:8000/api/'
 
 /* Ini base url untuk app vue.
 * hanya di akses ketika mengirimkan link survei kepuasan
@@ -21,8 +21,8 @@ axios.defaults.baseURL = 'http://localhost:8000/api/'
 
 // CHANGE THIS
 
-Vue.prototype.$appBaseUrl = 'http://localhost:8000/api'
-// Vue.prototype.$appBaseUrl = 'http://10.62.0.4:8000/api/'
+// Vue.prototype.$appBaseUrl = 'http://localhost:8000/api'
+Vue.prototype.$appBaseUrl = 'http://10.62.0.4:8000/api/'
 
 Vue.config.productionTip = false
 

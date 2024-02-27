@@ -117,7 +117,7 @@
                         </v-tooltip>
                       </v-row>
                       <v-row class="mb-2 px-3" justify="end" v-else-if="item.serveBy !== null && item.status === 'closed'">
-                        <v-tooltip bottom color="#8e44ad" v-if="item.status_tiket !== 1">
+                        <v-tooltip bottom color="#8e44ad" v-if="item.status_rating !== 1">
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
                               class="ml-2"
@@ -133,7 +133,7 @@
                           <span>Beri Nilai</span>
                         </v-tooltip>
                         <v-spacer></v-spacer>
-                        <v-tooltip bottom color="warning" v-if="item.status_tiket !== 1">
+                        <v-tooltip bottom color="warning" v-if="item.status_rating !== 1">
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
                               class="ml-2"

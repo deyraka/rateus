@@ -15,13 +15,11 @@
                 </v-col>
             </v-row>
 
-            <v-row
-            >
-                <v-col
-                    cols="12"
-                    md="6"
-                >
-                    <v-select
+            <v-row>
+              <v-col
+              cols="12"
+              md="12">
+              <v-select
                     v-model="jenisLayanan"
                     :items="itemLayanan"
                     item-text="state"
@@ -31,6 +29,24 @@
                     prepend-icon="mdi-ticket-account"
                     required
                 ></v-select>
+              </v-col>
+            </v-row>
+
+            <v-row
+            >
+                <v-col
+                    cols="12"
+                    md="6"
+                >
+                <v-text-field
+                    v-model="nohp"
+                    :rules="nohpRules"
+                    :counter="14"
+                    @keypress="numberOnly"
+                  label="No Handphone (WhatsApp)"
+                  prepend-icon="mdi-whatsapp"
+                  required
+                ></v-text-field>
                 </v-col>
                 <v-col
                     cols="12"
@@ -129,6 +145,10 @@
 
 <script>
 import axios from 'axios'
+function isValidPhoneNumber (value) {
+  const phoneNumberRegex = /^(?:\+62|0)[0-9]{9,13}$/ // Format: +62 or 0 followed by 9 to 13 digits
+  return phoneNumberRegex.test(value)
+}
 
 export default {
   data () {
@@ -141,8 +161,14 @@ export default {
         { state: 'Permintaan Data', val: 'A' },
         { state: 'Konsultasi Data', val: 'B' }
       ],
+      nohpRules: [
+        v => !!v || 'Nomor Whatsapp harus diisi',
+        v => (v && v.length <= 14) || 'Nomor whatsapp must be less than 14 characters',
+        v => isValidPhoneNumber(v) || 'Format Nomor Handphone tidak valid'
+      ],
       date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       dateFormatted: '',
+      nohp: '',
       menu1: false,
       minDate: '',
       maxDate: '',
@@ -183,6 +209,7 @@ export default {
       this.date = ''
       this.jenisLayanan = ''
       this.dateFormatted = ''
+      this.nohp = ''
     },
     setMinMaxDates () {
       const today = new Date()
@@ -241,12 +268,28 @@ export default {
       })
         .then((response) => {
           if (response.status === 200) {
-            this.isLoading = false
+            axios.post('/relayWhatsApp', {
+              nohp: this.nohp,
+              noticket: response.data.antrian,
+              message: 'reservasi'
+            }, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+              .then(responseWhatsApp => {
+                this.isLoading = false
 
-            this.createQueue = !this.createQueue
+                this.createQueue = !this.createQueue
 
-            console.log(response.data.antrian)
-            this.queueNumber = response.data.antrian
+                // console.log(response.data.antrian)
+                this.queueNumber = response.data.antrian
+                // console.log(responseWhatsApp)
+              }).catch(errorWhatsApp => {
+                this.loading = false
+                console.log(errorWhatsApp)
+              })
+
             // setTimeout(() => {
             //   this.dialogQueue = false
             // }, 5000)
