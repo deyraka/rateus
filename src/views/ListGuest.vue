@@ -166,22 +166,7 @@
                           <span>Hapus tiket</span>
                         </v-tooltip>
                         <v-spacer></v-spacer>
-                        <v-tooltip bottom color="info" v-if="item.status === 'postpone'">
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-btn
-                              class="ml-2"
-                              fab x-small dark
-                              color="info"
-                              v-bind="attrs"
-                              v-on="on"
-                              @click="openTicket(item.noticket)"
-                            >
-                              <v-icon>mdi-lock-open-outline</v-icon>
-                            </v-btn>
-                          </template>
-                          <span>Open Ticket</span>
-                        </v-tooltip>
-                        <v-tooltip bottom color="warning" v-if="item.status !== 'postpone'">
+                        <v-tooltip bottom color="warning">
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
                               class="ml-2"
@@ -214,7 +199,22 @@
                           <span>Hapus tiket</span>
                         </v-tooltip>
                         <v-spacer></v-spacer>
-                        <v-tooltip bottom color="success">
+                        <v-tooltip bottom color="info" v-if="item.status === 'postpone'">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              class="ml-2"
+                              fab x-small dark
+                              color="info"
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="openTicket(item.noticket)"
+                            >
+                              <v-icon>mdi-lock-open-outline</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Open Ticket</span>
+                        </v-tooltip>
+                        <v-tooltip bottom color="success" v-if="item.status !== 'postpone'">
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
                               class="ml-2"
