@@ -739,20 +739,20 @@ export default {
       },
       { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
       )
-        .then(function (response) {
+        .then((response) => {
           if (response.status === 200) {
             console.log(response)
           }
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.log(error)
         })
-        .finally(function () {
+        .finally(() => {
           /* vm.$router.push({
             name: 'guesthome'
           }) */
         })
-      // Add progress logs ticket was handled by agent then continue chat into whatsapp
+
       axios.post('progresslogs', {
         ticket_id: noticket,
         user_id: this.$store.getters['userAuth/activeUserId'],
@@ -760,27 +760,30 @@ export default {
       },
       { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
       )
-        .then(function (response) {
-          if (response.status === 200) {
-            console.log(response)
-
-            axios.post('/relayWhatsApp', { nohp: nohp, nama: nama, noticket: noticket, message: 'closeBot' })
-              .then(responseWhatsApp => {
-                var msg = 'Hi, kak. Kenalin saya ' + this.$store.getters['userAuth/activeUserName'] + '\nTerima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNomor Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_' + '\n\nBoleh ceritakan lebih detail kak kebutuhan data yang dicari?'
-                window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
-              }).catch(errorWhatsApp => {
-                console.log(errorWhatsApp)
-              })
+        .then((responseTicket) => {
+          if (responseTicket.status === 200) {
+            console.log(responseTicket)
+            var msg = 'Hi, kak. Kenalin saya ' + this.$store.getters['userAuth/activeUserName'] + '\nTerima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNomor Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_' + '\n\nBoleh ceritakan lebih detail kak kebutuhan data yang dicari?'
+            window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
+            // axios.post('/relayWhatsApp', { nohp: nohp, nama: nama, noticket: noticket, message: 'closeBot' })
+            //   .then(responseWhatsApp => {
+            //     var msg = 'Hi, kak. Kenalin saya ' + this.$store.getters['userAuth/activeUserName'] + '\nTerima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNomor Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_' + '\n\nBoleh ceritakan lebih detail kak kebutuhan data yang dicari?'
+            //     window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
+            //   }).catch(errorWhatsApp => {
+            //     console.log(errorWhatsApp)
+            //   })
           }
         })
-        .catch(function (error) {
-          console.log(error)
+        .catch(function (errorTicket) {
+          console.log(errorTicket)
         })
         .finally(function () {
           /* vm.$router.push({
             name: 'guesthome'
           }) */
         })
+      // Add progress logs ticket was handled by agent then continue chat into whatsapp
+
       // var msg = 'Hi, kak. Kenalin saya ' + this.$store.getters['userAuth/activeUserName'] + '\nTerima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNomor Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_' + '\n\nBoleh ceritakan lebih detail kak kebutuhan data yang dicari?'
       // window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
     },
@@ -872,7 +875,21 @@ export default {
           )
             .then(function (response) {
               if (response.status === 200) {
-                console.log(response)
+                axios.post('/relayWhatsApp', {
+                  nohp: nohp,
+                  noticket: noticket,
+                  message: 'closeBot'
+                }, {
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                })
+                  .then(responseWhatsApp => {
+                    console.log(responseWhatsApp)
+                  }).catch(errorWhatsApp => {
+                    this.loading = false
+                    console.log(errorWhatsApp)
+                  })
               }
             })
             .catch(function (error) {
@@ -908,20 +925,19 @@ export default {
           }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-              axios.post('/relayWhatsApp', { nohp: nohp, nama: nama, noticket: noticket })
-                .then(responseWhatsApp => {
-                  this.loadData()
-
-                  // var msg = 'Hi, kak. Kenalin saya ' + this.$store.getters['userAuth/activeUserName'] + '\nTerima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNomor Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_' + '\n\nBoleh ceritakan lebih detail kak kebutuhan data yang dicari?'
-                  // window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
-                }).catch(errorWhatsApp => {
-                  console.log(errorWhatsApp)
-                })
+              // axios.post('/relayWhatsApp', { nohp: nohp, nama: nama, noticket: noticket })
+              //   .then(responseWhatsApp => {
+              //     this.loadData()
+              // var msg = 'Hi, kak. Kenalin saya ' + this.$store.getters['userAuth/activeUserName'] + '\nTerima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNomor Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_' + '\n\nBoleh ceritakan lebih detail kak kebutuhan data yang dicari?'
+              // window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
+              // }).catch(errorWhatsApp => {
+              //   console.log(errorWhatsApp)
+              // })
               // var msg = 'Hi, kak ' + nama + '\nTerima kasih sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nPermohonan Anda dengan nomor tiket: ' + noticket + ' sudah selesai.\n' + 'Sebagai bentuk komitmen kami untuk terus meningkatkan pelayanan, kami sangat mengharap feedback dari kakak. Tolong isi survei kepuasan layanan kami melalui link berikut y kak: \n\n' + this.$appBaseUrl + 'rating/' + noticket + '\n\nTerima kasih 🙏'
               // // I use link api.whatsapp.com instead of wa.me because there is a problem in redirect from wa.me for emoji shortcode
               // window.open('https://api.whatsapp.com/send/?phone=62' + nohp.substring('1') + '&text=' + encodeURI(msg) + '&type=phone_number&app_absent=0')
               // window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
-              // this.loadData()
+              this.loadData()
             }
           })
         }

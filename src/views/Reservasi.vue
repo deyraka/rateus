@@ -211,6 +211,15 @@ export default {
       this.dateFormatted = ''
       this.nohp = ''
     },
+    numberOnly (evt) {
+      evt = (evt) || window.event
+      var charCode = (evt.which) ? evt.which : evt.keyCode
+      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+        evt.preventDefault()
+      } else {
+        return true
+      }
+    },
     setMinMaxDates () {
       const today = new Date()
       const yearEnd = new Date(today.getFullYear(), 11, 31)
@@ -251,7 +260,7 @@ export default {
       this.isLoading = true
 
       // console.log(this.jenisLayanan)
-      console.log(this.dateFormatted)
+      // console.log(this.dateFormatted)
       const tanggalReservasi = this.dateFormatted
       let revertTanggal
       if (this.dateFormatted) {
@@ -262,15 +271,21 @@ export default {
       } else {
         revertTanggal = null
       }
+
+      // console.log(this.nohp)
       axios.post('reservasi', {
         prefix: this.jenisLayanan,
-        reservasi: revertTanggal
+        reservasi: revertTanggal,
+        nohp: this.nohp
       })
         .then((response) => {
           if (response.status === 200) {
+            const replacedString = this.dateFormatted.replace(/ /g, '||')
+            const sentData = { noAntrian: response.data.antrian, tanggal: replacedString }
+            const textJson = JSON.stringify(sentData)
             axios.post('/relayWhatsApp', {
               nohp: this.nohp,
-              noticket: response.data.antrian,
+              noticket: textJson,
               message: 'reservasi'
             }, {
               headers: {
@@ -321,6 +336,7 @@ export default {
       this.date = ''
       this.jenisLayanan = ''
       this.dateFormatted = ''
+      this.nohp = ''
       this.createQueue = !this.createQueue
     },
     closeCard () {
