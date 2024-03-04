@@ -40,20 +40,60 @@
             </v-form>
             <p class="text-lowercase text-caption">forgot password? <a href="#" class="white--text">click here</a></p>
           </v-card-text>
-          <v-card-actions class="d-flex justify-center mb-6">
+          <v-card-actions class="d-flex justify-center">
             <v-btn
               color="red lighten-3"
               class="black--text"
+              :disabled = isDisabled
               @click="login()"
             >
-              <v-icon left>
-                mdi-login-variant
-              </v-icon>
-              Login
+            <span v-if="!isLoading">
+                <v-icon left>
+                  mdi-login-variant
+                </v-icon>
+                Login
+            </span>
+            <v-progress-circular v-if="isLoading" indeterminate color="black"></v-progress-circular>
+
+            </v-btn>
+          </v-card-actions>
+          <v-card-actions class="d-flex justify-center mb-6">
+            <v-btn
+              color="blue lighten-3"
+              class="black--text"
+              :disabled = isDisabled
+              @click="loginSSO()"
+            >
+
+              <span v-if="!isLoading">
+                <v-icon left>
+                  mdi-login-variant
+                </v-icon>
+                Login SSO
+              </span>
+              <v-progress-circular v-if="isLoadingSSO" indeterminate color="black"></v-progress-circular>
+
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-layout>
+      <v-snackbar
+      v-model="varSnackbar"
+      color="red darken-4"
+    >
+      Gagal login! Silahkan hubungi Admin.
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="varSnackbar = false"
+        >
+          Tutup
+        </v-btn>
+      </template>
+    </v-snackbar>
     </v-container>
   </v-main>
 </template>
@@ -75,12 +115,81 @@ export default {
     password: '',
     passwordRules: [
       v => !!v || 'Password is required'
-    ]
+    ],
+    username: '',
+    session: '',
+    isLoading: false,
+    isLoadingSSO: false,
+    isDisabled: false,
+    varSnackbar: false
   }),
+  mounted () {
+    const params = new URLSearchParams(window.location.search)
+    this.username = params.get('username')
+    this.session = params.get('session')
+    // CHANGE THIS
+    // console.log(this.username)
+    if (this.username !== null && this.session !== null) {
+      this.isLoadingSSO = true
+      this.isDisabled = true
+      const username = this.username
+
+      axios.post('verifySSO', {
+        username: username,
+        session: this.session
+      })
+        .then((responseSSO) => {
+          if (responseSSO.status === 200) {
+            axios.post('loginSSO', {
+              username: username
+            })
+              .then((response) => {
+                if (response.status === 200) {
+                  console.log(response)
+                  this.$store.dispatch('userAuth/renewUserInfo',
+                    {
+                      name: response.data.name,
+                      id: response.data.user_id
+                    }
+                  )
+                  // this.$store.dispatch('renewLoginStatus', 'true')
+                  this.$store.dispatch('userAuth/renewToken', response.data.access_token)
+                  this.$router.push({
+                    name: 'list-guest'
+                    // params: { keyword: this.form.search },
+                  })
+                }
+              })
+              .catch((error) => {
+                console.log(error)
+                this.varSnackbar = true
+              })
+              .finally(() => {})
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+          this.varSnackbar = true
+        })
+        .finally(() => {
+          this.isLoadingSSO = false
+          this.isDisabled = false
+        })
+    }
+    // console.log(this.username)
+  },
 
   methods: {
+    loginSSO () {
+      this.isLoadingSSO = true
+      this.isDisabled = true
+      // CHANGE THIS
+      window.location.href = 'http://localhost:8000/api/authenticate?link_app=10.62.6.180:8082/auth/login'
+    },
     login () {
       const vm = this
+      this.isLoading = true
+      this.isDisabled = true
       //  for baseUrl checkout file main.js in root dir
       axios.post('login', {
         email: this.email + '@bps.go.id',
@@ -105,8 +214,14 @@ export default {
         })
         .catch(function (error) {
           console.log(error)
+          vm.varSnackbar = true
+          vm.isLoading = false
+          vm.isDisabled = false
         })
-        .finally(function () {})
+        .finally(function () {
+          vm.isLoading = false
+          vm.isDisabled = false
+        })
     }
   }
 
