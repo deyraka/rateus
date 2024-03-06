@@ -113,12 +113,19 @@ export default {
     // console.log(this.valid)
     axios.get('ratings/' + noTicket)
       .then((response) => {
-        this.rating = response.data[0].star
-        this.advice = response.data[0].comment
-        this.readOnlyStat = true
-        this.valid = false
+        console.log(response)
 
-        this.loading = false
+        if (response.status === 204) {
+          this.loading = false
+        } else {
+          this.rating = response.data[0].star
+          this.advice = response.data[0].comment
+          this.readOnlyStat = true
+          this.valid = false
+
+          this.loading = false
+        }
+
         // console.log(this.valid)
 
         // if (response.data.total > 0) {
@@ -128,10 +135,17 @@ export default {
         // }
       })
       .catch((errorLogs) => {
-        // console.log(this.loading)
-        this.loading = false
-        console.log(this.loading)
         console.log(errorLogs)
+        // if (errorLogs.response.status === 204) {
+        //   this.loading = false
+        // }
+        // this.loading = false
+        this.$router.push({
+          name: 'page-not-found'
+        })
+        // console.log(this.loading)
+        // console.log(this.loading)
+        // console.log(errorLogs)
       })
   },
   methods: {
