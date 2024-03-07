@@ -184,7 +184,7 @@ export default {
       this.isLoadingSSO = true
       this.isDisabled = true
       // CHANGE THIS
-      window.location.href = 'http://localhost:8000/api/authenticate?link_app=10.62.6.180:8082/auth/login'
+      window.location.href = 'https://webapps.bps.go.id/kalteng/auth/api/authenticate?link_app=10.62.6.180:8080/auth/login'
     },
     login () {
       const vm = this

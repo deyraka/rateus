@@ -164,7 +164,8 @@ export default {
           .then(function (response) {
             if (response.status === 200) {
               // console.log(response)
-              window.close()
+              // window.close()
+              window.location.href = 'https://s.bps.go.id/skd2024kalteng'
             }
           })
           .catch(function (error) {

@@ -91,7 +91,7 @@
               v-model="job"
               :counter="150"
               label="Pekerjaan"
-              prepend-icon="mmdi-briefcase"
+              prepend-icon="mdi-briefcase"
               required
               readonly
             ></v-text-field>

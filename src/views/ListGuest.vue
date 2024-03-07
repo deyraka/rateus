@@ -532,6 +532,23 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-snackbar
+      v-model="varSnackbar"
+      color="red darken-4"
+    >
+      {{ errorMessage }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="varSnackbar = false"
+        >
+          Tutup
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -559,6 +576,9 @@ export default {
     AddProgress
   },
   data: () => ({
+    // formErrors: {},
+    errorMessage: '',
+    varSnackbar: false,
     valid: true,
     validRating: true,
     loading: true,
@@ -672,7 +692,15 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error)
+          // console.log(JSON.stringify(error))
+          if (error.response.status === 422) {
+            // this.formErrors = error.response.data.errors
+            this.varSnackbar = true
+            this.errorMessage = 'Error No HP sudah digunakan atau ada isian yang kosong'
+          } else {
+            this.varSnackbar = true
+            this.errorMessage = 'Gagal mendapatkan data dari server'
+          }
         })
         .finally(() => {
           /* vm.$router.push({
@@ -1053,6 +1081,7 @@ export default {
           .then((response) => {
             if (response.status === 200) {
               this.beriRating = !this.beriRating
+              window.open('http://s.bps.go.id/skd2024kalteng', '_blank')
             }
           })
           .catch((error) => {
