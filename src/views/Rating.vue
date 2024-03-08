@@ -61,25 +61,34 @@
             md="12"
           >
             <v-btn
-              :disabled="!valid"
+              :disabled="!valid||loadingButton"
               color="success"
               class="mr-4"
               @click="validate"
             >
-              Kirim
+              <span v-if="!loadingButton">
+                Simpan dan Lanjutkan
+              </span>
+              <v-progress-circular v-if="loadingButton" indeterminate color="black"></v-progress-circular>
+
             </v-btn>
 
             <v-btn
+              :disabled="loadingButton"
               color="error"
               class="mr-4"
               @click="reset"
             >
-              Reset Isian
-            </v-btn>
+              <span v-if="!loadingButton">
+                  Reset Isian
+                </span>
+                <v-progress-circular v-if="loadingButton" indeterminate color="black"></v-progress-circular>
+
+              </v-btn>
           </v-col>
           <v-col v-else cols="6">
             <div class="yellow-card">
-              Anda sudah mengisi penilaian Ini
+              Anda sudah mengisi penilaian Ini silahkan lanjutkan penilaian di <a href="https://s.bps.go.id/skd2024kalteng" target="_blank">s.bps.go.id/skd2024kalteng</a>
             </div>
           </v-col>
         </v-row>
@@ -98,6 +107,7 @@ export default {
     valid: true,
     readOnlyStat: false,
     loading: true,
+    loadingButton: false,
     rating: 0,
     advice: '',
     adviceRules: [
@@ -107,13 +117,15 @@ export default {
     // checkbox: false
   }),
   created () {
-    const noTicket = this.$route.params.noticket
-
     this.loading = true
-    // console.log(this.valid)
-    axios.get('ratings/' + noTicket)
+    const noTicket = this.$route.params.noticket
+    axios.get('ratings/' + noTicket, {
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    })
       .then((response) => {
-        console.log(response)
+        console.log(JSON.stringify(response))
 
         if (response.status === 204) {
           this.loading = false
@@ -125,31 +137,18 @@ export default {
 
           this.loading = false
         }
-
-        // console.log(this.valid)
-
-        // if (response.data.total > 0) {
-        //   this.varSnackbar = true
-        // } else {
-        //   window.open(`${process.env.BASE_URL}` + 'rating/' + encodeURI(noTicket))
-        // }
       })
       .catch((errorLogs) => {
         console.log(errorLogs)
-        // if (errorLogs.response.status === 204) {
-        //   this.loading = false
-        // }
-        // this.loading = false
         this.$router.push({
           name: 'page-not-found'
         })
-        // console.log(this.loading)
-        // console.log(this.loading)
-        // console.log(errorLogs)
       })
+    // localStorage.removeItem('ratingPageVisited')
   },
   methods: {
     validate () {
+      this.loadingButton = true
       this.$refs.form.validate()
       if (!this.rating || !this.advice) {
         alert('Tolong isi rating dan kritik/saran untuk menilai kualitas layanan kami')

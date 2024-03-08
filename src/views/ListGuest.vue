@@ -316,7 +316,7 @@
               class="mr-2"
               @click="giveRating(ratingTicket)"
             >
-              Kirim
+              Simpan dan Lanjutkan
             </v-btn>
 
             <v-btn
