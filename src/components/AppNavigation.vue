@@ -3,7 +3,10 @@
       flat
       color="rgba(0, 0, 0, 0)"
     >
-      <v-menu transition="scroll-y-transition">
+      <v-menu
+        transition="scroll-y-transition"
+        :open-on-hover="true"
+      >
         <template v-slot:activator="{ on, attrs }">
             <v-app-bar-nav-icon
               color="white"
@@ -27,6 +30,8 @@
       <v-spacer></v-spacer>
       <v-toolbar-title class="text-h6 white--text pl-0">
         <v-btn
+          fab
+          small
           depressed
           color="red lighten-4"
           class="black--text text-capitalize"
@@ -38,6 +43,8 @@
           </v-icon>
         </v-btn>
         <v-btn
+          fab
+          small
           depressed
           color="green lighten-4"
           @click="sinkron"
@@ -53,6 +60,8 @@
 
       </v-toolbar-title>
       <v-btn
+        fab
+        small
         class="ml-2"
         color="white"
         icon

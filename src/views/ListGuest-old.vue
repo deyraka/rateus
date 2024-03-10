@@ -1,10 +1,6 @@
 <template ref="lg">
   <v-container>
     <v-row justify="center">
-      <div
-        class="text-h5"
-      >Daftar Pengunjung
-      </div>
       <v-col cols="12" md="10">
         <v-row justify="center">
           <v-col cols="12" md="12">
@@ -15,7 +11,7 @@
             >
               <v-data-table
                 :headers="detailHeaders"
-                :items="filteredDetails"
+                :items="customDetails"
                 single-expand
                 :expanded.sync="expanded"
                 item-key="noticket"
@@ -26,6 +22,7 @@
                 loading-text="Loading... Please wait"
               >
                 <template v-slot:top>
+                  <v-row justify="center">
                     <v-toolbar
                       rounded
                       flat
@@ -33,80 +30,23 @@
                       class="mb-3 pt-5"
                       color="#81D4FA"
                       light
-                      extended
                     >
-                      <v-text-field
-                        v-model="search"
-                        append-icon="mdi-magnify"
-                        label="Search"
-                        single-line
-                        placeholder="Sila ketik keyword pencarian"
-                        hide-details
-                      ></v-text-field>
-                      <v-spacer></v-spacer>
-                      <v-menu
-                        bottom
-                        left
-                        :open-on-hover="true"
-                        :close-on-content-click="false"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn
-                            dark
-                            icon
-                            v-bind="attrs"
-                            v-on="on"
-                            color="blue"
-                            title="Filter berdasarkan status"
-                          >
-                            <v-icon>mdi-filter-cog</v-icon>
-                          </v-btn>
-                        </template>
-
-                        <v-list dense>
-                          <v-list-item dense>
-                            <v-list-item-title>
-                              <v-checkbox
-                                v-model="selectedStatus"
-                                label="Open"
-                                color="green"
-                                value="open"
-                              ></v-checkbox>
-                            </v-list-item-title>
-                          </v-list-item>
-                          <v-list-item dense>
-                            <v-list-item-title>
-                              <v-checkbox
-                                v-model="selectedStatus"
-                                label="Postpone"
-                                color="grey"
-                                value="postpone"
-                              ></v-checkbox>
-                            </v-list-item-title>
-                          </v-list-item>
-                          <v-list-item dense>
-                            <v-list-item-title>
-                              <v-checkbox
-                                v-model="selectedStatus"
-                                label="On Progress"
-                                color="blue"
-                                value="on progress"
-                              ></v-checkbox>
-                            </v-list-item-title>
-                          </v-list-item>
-                          <v-list-item dense>
-                            <v-list-item-title>
-                              <v-checkbox
-                                v-model="selectedStatus"
-                                label="Closed"
-                                color="red"
-                                value="closed"
-                              ></v-checkbox>
-                            </v-list-item-title>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
+                      <v-row justify="center">
+                        <v-col cols="12" md="6">
+                          <v-toolbar-title>Daftar Pengunjung</v-toolbar-title>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            v-model="search"
+                            append-icon="mdi-magnify"
+                            label="Search"
+                            single-line
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
                     </v-toolbar>
+                  </v-row>
                 </template>
                 <template v-slot:item.status="{ item }">
                   <v-chip
@@ -686,8 +626,7 @@ export default {
       { text: 'Status', value: 'status' },
       { text: 'Petugas', value: 'serveBy' },
       { text: '', value: 'data-table-expand' }
-    ],
-    selectedStatus: ['open', 'postpone', 'on progress'] // default: status closed isn't showed in list
+    ]
   }),
 
   mounted () {
@@ -1188,12 +1127,6 @@ export default {
     customDetails () {
       return this.details.map(item => {
         return { ...item, status: this.namingStatus(item.status), tanggal: this.reformatDate(item.tanggal) }
-      })
-    },
-    // for filtering status
-    filteredDetails () {
-      return this.customDetails.filter((i) => {
-        return !this.selectedStatus || (i.status === this.selectedStatus[0]) || (i.status === this.selectedStatus[1]) || (i.status === this.selectedStatus[2]) || (i.status === this.selectedStatus[3])
       })
     }
   }

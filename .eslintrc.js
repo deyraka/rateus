@@ -3,9 +3,9 @@ module.exports = {
   env: {
     node: true
   },
-  //wahyu-change
+  // wahyu-change
   globals: {
-    "YT": "readonly"
+    YT: 'readonly'
   },
   extends: [
     'plugin:vue/essential',
