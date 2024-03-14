@@ -20,6 +20,7 @@ import store from '../store'
 import Dashboard from '@/views/Dashboard.vue'
 import Antri from '@/views/Antri.vue'
 import Reservasi from '@/views/Reservasi.vue'
+import CustomerList from '../views/CustomerList.vue'
 
 Vue.use(VueRouter)
 
@@ -93,6 +94,11 @@ const routes = [
         path: 'pengguna',
         name: 'pengguna',
         component: Pengguna
+      },
+      {
+        path: 'pengunjung',
+        name: 'pengunjung',
+        component: CustomerList
       },
       {
         path: 'profile',

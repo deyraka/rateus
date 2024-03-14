@@ -127,8 +127,6 @@ export default {
     const params = new URLSearchParams(window.location.search)
     this.username = params.get('username')
     this.session = params.get('session')
-    // CHANGE THIS
-    // console.log(this.username)
     if (this.username !== null && this.session !== null) {
       this.isLoadingSSO = true
       this.isDisabled = true
@@ -186,6 +184,7 @@ export default {
       this.isDisabled = true
       // CHANGE THIS
       window.location.href = 'https://webapps.bps.go.id/kalteng/auth/api/authenticate?link_app=https://tiket.bpskalteng.id/auth/login'
+      // window.location.href = 'https://webapps.bps.go.id/kalteng/auth/api/authenticate?link_app=10.62.6.180:8080/auth/login'
     },
     login () {
       const vm = this

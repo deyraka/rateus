@@ -230,7 +230,7 @@ export default {
       return tanggalString
     },
     contact (noticket, nama) {
-      var msg = 'Hi, kak. Kenalin saya ' + nama + ' dengan Nomor Ticket: *' + noticket + '*. \n\n\n '
+      var msg = ''
       // var msg = 'sempak'
       window.open('https://wa.me/628115216200?text=' + encodeURI(msg))
     },

@@ -92,6 +92,7 @@ export default {
       items: [
         { title: 'Rank Board', icon: 'mdi-home', url: '/h/home' },
         { title: 'Daftar Pengunjung', icon: 'mdi-list-status', url: '/h/list-guest' },
+        { title: 'Edit Pengunjung', icon: 'mdi-account-edit', url: '/h/pengunjung' },
         { title: 'Pengaturan Pengguna', icon: 'mdi-account-cog', url: '/h/pengguna' },
         { title: 'Profil', icon: 'mdi-account', url: '/h/profile' },
         { title: 'Antrian Admin', icon: 'mdi-account-lock', url: '/h/queue' },

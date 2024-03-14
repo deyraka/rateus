@@ -252,7 +252,7 @@
     padding: 0 60px;
     max-width: 680px;
     margin: auto;
-    color:#212121;
+    color:#fff;
   }
 
   .missing__nav {
