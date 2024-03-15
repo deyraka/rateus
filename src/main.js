@@ -23,7 +23,7 @@ axios.defaults.baseURL = 'https://rating.bpskalteng.id/api/'
 // CHANGE THIS
 
 // Vue.prototype.$appBaseUrl = 'http://localhost:8080'
-// Vue.prototype.$appBaseUrl = 'http://10.62.6.180:8000/api/'
+// Vue.prototype.$appBaseUrl = 'http://10.62.6.180:8080/api/'
 Vue.prototype.$appBaseUrl = 'https://tiket.bpskalteng.id'
 
 Vue.config.productionTip = false

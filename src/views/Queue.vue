@@ -121,6 +121,7 @@ export default {
     window.Echo.channel('queue-channel')
       .listen('.queue-created', (event) => {
         this.loadData()
+        this.checkAndShowNotif(event.queue.noantrian)
       })
   },
   methods: {
@@ -164,6 +165,63 @@ export default {
       } else if (card.color === 'merah') {
         return 'red darken-1'
       }
+    },
+    showError () {
+      console.log('You blocked the notifications')
+    },
+    checkAndShowNotif (antrian) {
+      // check notification permission
+      let granted = false
+
+      if (Notification.permission === 'granted') {
+        granted = true
+        // console.log('notif granted')
+      } else if (Notification.permission !== 'denied') {
+        // let permission = await Notification.requestPermission();
+        Notification.requestPermission((permission) => {
+          // console.log('notif permission requested')
+          if (permission === 'granted') {
+            granted = true
+            console.log('notif request granted')
+          }
+        })
+        // granted = permission === 'granted' ? true : false;
+      }
+
+      // show notification or error
+      granted ? this.showNotification(antrian) : this.showError()
+    },
+    playsound () {
+      // alert('sound will played. it is okay?')
+      const audio = new Audio('https://notificationsounds.com/storage/sounds/file-sounds-1325-smile.mp3')
+      audio.play()
+    },
+    showNotification (antrian) {
+      // create a new notification
+      let notification
+
+      const typeAntrian = antrian[0]
+
+      if (typeAntrian === 'A') {
+        notification = new Notification('Hai! Ada Pengunjung Datang ', {
+          body: 'Hey, ada pengunjung datang, ingin melakukan layanan Permintaan Data dengan nomor Antrian ' + antrian
+        })
+      } else if (typeAntrian === 'B') {
+        notification = new Notification('Hai! Ada Pengunjung Datang ', {
+          body: 'Hey, ada pengunjung datang, ingin melakukan layanan Konsultasi Data dengan nomor Antrian ' + antrian
+        })
+      }
+
+      this.playsound()
+
+      // uncomment this code if you want close the notification automatically from windows notification after 10 seconds
+      // setTimeout(() => {
+      //   notification.close()
+      // }, 10 * 1000)
+      // navigate to a URL when clicked
+      notification.addEventListener('click', () => {
+        window.open(this.$appBaseUrl + '/h/list-guest', '_blank')
+      })
     },
     callNumber (item) {
       // console.log('Memanggil nomor antrian:', item.noantrian)

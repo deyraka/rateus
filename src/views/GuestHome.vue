@@ -214,6 +214,7 @@ export default {
     loading: false,
     necessityRules: [
       v => !!v || 'Keperluan is required',
+      v => (v && v.length >= 20) || 'Keperluan minimal 20 karakter',
       v => (v && v.length <= 500) || 'Keperluan must be less than 500 characters'
     ]
 

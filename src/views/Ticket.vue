@@ -296,7 +296,7 @@
 <script>
 import axios from 'axios'
 function isValidPhoneNumber (value) {
-  const phoneNumberRegex = /^(?:\+62|0)[0-9]{9,13}$/ // Format: +62 or 0 followed by 9 to 13 digits
+  const phoneNumberRegex = /^(?:\+628|08)[0-8]{8,13}$/ // Format: +62 or 0 followed by 9 to 13 digits
   return phoneNumberRegex.test(value)
 }
 export default {
@@ -385,6 +385,7 @@ export default {
     // isSearchDisabled: true,
     necessityRules: [
       v => !!v || 'Keperluan is required',
+      v => (v && v.length >= 20) || 'Keperluan minimal 20 karakter',
       v => (v && v.length <= 500) || 'Keperluan must be less than 500 characters'
     ]
   }),
