@@ -296,7 +296,7 @@
 <script>
 import axios from 'axios'
 function isValidPhoneNumber (value) {
-  const phoneNumberRegex = /^(?:\+628|08)[0-8]{8,13}$/ // Format: +62 or 0 followed by 9 to 13 digits
+  const phoneNumberRegex = /^08[0-9]{8,13}$/
   return phoneNumberRegex.test(value)
 }
 export default {

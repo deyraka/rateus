@@ -217,7 +217,7 @@ import Swal from 'sweetalert2'
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 function isValidPhoneNumber (value) {
-  const phoneNumberRegex = /^(?:\+62|0)[0-9]{9,13}$/ // Format: +62 or 0 followed by 9 to 13 digits
+  const phoneNumberRegex = /^08[0-9]{8,13}$/
   return phoneNumberRegex.test(value)
 }
 export default {
@@ -231,7 +231,7 @@ export default {
       { text: 'Nama', value: 'nama' },
       { text: 'Email', value: 'email' },
       { text: 'No Handphone', value: 'nohp' },
-      { text: 'Jumlah Tiket Aktif', value: 'activeTicket' },
+      { text: 'Jumlah Tiket', value: 'activeTicket' },
       { text: 'Aksi', value: 'actions', sortable: false }
     ],
     jobItems: [
