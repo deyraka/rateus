@@ -137,7 +137,8 @@ export default {
         session: this.session
       })
         .then((responseSSO) => {
-          if (responseSSO.status === 200) {
+          // console.log(responseSSO)
+          if (responseSSO.data.success) {
             axios.post('loginSSO', {
               username: username
             })
@@ -163,6 +164,9 @@ export default {
                 this.varSnackbar = true
               })
               .finally(() => {})
+          } else {
+            console.log(responseSSO.data)
+            this.varSnackbar = true
           }
         })
         .catch((error) => {
@@ -183,8 +187,8 @@ export default {
       this.isLoadingSSO = true
       this.isDisabled = true
       // CHANGE THIS
-      window.location.href = 'https://webapps.bps.go.id/kalteng/auth/api/authenticate?link_app=https://tiket.bpskalteng.id/auth/login'
-      // window.location.href = 'https://webapps.bps.go.id/kalteng/auth/api/authenticate?link_app=10.62.6.180:8080/auth/login'
+      // window.location.href = 'https://webapps.bps.go.id/kalteng/auth/api/authenticate?link_app=https://tiket.bpskalteng.id/auth/login'
+      window.location.href = 'https://webapps.bps.go.id/kalteng/auth/api/authenticate?link_app=10.62.6.180:8080/auth/login'
     },
     login () {
       const vm = this

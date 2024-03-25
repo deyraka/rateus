@@ -50,7 +50,7 @@
             md="4"
           >
             <div class="ticket">
-              <h2>Buat Anda disini</h2>
+              <h2>Buat Tiket Anda disini</h2>
             </div>
           </v-col>
         </v-row>
