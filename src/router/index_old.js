@@ -5,7 +5,7 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import GuestLayout from '@/layouts/GuestLayout.vue'
 import LoginLayout from '@/layouts/LoginLayout.vue'
 import Login from '@/views/Login.vue'
-import Statistik from '@/views/Statistik.vue'
+import RankBoard from '@/views/RankBoard.vue'
 import Pengguna from '@/views/Pengguna.vue'
 import Profile from '@/views/Profile.vue'
 import ListGuest from '@/views/ListGuest.vue'
@@ -78,7 +78,7 @@ const routes = [
       {
         path: 'home',
         name: 'home',
-        component: Statistik
+        component: RankBoard
       },
       {
         path: 'ticket',

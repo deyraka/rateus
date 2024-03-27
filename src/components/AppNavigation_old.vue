@@ -6,7 +6,6 @@
       <v-menu
         transition="scroll-y-transition"
         :open-on-hover="true"
-        :close-on-content-click="closeOnContentClick"
       >
         <template v-slot:activator="{ on, attrs }">
             <v-app-bar-nav-icon
@@ -15,37 +14,16 @@
               v-on="on"
             ></v-app-bar-nav-icon>
         </template>
-        <v-list v-for="(item, index) in items" :key="index">
+        <v-list>
           <v-list-item
-            v-if="item.nested===false"
+            v-for="(item, index) in items"
+            :key="index"
             :to="item.url"
             link
           >
             <v-list-item-icon><v-icon>{{ item.icon }}</v-icon></v-list-item-icon>
             <v-list-item-title v-text=item.title></v-list-item-title>
           </v-list-item>
-          <v-list-group
-            v-else-if="item.nested===true"
-            :value="false"
-            :prepend-icon="item.icon"
-          >
-            <template v-slot:activator>
-              <v-list-item-content>
-                <v-list-item-title v-text=item.title></v-list-item-title>
-              </v-list-item-content>
-            </template>
-
-            <v-list-item
-              v-for="(subitem, i) in item.subitems"
-              :key="i"
-              :to="subitem.url"
-              link
-              class="ml-5"
-            >
-              <v-list-item-icon><v-icon>{{ item.icon }}</v-icon></v-list-item-icon>
-              <v-list-item-title v-text="subitem.title"></v-list-item-title>
-            </v-list-item>
-          </v-list-group>
         </v-list>
       </v-menu>
       <span>Hi, {{ $store.state.userAuth.user.name }}</span>
@@ -112,50 +90,15 @@ export default {
       // isUserLogedIn: [],
       tokens: this.$store.getters['userAuth/activeToken'],
       items: [
-        { title: 'Statistik Layanan', icon: 'mdi-home', url: '/h/home', nested: false },
-        {
-          title: 'Daftar Pengunjung',
-          icon: 'mdi-list-status',
-          url: '',
-          nested: true,
-          subitems: [
-            { title: 'Ticket Pengunjung', icon: 'mdi-list-status', url: '/h/list-guest', nested: false },
-            { title: 'Edit Pengunjung', icon: 'mdi-account-edit', url: '/h/pengunjung', nested: false }
-          ]
-        },
-        {
-          title: 'Pengguna',
-          icon: 'mdi-account-cog',
-          url: '',
-          nested: true,
-          subitems: [
-            { title: 'Profil Anda', icon: 'mdi-account', url: '/h/profile', nested: false },
-            { title: 'Pengaturan Pengguna', icon: 'mdi-account-cog', url: '/h/pengguna', nested: false }
-          ]
-        },
-        {
-          title: 'Antrian',
-          icon: 'mdi-account-lock',
-          url: '',
-          nested: true,
-          subitems: [
-            { title: 'Kelola Antrian', icon: 'mdi-account-lock', url: '/h/queue', nested: false },
-            { title: 'Pilihan Antrian', icon: 'mdi-account-supervisor', url: '/antri', nested: false }
-          ]
-        },
-        { title: 'About', icon: 'mdi-information', url: '/h/about', nested: false }
-      ],
-      admins: [
-        ['Management', 'mdi-account-multiple-outline'],
-        ['Settings', 'mdi-cog-outline']
-      ],
-      cruds: [
-        ['Create', 'mdi-plus-outline'],
-        ['Read', 'mdi-file-outline'],
-        ['Update', 'mdi-update'],
-        ['Delete', 'mdi-delete']
-      ],
-      closeOnContentClick: false
+        { title: 'Rank Board', icon: 'mdi-home', url: '/h/home' },
+        { title: 'Daftar Pengunjung', icon: 'mdi-list-status', url: '/h/list-guest' },
+        { title: 'Edit Pengunjung', icon: 'mdi-account-edit', url: '/h/pengunjung' },
+        { title: 'Pengaturan Pengguna', icon: 'mdi-account-cog', url: '/h/pengguna' },
+        { title: 'Profil', icon: 'mdi-account', url: '/h/profile' },
+        { title: 'Antrian Admin', icon: 'mdi-account-lock', url: '/h/queue' },
+        { title: 'Antrian Pengunjung', icon: 'mdi-account-supervisor', url: '/antri' },
+        { title: 'About', icon: 'mdi-information', url: '/h/about' }
+      ]
     }
   },
 
