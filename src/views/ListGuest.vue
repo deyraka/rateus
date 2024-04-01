@@ -299,7 +299,7 @@
         </v-row>
       </v-col>
     </v-row>
-        <!-- dialog untuk confirm take order and chat -->
+        <!-- dialog untuk beri rating -->
     <v-dialog
       v-model="beriRating"
       max-width="50%"
@@ -400,7 +400,7 @@
     </v-card>
     </v-dialog>
 
-    <!-- dialog untuk confirm take order and chat -->
+    <!-- dialog untuk edit keperluan pengunjung lewat pst bps pusat -->
     <v-dialog
       v-model="editPengunjungDialog"
       max-width="500"
@@ -484,6 +484,64 @@
       </v-card>
     </v-dialog>
     <!-- dialog untuk confirm take order and chat -->
+    <v-dialog v-model="dialogTutupTiket" max-width="500px">
+          <v-card>
+            <v-container>
+              <v-row>
+                <v-col
+                  cols="12"
+                  md="12"
+                >
+                  <div class="ticket">
+                    <h2 class="text-center">Pilih klasifikasi Layanan</h2>
+                  </div>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12">
+                    <div class="yellow-card">
+                      Apakah Anda yakin akan menutup tiket ini? Tiket yang sudah ditutup tidak akan bisa dibuka lagi. Pastikan pengunjung sudah clear mendapatkan pelayanan.
+                    </div>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col
+                  cols="12"
+                  md="12"
+                >
+                <v-select
+                  v-model="klasifikasiLayanan"
+                  :items="itemKlasifikasi"
+                  item-value="id"
+                  item-text="name"
+                  label="Pilih petugas PST hari ini"
+                  required>
+                </v-select>
+              </v-col>
+            </v-row>
+          </v-container>
+          <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+              color="success"
+              class="mr-2"
+              @click="tutupTiket"
+            >
+              Simpan
+            </v-btn>
+
+            <v-btn
+              color="error"
+              class="mr-2"
+              @click="cancelTutupTiket"
+            >
+             Batalkan
+            </v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+    </v-dialog>
+
     <v-dialog
       v-model="takeChatModal"
       max-width="500"
@@ -637,7 +695,21 @@ export default {
   },
   data: () => ({
     // formErrors: {},
+    tempNohp: '',
+    tempNama: '',
+    tempNoticket: '',
     errorMessage: '',
+    klasifikasiLayanan: null,
+    itemKlasifikasi: [
+      { id: '1', name: 'Perpustakaan' },
+      { id: '2', name: 'Konsultasi Datang Langsung' },
+      { id: '3', name: 'Konsultasi Online' },
+      { id: '4', name: 'Penjualan Datang Langsung' },
+      { id: '5', name: 'Penjualan Online' },
+      { id: '6', name: 'Rekomendasi' },
+      { id: '7', name: 'Layanan Surat' }
+    ],
+    dialogTutupTiket: false,
     varSnackbar: false,
     valid: true,
     validRating: true,
@@ -945,93 +1017,161 @@ export default {
         }
       })
     },
-    closeTicket (nohp, nama, noticket) {
-      Swal.fire({
-        title: 'Apa Anda yakin akan menutup tiket ini?',
-        text: 'Anda tidak bisa membatalkan kembali, jika aksi ini sudah dilakukan',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya, tutup ticket!'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Edit status ticket from 'on progress' become 'closed'
-          axios.put('tickets/' + noticket, {
-            status: 9
-          },
-          { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
-          )
-            .then(function (response) {
-              if (response.status === 200) {
-                axios.post('/relayWhatsApp', {
-                  nohp: nohp,
-                  noticket: noticket,
-                  message: 'closeBot'
-                }, {
-                  headers: {
-                    'Content-Type': 'application/json'
-                  }
+    cancelTutupTiket () {
+      this.dialogTutupTiket = false
+    },
+    tutupTiket () {
+      console.log(this.klasifikasiLayanan)
+      if (this.klasifikasiLayanan === null) {
+        this.varSnackbar = true
+        this.errorMessage = 'Klasifikasi Layanan harus terpilih'
+      } else {
+        this.dialogTutupTiket = false
+        // console.log(this.tempNohp)
+        axios.put('tickets/' + this.tempNoticket, {
+          status: 9,
+          klasifikasi: this.klasifikasiLayanan
+        },
+        { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
+        )
+          .then(function (response) {
+            console.log('Response klasifikasi')
+            console.log(response)
+            if (response.status === 200) {
+              axios.post('/relayWhatsApp', {
+                nohp: response.data[1].nohp,
+                noticket: response.data[1].noticket,
+                message: 'closeBot'
+              }, {
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              })
+                .then(responseWhatsApp => {
+                  console.log(responseWhatsApp)
+                }).catch(errorWhatsApp => {
+                  console.log(errorWhatsApp)
                 })
-                  .then(responseWhatsApp => {
-                    console.log(responseWhatsApp)
-                  }).catch(errorWhatsApp => {
-                    this.loading = false
-                    console.log(errorWhatsApp)
-                  })
-              }
-            })
-            .catch(function (error) {
-              console.log(error)
-            })
-            .finally(function () {
-            })
-          // Add progress logs ticket was closed by agent
-          axios.post('progresslogs', {
-            ticket_id: noticket,
-            user_id: this.$store.getters['userAuth/activeUserId'],
-            note: 'Permintaan telah dilayani dan ticket ditutup'
-          },
-          { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
-          )
-            .then(function (response) {
-              if (response.status === 200) {
-                console.log(response)
-              }
-            })
-            .catch(function (error) {
-              console.log(error)
-            })
-            .finally(function () {
-            })
-          Swal.fire({
-            title: 'You have closed this ticket',
-            text: 'You will redirect into whatsapp to send survei link for customer.',
-            icon: 'success',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            confirmButtonText: 'OK'
-          }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
-              // axios.post('/relayWhatsApp', { nohp: nohp, nama: nama, noticket: noticket })
-              //   .then(responseWhatsApp => {
-              //     this.loadData()
-              // var msg = 'Hi, kak. Kenalin saya ' + this.$store.getters['userAuth/activeUserName'] + '\nTerima kasih kakak *' + nama + '* sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nNomor Tiket Anda : *' + noticket + '*\n' + 'Perihal _: ' + perihal + '_' + '\n\nBoleh ceritakan lebih detail kak kebutuhan data yang dicari?'
-              // window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
-              // }).catch(errorWhatsApp => {
-              //   console.log(errorWhatsApp)
-              // })
-              // var msg = 'Hi, kak ' + nama + '\nTerima kasih sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nPermohonan Anda dengan nomor tiket: ' + noticket + ' sudah selesai.\n' + 'Sebagai bentuk komitmen kami untuk terus meningkatkan pelayanan, kami sangat mengharap feedback dari kakak. Tolong isi survei kepuasan layanan kami melalui link berikut y kak: \n\n' + this.$appBaseUrl + 'rating/' + noticket + '\n\nTerima kasih 🙏'
-              // // I use link api.whatsapp.com instead of wa.me because there is a problem in redirect from wa.me for emoji shortcode
-              // window.open('https://api.whatsapp.com/send/?phone=62' + nohp.substring('1') + '&text=' + encodeURI(msg) + '&type=phone_number&app_absent=0')
-              // window.open('https://wa.me/62' + nohp.substring('1') + '?text=' + encodeURI(msg))
-              this.loadData()
             }
           })
-        }
-      })
+          .catch(function (error) {
+            console.log(error)
+          })
+          .finally(function () {
+          })
+          // Add progress logs ticket was closed by agent
+        axios.post('progresslogs', {
+          ticket_id: this.tempNoticket,
+          user_id: this.$store.getters['userAuth/activeUserId'],
+          note: 'Permintaan telah dilayani dan ticket ditutup'
+        },
+        { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
+        )
+          .then(function (response) {
+            if (response.status === 200) {
+              console.log(response)
+            }
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+          .finally(function () {
+          })
+        Swal.fire({
+          title: 'Anda sudah menutup tiket ini',
+          text: 'Mohon pastikan link penilaian sudah dikirimkan ke pengunjung.',
+          icon: 'success',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          confirmButtonText: 'OK'
+        }).then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+          if (result.isConfirmed) {
+            this.loadData()
+          }
+        })
+      }
     },
+    closeTicket (nohp, nama, noticket) {
+      this.dialogTutupTiket = true
+      this.tempNohp = nohp
+      this.tempNoticket = noticket
+    },
+    // closeTicketBackup (nohp, nama, noticket) {
+    //   Swal.fire({
+    //     title: 'Apa Anda yakin akan menutup tiket ini?',
+    //     text: 'Anda tidak bisa membatalkan kembali, jika aksi ini sudah dilakukan',
+    //     icon: 'warning',
+    //     showCancelButton: true,
+    //     confirmButtonColor: '#3085d6',
+    //     cancelButtonColor: '#d33',
+    //     confirmButtonText: 'Ya, tutup ticket!'
+    //   }).then((result) => {
+    //     if (result.isConfirmed) {
+    //       // Edit status ticket from 'on progress' become 'closed'
+    //       axios.put('tickets/' + noticket, {
+    //         status: 9
+    //       },
+    //       { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
+    //       )
+    //         .then(function (response) {
+    //           if (response.status === 200) {
+    //             axios.post('/relayWhatsApp', {
+    //               nohp: nohp,
+    //               noticket: noticket,
+    //               message: 'closeBot'
+    //             }, {
+    //               headers: {
+    //                 'Content-Type': 'application/json'
+    //               }
+    //             })
+    //               .then(responseWhatsApp => {
+    //                 console.log(responseWhatsApp)
+    //               }).catch(errorWhatsApp => {
+    //                 this.loading = false
+    //                 console.log(errorWhatsApp)
+    //               })
+    //           }
+    //         })
+    //         .catch(function (error) {
+    //           console.log(error)
+    //         })
+    //         .finally(function () {
+    //         })
+    //       // Add progress logs ticket was closed by agent
+    //       axios.post('progresslogs', {
+    //         ticket_id: noticket,
+    //         user_id: this.$store.getters['userAuth/activeUserId'],
+    //         note: 'Permintaan telah dilayani dan ticket ditutup'
+    //       },
+    //       { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
+    //       )
+    //         .then(function (response) {
+    //           if (response.status === 200) {
+    //             console.log(response)
+    //           }
+    //         })
+    //         .catch(function (error) {
+    //           console.log(error)
+    //         })
+    //         .finally(function () {
+    //         })
+    //       Swal.fire({
+    //         title: 'Anda sudah menutup tiket ini',
+    //         text: 'Mohon pastikan link penilaian sudah dikirimkan ke pengunjung.',
+    //         icon: 'success',
+    //         allowOutsideClick: false,
+    //         allowEscapeKey: false,
+    //         confirmButtonText: 'OK'
+    //       }).then((result) => {
+    //         /* Read more about isConfirmed, isDenied below */
+    //         if (result.isConfirmed) {
+    //           this.loadData()
+    //         }
+    //       })
+    //     }
+    //   })
+    // },
     openTicket (noticket) {
       Swal.fire({
         title: 'Apa Anda yakin akan membuka tiket ini?',
