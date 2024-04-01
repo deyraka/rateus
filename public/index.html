@@ -33,5 +33,28 @@ html {
     overflow: scroll;
 }
 
+.marquee {
+  white-space: nowrap;
+  overflow: hidden;
+  animation: marquee 20s linear infinite;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.app-header{
+  background-color:#FEFBE8;
+}
+
+.black-text{
+  color: black !important;;
+} 
+
+.video-player {
+  background-color: white;
+}
+
   </style>
   

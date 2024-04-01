@@ -1,81 +1,125 @@
 <template>
-  <div class="app-header" style="height: 100vh">
-    <v-row no-gutters class="header-top">
-      <v-col cols="2" class="logo-container hidden-md-and-down">
-        <img src="http://cdn.bps.go.id/bps.png" class="logo">
-      </v-col>
-      <v-col cols="3" class="title-container hidden-md-and-down">
-        <div class="text-logo pl-3">BADAN PUSAT STATISTIK</div>
-        <div class="text-logo pl-3">PROVINSI KALIMANTAN TENGAH</div>
-      </v-col>
-      <v-col cols="5" offset="2" class="time-display hidden-md-and-down">
-        {{ currentTime }}
-      </v-col>
-      <v-col cols="4" class="logo-container hidden-lg-and-up">
-        <img src="http://cdn.bps.go.id/bps.png" class="logo">
-      </v-col>
-      <v-col cols="8" class="title-container hidden-lg-and-up">
-        <div class="text-logo-sm pl-3">BADAN PUSAT STATISTIK</div>
-        <div class="text-logo-sm pl-3">PROVINSI KALIMANTAN TENGAH</div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" md="4">
-        <v-card class="mx-auto" max-width="100%" height="350">
-          <v-card-text>
-            <!-- <div>Word of the Day</div> -->
-            <p class="text-h4 text-center text--primary">
-              Antrian
-            </p>
-            <v-divider :thickness="5"></v-divider>
-            <p class="text-h2 d-flex flex-column justify-center align-center pt-16">
-              {{ noAntrian }}
-            </p>
-            <div class="text-h4 d-flex flex-column justify-center align-center text--primary pt-16">
-              Silakan menuju loket
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="12" md="8">
-        <iframe width="100%" height="350" :src="videoUrl" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-card class="mx-auto" max-width="100%">
-          <v-row>
-            <v-col cols="12" md="8">
-              <p class="text-h4 report-text pl-5 mt-4 d-flex flex-column justify-center align-center pt-16">
-                {{ runningText }}
+    <div class="app-header" style="height: 100vh">
+      <v-row no-gutters class="header-top">
+        <v-col cols="2" class="logo-container hidden-md-and-down">
+          <img src="http://cdn.bps.go.id/bps.png" class="logo">
+        </v-col>
+        <v-col cols="3" class="title-container hidden-md-and-down">
+          <div class="text-logo pl-3">BADAN PUSAT STATISTIK</div>
+          <div class="text-logo pl-3">PROVINSI KALIMANTAN TENGAH</div>
+        </v-col>
+        <v-col cols="5" offset="2" class="time-display hidden-md-and-down">
+          {{ currentTime }}
+        </v-col>
+        <v-col cols="4" class="logo-container hidden-lg-and-up">
+          <img src="http://cdn.bps.go.id/bps.png" class="logo">
+        </v-col>
+        <v-col cols="8" class="title-container hidden-lg-and-up">
+          <div class="text-logo-sm pl-3">BADAN PUSAT STATISTIK</div>
+          <div class="text-logo-sm pl-3">PROVINSI KALIMANTAN TENGAH</div>
+        </v-col>
+      </v-row>
+      <v-container fluid>
+        <v-row no-gutters>
+        <v-col cols="12" md="8">
+          <v-row cols="12">
+            <v-col cols="12" md="6">
+              <v-card
+                class="mx-auto rounded-xl"
+                color="#F6ADB4"
+                height="100%"
+              >
+              <p class="antrian pt-8 text-center">
+                Antrian
               </p>
+              <v-divider class="thick-divider"></v-divider>
+              <p class="no-antrian d-flex flex-column justify-center align-center">
+                {{ noAntrian }}
+                <!-- A001 -->
+              </p>
+              <div class="loket d-flex flex-column justify-center align-center">
+                Silakan menuju loket
+              </div>
+              </v-card>
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="3">
+              <v-card
+                class="mx-auto rounded-xl"
+                color="#B4F7C2"
+                dark
+                height="100%"
+              >
+              <p class="wa-sicantik pt-10 text-center">
+                Petugas Pelayanan
+              </p>
               <v-img
-                  :src="require('../assets/qr_code_sicantik.png')"
-                  class="my-2"
-                  contain
-                  height="260"
-                />
+                    :src="fotoPetugas"
+                    contain
+                    height="280"
+                    width="100%"
+                  />
+              </v-card>
+            </v-col>
+            <v-col cols="12" md="3">
+              <v-card
+                class="mx-auto rounded-xl"
+                color="#F1E6EC"
+                dark
+                height="100%"
+              >
+              <p class="wa-sicantik pt-8 text-center">
+                WhatsApp SiCantik
+              </p>
+              <v-img
+                    :src="require('../assets/qr_code_sicantik.png')"
+                    contain
+                    height="280"
+                  />
+              </v-card>
             </v-col>
           </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row class="footer-running-text">
-      <!-- <v-col cols="12"> -->
-      <div class="running-text">
-        <span class="text-h6">LAPORKAN! Jika terjadi hal-hal yang kurang berkenan atau petugas meminta imbalan/tip, melalui WhatsApp: 0811 521 6200 atau bisa lakukan scan barcode.</span>
-      </div>
-      <!-- </v-col> -->
-    </v-row>
-  </div>
+          <v-row cols="12" align="center" justify="center">
+            <v-col cols="12" md="12">
+              <v-card class="mx-auto rounded-xl" max-width="100%" height="250px" color="#B3DAF7" style="display: flex; align-items: center;">
+                <v-card-text class="text-h5 runningText" style="margin: auto;">
+                  {{ runningText }}
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="12" md="4">
+          <v-card class="mx-auto rounded-xl" color="#FEFBEA" height="100%" flat tile>
+            <v-container fill-height fluid>
+              <v-row align="center" justify="center" class="fill-height">
+                <video class="video-player" ref="videoPlayer" :key="videoUrl" @ended="playNextVideo" controls height="600" autoplay width="100%" :poster="whiteImage">
+                  <source :src="videoUrl" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-col>
+      </v-row>
+      </v-container>
+        <v-footer padless >
+          <v-col
+          class="footer"
+          >
+            <span class="text-h6">
+              <marquee>LAPORKAN! Jika terjadi hal-hal yang kurang berkenan atau petugas meminta imbalan/tip, melalui WhatsApp: 0811 521 6200 atau bisa lakukan scan barcode.</marquee>
+            </span>
+          </v-col>
+        </v-footer>
+    </div>
 </template>
 
 <script>
 import axios from 'axios'
 import Echo from 'laravel-echo'
 import audioFile from '@/assets/tingtung.mp3'
+import whiteImage from '@/assets/logo-bps.png'
 
 // import Swal from 'sweetalert2'
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
@@ -93,17 +137,41 @@ export default {
   data () {
     return {
       currentTime: this.formatDateTime(new Date()),
-      videoUrl: 'https://www.youtube.com/embed/lfFAuRtioE8?autoplay=1&mute=0',
+      // videoUrl: 'https://www.youtube.com/embed/lfFAuRtioE8?autoplay=1&mute=0',
       noAntrian: '',
       currentIndex: 0,
       runningText: 'Data lainnya dapat diakses di kalteng.bps.go.id',
       intervalId: null,
-      audio: null
+      audio: null,
+      instagramVideos: [],
+      currentVideoIndex: 0,
+      videoUrl: '',
+      whiteImage: whiteImage,
+      fotoPetugas: ''
     }
   },
+  watch: {
+    currentVideoIndex (newVal, oldVal) {
+      this.videoUrl = this.instagramVideos[newVal].media_url
+      console.log(this.videoUrl)
+    },
+    instagramVideos (newVal, oldVal) {
+    // When instagramVideos updates, update the videoUrl to the first video's URL
+      if (newVal.length > 0) {
+        this.videoUrl = newVal[0].media_url
+      }
+    },
+    videoUrl (newVal, oldVal) {
+      this.$nextTick(() => {
+        this.$refs.videoPlayer.load()
+      })
+    }
+  },
+
   created () {
     this.getPressRelease()
-    this.getYoutube()
+    this.getInstagram()
+    this.getPetugasHariIni()
     return this.loadData()
   },
   mounted () {
@@ -112,6 +180,7 @@ export default {
       .listen('.queue-updated', (event) => {
         this.loadData()
         // var noAntrian = event.queue.noantrian
+        this.$refs.videoPlayer.pause()
         this.playSequence().then(() => {
           var textSpeech = 'Nomor Antrian '
           // console.log(textSpeech)
@@ -135,14 +204,15 @@ export default {
           speechFinal.rate = 0.95
           speechFinal.voice = speechSynthesis.getVoices().find(voice => voice.lang === 'id-ID')
           window.speechSynthesis.speak(speechFinal)
+
+          speechFinal.onend = () => {
+            // Resume the video
+            this.$refs.videoPlayer.play()
+          }
         }).catch((error) => {
           console.error('Error playing audio:', error)
         })
       })
-    if (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor)) {
-      const appHeader = document.querySelector('.app-header')
-      appHeader.classList.add('chrome-scrollbar')
-    }
     this.intervalId = setInterval(() => {
       this.currentTime = this.formatDateTime(new Date())
     }, 1000)
@@ -200,7 +270,6 @@ export default {
         year: year
       })
         .then((response) => {
-          console.log(response)
           this.runningText = response.data[this.currentIndex].title
           setInterval(() => {
             this.currentIndex = (this.currentIndex + 1) % response.data.length
@@ -213,16 +282,48 @@ export default {
         .finally(function () {
         })
     },
-    getYoutube () {
-      axios.get('getYoutube')
+    getPetugasHariIni () {
+      var config = {
+        method: 'get',
+        url: 'getPetugasHariIni'
+      }
+      axios(config)
         .then((response) => {
-          console.log(JSON.stringify(response.data))
+          if (response.status === 200) {
+            console.log(response.data[0].foto_petugas)
+            const baseURLWithoutApi = axios.defaults.baseURL.replace('/api/', '/')
+            // console.log(baseURLWithoutApi + response.data[0].foto_petugas)
+            this.fotoPetugas = baseURLWithoutApi + response.data[0].foto_petugas
+            // this.noAntrian = response.data.filter(obj => obj.is_call === '1').sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0]?.noantrian || '-'
+          // var antrianSpeech = event.queue.noantrian.split('').join(' ')
+          }
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.log(error)
         })
-        .finally(function () {
+        .finally(() => {
+        /* vm.$router.push({
+          name: 'guesthome'
+        }) */
         })
+    },
+    getInstagram () {
+      axios.get('getInstagram')
+        .then((response) => {
+          this.instagramVideos = response.data
+          // console.log(JSON.stringify(this.instagramVideos))
+          if (this.instagramVideos.length > 0) {
+            this.videoUrl = this.instagramVideos[this.currentVideoIndex].media_url
+            // console.log(this.videoUrl)
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    playNextVideo () {
+      this.currentVideoIndex = (this.currentVideoIndex + 1) % this.instagramVideos.length
+      this.videoUrl = this.instagramVideos[this.currentVideoIndex].media_url
     },
     formatDateTime (now) {
       const day = now.getDate()
@@ -244,12 +345,20 @@ export default {
 </script>
 
 <style scoped>
+
+.thick-divider {
+  border-top: 5px solid #FEFBE8; /* Ubah angka 4 sesuai dengan ketebalan yang Anda inginkan */
+}
 .header-top {
-  background-color: #1E4D8C;
+  background-color: #EFEDEE;
   color: white;
   padding: 20px 0;
 }
 
+.footer{
+  background-color: #EFEDEE;
+  color: black;
+}
 .logo-container {
   display: flex;
   align-items: right;
@@ -257,7 +366,7 @@ export default {
 }
 
 .logo {
-  height: 60px;
+  height: 90px;
 }
 
 .title-container {
@@ -267,6 +376,7 @@ export default {
 }
 
 .text-logo {
+  color: #508DA9;
   font-size: 1.2em;
   text-align: left;
   font-family: Arial, sans-serif;
@@ -275,6 +385,7 @@ export default {
 }
 
 .text-logo-sm {
+  color: #508DA9;
   font-size: 0.8em;
   text-align: left;
   font-family: Arial, sans-serif;
@@ -283,12 +394,49 @@ export default {
 }
 
 .time-display {
+  color: black;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.5em;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
 }
 
+.antrian{
+  color: black;
+  font-size: 2em;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+}
+
+.no-antrian{
+  color: black;
+  font-size: 8em;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-weight: bold;
+}
+
+.wa-sicantik{
+  color: black;
+  font-size: 1.3em;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+}
+
+.loket{
+  color: black;
+  font-size: 2em;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+}
+
+.runningText{
+  color: black !important;;
+  font-size: 2em;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+}
 .queue-section {
   margin-top: 20px;
   text-align: center;
@@ -324,42 +472,9 @@ export default {
 }
 
 .chrome-scrollbar {
--ms-overflow-style: none; /* IE and Edge */
-scrollbar-width: none; /* Firefox */
-
-/* Chrome, Safari, dan browser yang berbasis WebKit */
-overflow-y: none;
-}
-
-.footer-running-text {
-background-color: #1E4D8C;
-color: white;
-padding: 1% 0;
-white-space: nowrap;
-overflow: hidden;
-box-sizing: border-box;
-}
-
-@keyframes marquee {
-0% { transform: translateX(100%); }
-100% { transform: translateX(-100%); }
-}
-
-.running-text span {
-display: inline-block;
-padding-left: 100%;
-animation: marquee 40s linear infinite;
-}
-
-@media (max-width: 600px) {
-.footer-running-text {
-background-color: #1E4D8C;
-color: white;
-padding-bottom: 10%;
-white-space: nowrap;
-overflow: hidden;
-box-sizing: border-box;
-}
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  overflow-y: none;
 }
 
 </style>

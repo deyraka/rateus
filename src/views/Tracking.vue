@@ -215,11 +215,13 @@ export default {
     getColor (status) {
       if (status === 0) return 'success'
       if (status === 1) return 'primary'
+      if (status === 5) return 'blue-grey'
       else return 'red'
     },
     getStatus (status) {
       if (status === 0) return 'open'
       if (status === 1) return 'on progress'
+      if (status === 5) return 'tertunda'
       else return 'closed'
     },
     reformatDate (date) {

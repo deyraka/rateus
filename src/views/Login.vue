@@ -186,9 +186,8 @@ export default {
     loginSSO () {
       this.isLoadingSSO = true
       this.isDisabled = true
-      // CHANGE THIS
-      window.location.href = 'https://webapps.bps.go.id/kalteng/auth/api/authenticate?link_app=https://tiket.bpskalteng.id/auth/login'
-      // window.location.href = 'https://webapps.bps.go.id/kalteng/auth/api/authenticate?link_app=localhost:8080/auth/login'
+      const baseUrl = this.$appBaseUrl
+      window.location.href = 'https://webapps.bps.go.id/kalteng/auth/api/authenticate?link_app=' + baseUrl + '/auth/login'
     },
     login () {
       const vm = this

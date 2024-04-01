@@ -1,4 +1,5 @@
 <template>
+  <div>
   <v-data-table
       :headers="detailHeaders"
       :items="users"
@@ -12,6 +13,140 @@
         <v-toolbar-title>Manajemen Pengguna</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
+        <v-btn
+              color="#f39c12"
+              dark
+              class="mb-2 mr-2"
+              :disabled="disabledPSTButton"
+              @click="petugasHariIni"
+              title="Ubah Petugas Hari Ini"
+            >
+              <v-icon>
+                mdi-face-man
+              </v-icon>
+        </v-btn>
+        <v-dialog v-model="dialogPetugas" max-width="500px">
+          <v-card>
+            <v-card-title>
+              <span class="text-h5">Ubah Petugas PST Hari Ini</span>
+            </v-card-title>
+            <v-container>
+              <v-row>
+                <v-col
+                  cols="12"
+                  md="12"
+                >
+                <v-select
+                  v-model="petugasPSTHariIni"
+                  :items="items"
+                  item-value="id"
+                  item-text="name"
+                  label="Pilih petugas PST hari ini">
+                </v-select>
+              </v-col>
+            </v-row>
+          </v-container>
+          <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue-darken-1" text @click="closePetugas"
+                >Cancel</v-btn
+              >
+              <v-btn
+                color="blue-darken-1" text @click="submitPetugas"
+                >Kirim</v-btn
+              >
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-btn
+              color="#2ecc71"
+              dark
+              class="mb-2 mr-2"
+              :disabled="disabledPSTButton"
+              @click="polaPST"
+              title="Atur Pola PST"
+            >
+              <v-icon>
+                mdi-repeat
+              </v-icon>
+        </v-btn>
+        <v-dialog v-model="dialogAturPola" max-width="500px" persistent>
+          <v-card>
+            <v-card-title>
+              <span class="text-h5">Ubah Pola Petugas PST</span>
+            </v-card-title>
+            <v-container>
+              <v-row>
+                <v-col
+                  cols="12"
+                  md="12"
+                >
+                <v-select
+                v-for="(selected, index) in selectedItems"
+                :key="index"
+                :items="getAvailableItems(index)"
+                item-text="name"
+                item-value="id"
+                v-model="selectedItems[index]"
+                @change="handleChange"
+                :label="`Pilih orang ke-${index + 1}`"
+              ></v-select>
+              </v-col>
+              </v-row>
+              <v-row>
+                <v-col
+                    cols="12"
+                >
+                    <v-menu
+                    ref="menu1"
+                    v-model="menu1"
+                    :close-on-content-click="false"
+                    transition="scale-transition"
+                    offset-y
+                    max-width="100%"
+                    min-width="auto"
+                    >
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-text-field
+                            v-model="dateFormatted"
+                            label="Tanggal Orang Pertama Bertugas"
+                            persistent-hint
+                            v-bind="attrs"
+                            :rules="[v => !!v || 'Tanggal harus terisi']"
+                            v-on="on"
+                            ></v-text-field>
+                        </template>
+                        <v-date-picker
+                            v-model="date"
+                            no-title
+                            @input="menu1 = false"
+                            :allowed-dates="allowedDates"
+                            :min="minDate"
+                            :max="maxDate"
+                        ></v-date-picker>
+                    </v-menu>
+                </v-col>
+              </v-row>
+            </v-container>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue-darken-1" text @click="closeAturPola"
+                >Cancel</v-btn
+              >
+              <v-btn color="blue-darken-1" text @click="resetDropdown"
+                >Reset</v-btn
+              >
+              <v-btn
+                color="blue-darken-1" text @click="submitAturPola"
+                >Kirim</v-btn
+              >
+              <v-spacer></v-spacer>
+            </v-card-actions>
+
+            <!-- <v-btn @click="addDropdown" :disabled="selectedItems.length >= items.length">Add Dropdown</v-btn> -->
+          </v-card>
+        </v-dialog>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -53,6 +188,23 @@
                       label="Password (nip panjang)"
                     ></v-text-field>
                   </v-col>
+                  <v-col cols="12" sm="12" md="12">
+                    <v-checkbox
+                      v-model="editedItem.is_pelayan"
+                      label="Petugas PST"
+                      true-value="1"
+                      false-value="0"
+                    ></v-checkbox>
+                  </v-col>
+                    <v-col cols="12" sm="12" md="12" v-if="editedItem.is_pelayan == '1'">
+                      <v-file-input
+                        label="Upload Foto Pelayanan"
+                        v-model="editedItem.foto"
+                        accept="image/*"
+                        @change="save"
+                      ></v-file-input>
+                    </v-col>
+
                 </v-row>
               </v-container>
             </v-card-text>
@@ -111,6 +263,37 @@
       </v-btn>
     </template>
   </v-data-table>
+  <v-snackbar
+            v-model="errorSnackbar"
+            color="red darken-4">
+            {{ errMessageSnackbar }}
+
+              <template v-slot:action="{ attrs }">
+                  <v-btn
+                    color="white"
+                    text
+                    v-bind="attrs"
+                    @click="errorSnackbar = false">
+                    Tutup
+                  </v-btn>
+              </template>
+          </v-snackbar>
+          <v-snackbar
+            v-model="succesSnackbar"
+            color="green darken-4">
+              {{ successMessageSnackbar }}
+
+              <template v-slot:action="{ attrs }">
+                  <v-btn
+                    color="white"
+                    text
+                    v-bind="attrs"
+                    @click="succesSnackbar = false">
+                    Tutup
+                  </v-btn>
+              </template>
+          </v-snackbar>
+        </div>
 </template>
 
 <script>
@@ -120,8 +303,15 @@ axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 export default {
   data: () => ({
+    errorSnackbar: false,
+    errMessageSnackbar: 'Terjadi kesalahan. Hubungi Admin!',
+    succesSnackbar: false,
+    successMessageSnackbar: '',
     dialog: false,
+    disabledPSTButton: true,
     dialogDelete: false,
+    dialogAturPola: false,
+    dialogPetugas: false,
     search: '',
     detailHeaders: [
       { text: 'No', value: 'no', key: 'id' },
@@ -134,17 +324,34 @@ export default {
     iteration: 0,
     editedItem: {
       name: '',
-      email: ''
+      email: '',
+      is_pelayan: '',
+      foto: null
     },
     defaultItem: {
       name: '',
-      email: ''
+      email: '',
+      is_pelayan: '',
+      foto: 'null'
     },
-    overlay: false
+    overlay: false,
+    items: [],
+    selectedItems: [null],
+    petugasPSTHariIni: null,
+    date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+    dateFormatted: '',
+    menu1: false,
+    minDate: '',
+    maxDate: '',
+    blockingDates: [],
+    tanggalReservasi: ''
   }),
   computed: {
     formTitle () {
       return this.editedIndex === -1 ? 'Tambah Pengguna' : 'Edit Pengguna'
+    },
+    computedDateFormatted () {
+      return this.formatDate(this.date)
     }
   },
   watch: {
@@ -158,10 +365,16 @@ export default {
       val && setTimeout(() => {
         this.overlay = false
       }, 3000)
+    },
+    date () {
+      this.dateFormatted = this.formatDate(this.date)
     }
   },
-  created () {
+  async created () {
+    this.setMinMaxDates()
     this.loadData()
+    this.loadDataPST()
+    await this.fetchBlockingDates()
   },
   methods: {
     loadData () {
@@ -178,61 +391,161 @@ export default {
           this.users = response.data[0]
           this.loading = false
           console.log('Load Data respose :')
-          console.log(response.data[0])
+          // console.log(response.data[0])
         })
         .catch((e) => {
           console.log(e)
         })
     },
-    playsound () {
-      alert('sound will played. it is okay?')
-      const audio = new Audio('https://notificationsounds.com/storage/sounds/file-sounds-1325-smile.mp3')
-      audio.play()
-    },
-    showNotification () {
-      // create a new notification
-      const notification = new Notification('JavaScript Notification API', {
-        body: 'This is a JavaScript Notification API demo'
-      })
-
-      this.playsound()
-
-      // close the notification after 10 seconds
-      setTimeout(() => {
-        notification.close()
-      }, 10 * 1000)
-
-      // navigate to a URL when clicked
-      notification.addEventListener('click', () => {
-        window.open('https://www.javascripttutorial.net/web-apis/javascript-notification/', '_blank')
-      })
-    },
-    showError () {
-      console.log('You blocked the notifications')
-    },
-    checkAndShowNotif () {
-      // check notification permission
-      let granted = false
-
-      if (Notification.permission === 'granted') {
-        granted = true
-        console.log('notif granted')
-      } else if (Notification.permission !== 'denied') {
-        // let permission = await Notification.requestPermission();
-        Notification.requestPermission((permission) => {
-          console.log('notif permission requested')
-          if (permission === 'granted') {
-            granted = true
-            console.log('notif request granted')
+    loadDataPST () {
+      this.loading = true
+      var config = {
+        method: 'get',
+        url: 'getAllPetugasLayanan',
+        headers: {
+          Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken']
+        }
+      }
+      axios(config)
+        .then((response) => {
+          console.log(JSON.stringify(response.data))
+          this.items = response.data
+          if (this.items.length > 0) {
+            this.disabledPSTButton = false
           }
+          // this.users = response.data[0]
+          // this.loading = false
+          // console.log('Load Data respose :')
+          // console.log(response.data[0])
         })
-        // granted = permission === 'granted' ? true : false;
+        .catch((e) => {
+          console.log(e)
+        })
+    },
+    petugasHariIni () {
+      const selectedPetugas = this.items.find(item => item.is_selected_petugas === '1')
+      this.petugasPSTHariIni = selectedPetugas ? selectedPetugas.id : null
+      this.dialogPetugas = true
+    },
+    closePetugas () {
+      this.dialogPetugas = false
+    },
+    submitPetugas () {
+      // console.log(this.petugasPSTHariIni)
+      axios.get('changePetugasPST/' + this.petugasPSTHariIni,
+        { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
+      ).then((response) => {
+        // console.log(response)
+        this.loadDataPST()
+        this.successMessageSnackbar = 'Sukses mengubah Petugas PST'
+        this.succesSnackbar = true
+        this.dialogPetugas = false
+      }).catch((error) => {
+        console.log(error)
+        this.errorSnackbar = true
+      })
+    },
+    polaPST () {
+      this.dialogAturPola = true
+    },
+    getAvailableItems (index) {
+      // return this.items.filter(item => !this.selectedItems.includes(item.id))
+      return this.items.filter(item =>
+        !this.selectedItems.includes(item.id) || this.selectedItems[index] === item.id
+      )
+    },
+    handleChange () {
+      console.log(this.selectedItems)
+      this.selectedItems = this.selectedItems.filter(item => item !== null)
+      if (this.selectedItems.length < this.items.length) {
+        this.addDropdown()
+      }
+    },
+    addDropdown () {
+      if (this.selectedItems.length < this.items.length) {
+        this.selectedItems.push(null)
+      }
+    },
+    resetDropdown () {
+      this.selectedItems = [null]
+      this.dateFormatted = ''
+    },
+    closeAturPola () {
+      this.dialogAturPola = false
+    },
+    submitAturPola () {
+      const names = this.selectedItems.map(itemId => {
+        const selectedItem = this.items.find(item => item.id === itemId)
+        return selectedItem ? selectedItem.name : null
+      }).filter(name => name !== null)
+      const tanggalReservasi = this.dateFormatted
+      let revertTanggal
+      if (this.dateFormatted) {
+        const [day, monthName, year] = tanggalReservasi.split(' ')
+        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+        const month = months.indexOf(monthName) + 1
+        revertTanggal = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+      }
+      console.log(names)
+      console.log(revertTanggal)
+      axios.post('updatePolaPST/', {
+        names: names,
+        startDate: revertTanggal
+      }, {
+        headers: {
+          Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken']
+        }
+      }).then(response => {
+        // console.log(response)
+        this.successMessageSnackbar = 'Sukses mengubah pola petugas PST'
+        this.succesSnackbar = true
+        this.dialogAturPola = false
+      }).catch(error => {
+        this.errorSnackbar = true
+        console.log(error)
+      })
+    },
+    setMinMaxDates () {
+      const today = new Date()
+      const yearEnd = new Date(today.getFullYear(), 11, 31)
+      this.minDate = today.toISOString().substr(0, 10)
+      this.maxDate = yearEnd.toISOString().substr(0, 10)
+    },
+    formatDate (date) {
+      if (!date) return null
+
+      const [year, month, day] = date.split('-')
+      const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+      const monthModified = (parseInt(month, 10)) - 1
+      return `${day} ${months[monthModified]} ${year}`
+    },
+    async fetchBlockingDates () {
+      try {
+        const response = await axios.get('blockingDates')
+        this.blockingDates = response.data
+      } catch (error) {
+        console.error('Error fetching blocking dates:', error)
+        this.blockingDates = []
+      }
+    },
+    allowedDates (date) {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const selectedDate = new Date(date)
+      selectedDate.setHours(0, 0, 0, 0)
+
+      const isWeekend = d => d.getDay() === 6 || d.getDay() === 0
+
+      const isPastDate = d => d <= today
+
+      const isBlockedDate = d => {
+        d.setDate(d.getDate() + 1)
+        const formattedDate = d.toISOString().split('T')[0]
+        return this.blockingDates.some(blocked => blocked.tanggal === formattedDate)
       }
 
-      // show notification or error
-      granted ? this.showNotification() : this.showError()
+      return !isWeekend(selectedDate) && !isPastDate(selectedDate) && !isBlockedDate(selectedDate)
     },
-
     editItem (item) {
       this.editedIndex = this.users.indexOf(item)
       this.editedItem = Object.assign({}, item)
@@ -265,24 +578,87 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
       })
-      // axios.delete('users/' + this.editItem.id)
     },
 
     save () {
       if (this.editedIndex > -1) {
+        console.log(this.editedItem) // ada
+        const originalItem = {
+          ...this.editedItem
+        }
         Object.assign(this.users[this.editedIndex], this.editedItem)
         axios.put('users/' + this.editedItem.id,
-          this.editedItem
-        ).catch(error => {
+          this.editedItem,
+          { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
+        ).then((response) => {
+          // console.log(originalItem)
+          if (response.status === 200 && originalItem.is_pelayan === '1') {
+            const formData = new FormData()
+            // console.log('Okee')
+            formData.append('foto', originalItem.foto)
+            axios.post('uploadFoto/' + originalItem.id, formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken']
+              }
+            }).then(responseFoto => {
+              // console.log(responseFoto)
+              this.successMessageSnackbar = 'Sukses mengubah Pengguna'
+              this.succesSnackbar = true
+              this.loadDataPST()
+            }).catch(errorFoto => {
+              console.log(errorFoto)
+              this.errorSnackbar = true
+            })
+            // formData
+          } else if (response.status === 200 && originalItem.is_pelayan === '0') {
+            axios.post('batalkanPelayan/' + originalItem.id, {}, {
+              headers: {
+                Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken']
+              }
+            })
+              .then(responseCancel => {
+                this.successMessageSnackbar = 'Sukses mengubah Pengguna'
+                this.succesSnackbar = true
+                this.loadDataPST()
+                console.log(responseCancel)
+              })
+              .catch(errorCancel => {
+                console.log(errorCancel)
+                this.errorSnackbar = true
+              })
+          }
+        }).catch(error => {
           console.error(error)
         })
         this.dialog = false
       } else {
         this.users.push(this.editedItem)
+        const originalItem = {
+          ...this.editedItem
+        }
         this.loading = true
         axios.post('users',
-          this.editedItem
-        ).catch(error => {
+          this.editedItem,
+          { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
+        ).then((response) => {
+          if (response.status === 200 && originalItem.is_pelayan === '1') {
+            const formData = new FormData()
+            // console.log('Okee')
+            formData.append('foto', originalItem.foto)
+            axios.post('uploadFoto/' + response.data.details.id, formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken']
+              }
+            }).then(responseFoto => {
+              console.log(responseFoto)
+            }).catch(errorFoto => {
+              console.log(errorFoto)
+            })
+            // formData
+          }
+        }).catch(error => {
           console.error(error)
         })
         this.dialog = false
@@ -292,323 +668,3 @@ export default {
   }
 }
 </script>
-
-<!-- <template>
-  <v-data-table
-    :headers="headers"
-    :items="desserts"
-    sort-by="calories"
-    class="elevation-1"
-  >
-    <template v-slot:top>
-      <v-toolbar
-        flat
-      >
-        <v-toolbar-title>My CRUD</v-toolbar-title>
-        <v-divider
-          class="mx-4"
-          inset
-          vertical
-        ></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog
-          v-model="dialog"
-          max-width="500px"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              color="primary"
-              dark
-              class="mb-2"
-              v-bind="attrs"
-              v-on="on"
-            >
-              New Item
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.name"
-                      label="Dessert name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.calories"
-                      label="Calories"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.fat"
-                      label="Fat (g)"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.carbs"
-                      label="Carbs (g)"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.protein"
-                      label="Protein (g)"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="close"
-              >
-                Cancel
-              </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="save"
-              >
-                Save
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon
-        small
-        class="mr-2"
-        @click="editItem(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon
-        small
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
-    </template>
-  </v-data-table>
-</template>
-<script>
-export default {
-  data: () => ({
-    dialog: false,
-    dialogDelete: false,
-    headers: [
-      {
-        text: 'Dessert (100g serving)',
-        align: 'start',
-        sortable: false,
-        value: 'name'
-      },
-      { text: 'Calories', value: 'calories' },
-      { text: 'Fat (g)', value: 'fat' },
-      { text: 'Carbs (g)', value: 'carbs' },
-      { text: 'Protein (g)', value: 'protein' },
-      { text: 'Actions', value: 'actions', sortable: false }
-    ],
-    desserts: [],
-    editedIndex: -1,
-    editedItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
-    },
-    defaultItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
-    }
-  }),
-
-  computed: {
-    formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-    }
-  },
-
-  watch: {
-    dialog (val) {
-      val || this.close()
-    },
-    dialogDelete (val) {
-      val || this.closeDelete()
-    }
-  },
-
-  created () {
-    this.initialize()
-  },
-
-  methods: {
-    initialize () {
-      this.desserts = [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7
-        }
-      ]
-    },
-
-    editItem (item) {
-      this.editedIndex = this.desserts.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
-    },
-
-    deleteItem (item) {
-      this.editedIndex = this.desserts.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialogDelete = true
-    },
-
-    deleteItemConfirm () {
-      this.desserts.splice(this.editedIndex, 1)
-      this.closeDelete()
-    },
-
-    close () {
-      this.dialog = false
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
-    },
-
-    closeDelete () {
-      this.dialogDelete = false
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
-    },
-
-    save () {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem)
-      } else {
-        this.desserts.push(this.editedItem)
-      }
-      this.close()
-    }
-  }
-}
-</script> -->
