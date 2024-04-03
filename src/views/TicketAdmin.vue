@@ -355,7 +355,7 @@
 <script>
 import axios from 'axios'
 function isValidPhoneNumber (value) {
-  const phoneNumberRegex = /^(?:\+62|0)[0-9]{9,13}$/ // Format: +62 or 0 followed by 9 to 13 digits
+  const phoneNumberRegex = /^08[0-9]{8,13}$/
   return phoneNumberRegex.test(value)
 }
 export default {
@@ -412,6 +412,7 @@ export default {
     // isSearchDisabled: true,
     necessityRules: [
       v => !!v || 'Keperluan is required',
+      v => (v && v.length >= 20) || 'Keperluan minimal 20 karakter',
       v => (v && v.length <= 500) || 'Keperluan must be less than 500 characters'
     ]
 
@@ -590,7 +591,7 @@ export default {
     },
     submitNewAccount () {
       this.$refs.form.validate()
-      const vm = this
+      // const vm = this
       // console.log(this.tahunLahir)
       axios.post('register-customer', {
         nohp: this.phoneNumber,
@@ -601,6 +602,7 @@ export default {
         bersedia: this.checkbox,
         pendidikan: this.pendidikan,
         necessity: this.necessity,
+        is_show: '1',
         editable: '0',
         job: this.job
       })
@@ -614,9 +616,9 @@ export default {
             this.phoneNumber = ''
             this.pendidikan = ''
             this.pekerjaan = ''
-            vm.$router.push({
-              name: 'list-guest'
-            })
+            // this.$router.push({
+            //   name: 'list-guest'
+            // })
           }
         })
         .catch((error) => {
@@ -632,13 +634,14 @@ export default {
     },
     validate () {
       this.$refs.form.validate()
-      const vm = this
+      // const vm = this
       axios.post('tickets', {
         nohp: this.phoneNumber,
         customer_id: this.customer_id,
         name: this.name,
         email: this.email,
         editable: '0',
+        is_show: '1',
         necessity: this.necessity,
         bersedia: this.checkbox,
         status: 0
@@ -658,7 +661,7 @@ export default {
                 this.pendidikan = ''
                 this.pekerjaan = ''
 
-                vm.$router.push({
+                this.$router.push({
                   name: 'list-guest'
                 })
               })

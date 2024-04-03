@@ -168,10 +168,10 @@ export default {
     }
   },
 
-  created () {
-    this.getPressRelease()
-    this.getInstagram()
-    this.getPetugasHariIni()
+  async created () {
+    await this.getPressRelease()
+    await this.getInstagram()
+    await this.getPetugasHariIni()
     return this.loadData()
   },
   mounted () {
@@ -282,33 +282,39 @@ export default {
         .finally(function () {
         })
     },
+    // getPetugasHariIni () {
+    //   var config = {
+    //     method: 'get',
+    //     url: 'getPetugasHariIni'
+    //   }
+    //   axios(config)
+    //     .then((response) => {
+    //       if (response.status === 200) {
+    //         console.log(response.data[0].foto_petugas)
+    //         const baseURLWithoutApi = axios.defaults.baseURL.replace('/api/', '/')
+    //         this.fotoPetugas = baseURLWithoutApi + response.data[0].foto_petugas
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.log(error)
+    //     })
+    //     .finally(() => {
+    //     /* vm.$router.push({
+    //       name: 'guesthome'
+    //     }) */
+    //     })
+    // },
     getPetugasHariIni () {
-      var config = {
-        method: 'get',
-        url: 'getPetugasHariIni'
-      }
-      axios(config)
+      return axios.get('getPetugasHariIni')
         .then((response) => {
           if (response.status === 200) {
-            console.log(response.data[0].foto_petugas)
             const baseURLWithoutApi = axios.defaults.baseURL.replace('/api/', '/')
-            // console.log(baseURLWithoutApi + response.data[0].foto_petugas)
             this.fotoPetugas = baseURLWithoutApi + response.data[0].foto_petugas
-            // this.noAntrian = response.data.filter(obj => obj.is_call === '1').sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0]?.noantrian || '-'
-          // var antrianSpeech = event.queue.noantrian.split('').join(' ')
           }
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-        .finally(() => {
-        /* vm.$router.push({
-          name: 'guesthome'
-        }) */
         })
     },
     getInstagram () {
-      axios.get('getInstagram')
+      return axios.get('getInstagram')
         .then((response) => {
           this.instagramVideos = response.data
           // console.log(JSON.stringify(this.instagramVideos))

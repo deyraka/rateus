@@ -252,7 +252,7 @@
                 <v-data-table
                     :headers="headersRating"
                     :hide-default-header="true"
-                    :hide-default-footer="true"
+                    :hide-default-footer="false"
                     :items="dataRatings"
                     :items-per-page="3"
                     :loading="loading"
