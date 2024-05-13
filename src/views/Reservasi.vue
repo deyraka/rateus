@@ -322,6 +322,7 @@ export default {
           // }
         })
     },
+
     closeQueue (dateFormatted, queueNumber) {
       this.alreadyRequest = true
       this.pastQueue = queueNumber

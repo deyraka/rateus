@@ -21,7 +21,7 @@
             </v-btn>
             <v-btn
                 color="#8e44ad"
-                :disabled = "disableRatings"
+                v-if = "disableRatings"
                 class="mt-6 ml-2 my-auto"
                 @click="ratings(detail[0].noticket)"
                 rounded
@@ -254,9 +254,13 @@ export default {
               })
 
             this.detail = response.data
+            console.log(this.detail)
+            console.log(this.disableRatings)
 
-            if (this.detail[0].status === 9) {
+            if (this.detail[0].status !== 9 || this.detail[0].klasifikasi === '8') {
               this.disableRatings = false
+            } else {
+              this.disableRatings = true
             }
 
             axios.get('progresslogs/showLogs/' + noTicket)

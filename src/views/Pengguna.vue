@@ -559,9 +559,20 @@ export default {
     },
 
     deleteItemConfirm () {
-      axios.delete('users/' + this.editedItem.id)
-      this.users.splice(this.editedIndex, 1)
-      this.closeDelete()
+      // axios.delete('users/' + this.editedItem.id)
+      axios.delete('users/' + this.editedItem.id, {
+        headers: {
+          Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken']
+        }
+      }).then(response => {
+        // console.log(responseFoto)
+        this.users.splice(this.editedIndex, 1)
+        this.closeDelete()
+      }).catch(error => {
+        console.log(error)
+      })
+      // this.users.splice(this.editedIndex, 1)
+      // this.closeDelete()
     },
 
     close () {

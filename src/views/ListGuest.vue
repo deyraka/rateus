@@ -68,6 +68,16 @@
                             <v-list-item-title>
                               <v-checkbox
                                 v-model="selectedStatus"
+                                label="BOT"
+                                color="yellow"
+                                value="BOT"
+                              ></v-checkbox>
+                            </v-list-item-title>
+                          </v-list-item>
+                          <v-list-item dense>
+                            <v-list-item-title>
+                              <v-checkbox
+                                v-model="selectedStatus"
                                 label="Open"
                                 color="green"
                                 value="open"
@@ -111,6 +121,7 @@
                 <template v-slot:item.status="{ item }">
                   <v-chip
                     :color="getColor(item.status)"
+                    :class="getTextColor(item.status)"
                     dark
                     small
                   >
@@ -240,6 +251,40 @@
                             </v-btn>
                           </template>
                           <span>Edit Isi Pengunjung</span>
+                        </v-tooltip>
+                      </v-row>
+                      <v-row class="mb-2 px-3" justify="end" v-else-if="item.is_show === '0'">
+                        <v-tooltip bottom color="#e74c3c">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              class="ml-2"
+                              fab x-small dark
+                              color="#e74c3c"
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="deleteTicket(item.noticket)"
+                            >
+                              <v-icon>mdi-delete</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Hapus tiket</span>
+                        </v-tooltip>
+                        <v-spacer></v-spacer>
+                        <v-tooltip bottom color="#f1c40f">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              class="ml-2"
+                              fab x-small dark
+                              color="#f1c40f"
+                              v-bind="attrs"
+                              v-on="on"
+                              style="color: black"
+                              @click="showTicket(item.noticket,item.nohp)"
+                            >
+                              <v-icon>mdi-face-agent</v-icon>
+                            </v-btn>
+                          </template>
+                          <span style="color: black">Layani Sekarang</span>
                         </v-tooltip>
                       </v-row>
                       <v-row class="mb-2 px-3" justify="end" v-else>
@@ -493,14 +538,14 @@
                   md="12"
                 >
                   <div class="ticket">
-                    <h2 class="text-center">Pilih klasifikasi Layanan</h2>
+                    <h2 class="text-center">Pilih Klasifikasi Layanan</h2>
                   </div>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="12">
                     <div class="yellow-card">
-                      Apakah Anda yakin akan menutup tiket ini? Tiket yang sudah ditutup tidak akan bisa dibuka lagi. Pastikan pengunjung sudah clear mendapatkan pelayanan.
+                      Apakah Anda yakin akan menutup tiket ini? Tiket yang sudah ditutup tidak akan bisa dibuka lagi. Pastikan pengunjung sudah selesai mendapatkan pelayanan.
                     </div>
                 </v-col>
               </v-row>
@@ -514,9 +559,21 @@
                   :items="itemKlasifikasi"
                   item-value="id"
                   item-text="name"
-                  label="Pilih petugas PST hari ini"
+                  label="Pilih klasifikasi layanan pengunjung PST"
                   required>
                 </v-select>
+              </v-col>
+              <v-col
+                cols="12"
+                md="12"
+              >
+                <v-textarea
+                  v-model="closingMessage"
+                  label="Pesan yang dikirim ke WhatsApp pengunjung"
+                  rows=1
+                  auto-grow
+                  hint="Edit sesuai keperluan"
+                ></v-textarea>
               </v-col>
             </v-row>
           </v-container>
@@ -699,6 +756,7 @@ export default {
     tempNama: '',
     tempNoticket: '',
     errorMessage: '',
+    closingMessage: '',
     klasifikasiLayanan: null,
     itemKlasifikasi: [
       { id: '1', name: 'Perpustakaan' },
@@ -707,7 +765,8 @@ export default {
       { id: '4', name: 'Penjualan Datang Langsung' },
       { id: '5', name: 'Penjualan Online' },
       { id: '6', name: 'Rekomendasi' },
-      { id: '7', name: 'Layanan Surat' }
+      { id: '7', name: 'Layanan Surat' },
+      { id: '8', name: 'Lainnya' }
     ],
     dialogTutupTiket: false,
     varSnackbar: false,
@@ -759,7 +818,7 @@ export default {
       { text: 'Petugas', value: 'serveBy' },
       { text: '', value: 'data-table-expand' }
     ],
-    selectedStatus: ['open', 'postpone', 'on progress'] // default: status closed isn't showed in list
+    selectedStatus: ['open', 'postpone', 'on progress', 'BOT'] // default: status closed isn't showed in list
   }),
 
   mounted () {
@@ -786,6 +845,7 @@ export default {
     namingStatus (status) {
       if (status === 0) return 'open'
       if (status === 1) return 'on progress'
+      if (status === 3) return 'BOT'
       if (status === 5) return 'postpone'
       else return 'closed'
     },
@@ -843,9 +903,13 @@ export default {
     },
     getColor (status) {
       if (status === 'open') return 'success'
+      if (status === 'BOT') return 'yellow'
       if (status === 'on progress') return 'primary'
       if (status === 'postpone') return 'blue-grey'
       else return 'red'
+    },
+    getTextColor (status) {
+      return status === 'BOT' ? 'black-text' : ''
     },
     giveScore (noticket) {
       // this.nohp = this.details.nohp
@@ -1022,9 +1086,9 @@ export default {
     },
     tutupTiket () {
       console.log(this.klasifikasiLayanan)
-      if (this.klasifikasiLayanan === null) {
+      if (this.klasifikasiLayanan === null || this.closingMessage === '') {
         this.varSnackbar = true
-        this.errorMessage = 'Klasifikasi Layanan harus terpilih'
+        this.errorMessage = 'Form tidak sesuai ketentuan'
       } else {
         this.dialogTutupTiket = false
         // console.log(this.tempNohp)
@@ -1034,13 +1098,14 @@ export default {
         },
         { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
         )
-          .then(function (response) {
+          .then((response) => {
             console.log('Response klasifikasi')
             console.log(response)
             if (response.status === 200) {
               axios.post('/relayWhatsApp', {
                 nohp: response.data[1].nohp,
                 noticket: response.data[1].noticket,
+                pesan: this.closingMessage,
                 message: 'closeBot'
               }, {
                 headers: {
@@ -1048,16 +1113,16 @@ export default {
                 }
               })
                 .then(responseWhatsApp => {
+                  this.klasifikasiLayanan = null
                   console.log(responseWhatsApp)
+                  this.closingMessage = ''
                 }).catch(errorWhatsApp => {
                   console.log(errorWhatsApp)
                 })
             }
           })
-          .catch(function (error) {
+          .catch((error) => {
             console.log(error)
-          })
-          .finally(function () {
           })
           // Add progress logs ticket was closed by agent
         axios.post('progresslogs', {
@@ -1096,82 +1161,8 @@ export default {
       this.dialogTutupTiket = true
       this.tempNohp = nohp
       this.tempNoticket = noticket
+      this.closingMessage = 'Terima kasih sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nPermohonan Anda dengan nomor tiket: ' + noticket + ' sudah selesai.\n' + 'Sebagai bentuk komitmen kami untuk terus meningkatkan pelayanan, kami sangat mengharap feedback dari kakak. Tolong isi survei kepuasan layanan kami melalui link berikut ya kak: \n\nhttps://tiket.bpskalteng.id/rating/' + noticket + '\n\nTerima kasih 🙏😊'
     },
-    // closeTicketBackup (nohp, nama, noticket) {
-    //   Swal.fire({
-    //     title: 'Apa Anda yakin akan menutup tiket ini?',
-    //     text: 'Anda tidak bisa membatalkan kembali, jika aksi ini sudah dilakukan',
-    //     icon: 'warning',
-    //     showCancelButton: true,
-    //     confirmButtonColor: '#3085d6',
-    //     cancelButtonColor: '#d33',
-    //     confirmButtonText: 'Ya, tutup ticket!'
-    //   }).then((result) => {
-    //     if (result.isConfirmed) {
-    //       // Edit status ticket from 'on progress' become 'closed'
-    //       axios.put('tickets/' + noticket, {
-    //         status: 9
-    //       },
-    //       { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
-    //       )
-    //         .then(function (response) {
-    //           if (response.status === 200) {
-    //             axios.post('/relayWhatsApp', {
-    //               nohp: nohp,
-    //               noticket: noticket,
-    //               message: 'closeBot'
-    //             }, {
-    //               headers: {
-    //                 'Content-Type': 'application/json'
-    //               }
-    //             })
-    //               .then(responseWhatsApp => {
-    //                 console.log(responseWhatsApp)
-    //               }).catch(errorWhatsApp => {
-    //                 this.loading = false
-    //                 console.log(errorWhatsApp)
-    //               })
-    //           }
-    //         })
-    //         .catch(function (error) {
-    //           console.log(error)
-    //         })
-    //         .finally(function () {
-    //         })
-    //       // Add progress logs ticket was closed by agent
-    //       axios.post('progresslogs', {
-    //         ticket_id: noticket,
-    //         user_id: this.$store.getters['userAuth/activeUserId'],
-    //         note: 'Permintaan telah dilayani dan ticket ditutup'
-    //       },
-    //       { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
-    //       )
-    //         .then(function (response) {
-    //           if (response.status === 200) {
-    //             console.log(response)
-    //           }
-    //         })
-    //         .catch(function (error) {
-    //           console.log(error)
-    //         })
-    //         .finally(function () {
-    //         })
-    //       Swal.fire({
-    //         title: 'Anda sudah menutup tiket ini',
-    //         text: 'Mohon pastikan link penilaian sudah dikirimkan ke pengunjung.',
-    //         icon: 'success',
-    //         allowOutsideClick: false,
-    //         allowEscapeKey: false,
-    //         confirmButtonText: 'OK'
-    //       }).then((result) => {
-    //         /* Read more about isConfirmed, isDenied below */
-    //         if (result.isConfirmed) {
-    //           this.loadData()
-    //         }
-    //       })
-    //     }
-    //   })
-    // },
     openTicket (noticket) {
       Swal.fire({
         title: 'Apa Anda yakin akan membuka tiket ini?',
@@ -1186,6 +1177,36 @@ export default {
           // Edit status ticket from 'postpone' become 'open'
           axios.put('tickets/' + noticket, {
             status: 0
+          },
+          { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
+          )
+            .then(function (response) {
+              if (response.status === 200) {
+                console.log(response)
+              }
+            })
+            .catch(function (error) {
+              console.log(error)
+            })
+            .finally(function () {
+            })
+        }
+      })
+    },
+    showTicket (noticket) {
+      Swal.fire({
+        title: 'Apa Anda yakin akan melayani tiket ini?',
+        text: 'Anda tidak bisa membatalkan kembali, jika aksi ini sudah dilakukan',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, layani ticket!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Edit status ticket from 'postpone' become 'open'
+          axios.post('updateToServeByPetugas/', {
+            noticket: noticket
           },
           { headers: { Authorization: 'Bearer ' + this.$store.getters['userAuth/activeToken'] } }
           )
@@ -1223,7 +1244,7 @@ export default {
           this.details = response.data.details
           this.loading = false
           console.log('Load Data respose :')
-          console.log(response)
+          // console.log(response)
         })
         .catch((e) => {
           console.log(e)
@@ -1333,18 +1354,20 @@ export default {
     // for filtering status
     filteredDetails () {
       return this.customDetails.filter((i) => {
-        return !this.selectedStatus || (i.status === this.selectedStatus[0]) || (i.status === this.selectedStatus[1]) || (i.status === this.selectedStatus[2]) || (i.status === this.selectedStatus[3])
+        return !this.selectedStatus || (i.status === this.selectedStatus[0]) || (i.status === this.selectedStatus[1]) || (i.status === this.selectedStatus[2]) || (i.status === this.selectedStatus[3]) || (i.status === this.selectedStatus[4])
       })
     }
+  },
+  watch: {
+    klasifikasiLayanan (newVal) {
+      // console.log('Klasifikasi Layanan has changed to:', newVal)
+      if (newVal === '8') {
+        this.closingMessage = 'Terima kasih sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nJika ada lagi yang bisa kami bantu, jangan sungkan untuk hubungi kami kembali dan isi keperluan Anda di tiket.bpskalteng.id 🙏😊'
+      } else {
+        this.closingMessage = 'Terima kasih sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nPermohonan Anda dengan nomor tiket: ' + this.tempNoticket + ' sudah selesai.\n' + 'Sebagai bentuk komitmen kami untuk terus meningkatkan pelayanan, kami sangat mengharap feedback dari kakak. Tolong isi survei kepuasan layanan kami melalui link berikut ya kak: \n\nhttps://tiket.bpskalteng.id/rating/' + this.tempNoticket + '\n\nTerima kasih 🙏😊'
+      }
+    }
   }
-  /* watch: {
-    window.Echo.channel('tickets-channel').listen('TicketCreated', (event) => {
-      console.log(event)
-      // alert('sukses');
-      this.$refs.lg.renewData()
-      // App.renewData()
-    })
-  } */
 }
 </script>
 <style scoped>
