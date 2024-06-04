@@ -41,7 +41,7 @@
       <v-form
         ref="form"
         v-model="valid"
-        lazy-validation
+        :lazy-validation="false"
         @submit.prevent="validate"
       >
         <v-row>
@@ -111,6 +111,21 @@
             ></v-text-field>
           </v-col>
 
+          <!-- new field {asal} since v2.1.0 -->
+          <v-col
+            cols="12"
+            md="12"
+          >
+            <v-text-field v-if="isAsalEmpty===true"
+              v-model="asal"
+              :rules="asalRules"
+              :counter="200"
+              label="Asal Instansi/Sekolah/Universitas Anda"
+              prepend-icon="mdi-home"
+              required
+            ></v-text-field>
+          </v-col>
+
           <v-col
             cols="12"
           >
@@ -122,6 +137,7 @@
               rows="3"
               prepend-icon="mdi-comment"
               hint="(silakan jelaskan secara rinci)"
+              required
             ></v-textarea>
           </v-col>
         </v-row>
@@ -130,7 +146,7 @@
         <v-checkbox
           v-model="checkbox"
           :rules="[v => !!v || 'You must agree to continue!']"
-          label="Apakah Anda bersedia?"
+          label="Ya, saya bersedia."
           required
         ></v-checkbox>
 
@@ -156,7 +172,7 @@
     </v-row>
    <v-container v-else-if="statNumber===false">
       <v-row justify="center">
-          <p>Anda belum pernah terdaftar</p>
+          <p>Anda belum terdaftar dalam sistem kami, untuk mengajukan tiket silahkan klik tombol dibawah</p>
         </v-row>
         <v-row justify="center">
           <v-btn
@@ -205,6 +221,7 @@ export default {
     statNumber: null,
     foundPhoneNumber: null,
     name: '',
+    asal: '', // add new field since v2.1.0
     email: '',
     job: '',
     pendidikan: '',
@@ -212,10 +229,16 @@ export default {
     phoneNumber: '',
     customer_id: '',
     loading: false,
+    isAsalEmpty: true, // add new field since v2.1.0
     necessityRules: [
-      v => !!v || 'Keperluan is required',
+      v => !!v || 'Keperluan harus diisi',
       v => (v && v.length >= 20) || 'Keperluan minimal 20 karakter',
       v => (v && v.length <= 500) || 'Keperluan must be less than 500 characters'
+    ],
+    asalRules: [
+      v => !!v || 'Asal harus diisi',
+      v => (v && v.length >= 3) || 'Keperluan minimal 3 karakter',
+      v => (v && v.length <= 200) || 'Keperluan maksimal 200 karakter'
     ]
 
   }),
@@ -301,6 +324,16 @@ export default {
                     default:
                       this.pendidikan = 'S2/S3'
                   }
+
+                  // add new field since v2.1.0
+                  switch (this.foundPhoneNumber.asal) {
+                    case '': // case asal still empty
+                      this.isAsalEmpty = true
+                      break
+                    default: // case asal has its value
+                      this.isAsalEmpty = false
+                      this.asal = this.foundPhoneNumber.asal
+                  }
                 } else {
                   // Data tidak ditemukan
                   this.statNumber = false
@@ -331,6 +364,7 @@ export default {
     reset () {
       this.checkbox = false
       this.necessity = ''
+      this.asal = '' // add new field since v2.1.0
     },
     validate () {
       this.loading = true
@@ -346,6 +380,7 @@ export default {
       axios.post('tickets', {
         nohp: cleanPhoneNumber,
         customer_id: this.customer_id,
+        asal: this.asal, // add new field since v2.1.0
         name: this.name,
         email: this.email,
         editable: '0',

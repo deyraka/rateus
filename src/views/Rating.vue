@@ -32,7 +32,6 @@
               background-color="orange lighten-3"
               large
               :readonly="readOnlyStat"
-              half-increments
               hover
             ></v-rating>
             <div>

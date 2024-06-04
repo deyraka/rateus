@@ -49,7 +49,7 @@
      <v-form
        ref="form"
        v-model="valid"
-       lazy-validation
+       :lazy-validation="false"
        @submit.prevent="validate"
      >
        <v-row>
@@ -114,6 +114,21 @@
               required
             ></v-select>
          </v-col>
+
+         <!-- new field {asal} since v2.1.0 -->
+         <v-col
+            cols="12"
+            md="6"
+          >
+            <v-text-field
+              v-model="asal"
+              :counter="200"
+              :rules="asalRules"
+              label="Asal Instansi/Sekolah/Universitas"
+              prepend-icon="mdi-home"
+              required
+            ></v-text-field>
+          </v-col>
 
          <v-col
            cols="12"
@@ -184,7 +199,7 @@
     <v-form
        ref="form"
        v-model="valid"
-       lazy-validation
+       :lazy-validation="false"
        @submit.prevent="validate"
      >
        <v-row>
@@ -289,6 +304,21 @@
             ></v-select>
          </v-col>
 
+         <!-- new field {asal} since v2.1.0 -->
+         <v-col
+            cols="12"
+            md="6"
+          >
+            <v-text-field
+              v-model="asal"
+              :counter="200"
+              :rules="asalRules"
+              label="Asal Instansi/Sekolah/Universitas"
+              prepend-icon="mdi-home"
+              required
+            ></v-text-field>
+          </v-col>
+
          <v-col
            cols="12"
            md="6"
@@ -383,6 +413,12 @@ export default {
       email: null
       // Tambahkan properti lainnya sesuai kebutuhan
     },
+    asal: '', // new field since v2.10
+    asalRules: [
+      v => !!v || 'Asal harus diisi',
+      v => (v && v.length >= 3) || 'Keperluan minimal 3 karakter',
+      v => (v && v.length <= 200) || 'Keperluan maksimal 200 karakter'
+    ],
     jobItems: [
       { state: 'Aparatur Sipil Negara', val: 'Aparatur Sipil Negara' },
       { state: 'Karyawan Swasta', val: 'Karyawan Swasta' },
@@ -396,7 +432,7 @@ export default {
     pendidikanItems: [
       { state: '<= SLTA', val: '1' },
       { state: 'D1/D2/D3', val: '2' },
-      { state: 'D4/D1', val: '3' },
+      { state: 'D4/S1', val: '3' },
       { state: 'S2/S3', val: '4' }
     ],
     jenisKelaminItem: [
@@ -586,11 +622,12 @@ export default {
       this.necessity = ''
       this.phoneNumber = ''
       this.pendidikan = ''
+      this.asal = '' // add new field since v2.1.0
       this.pekerjaan = ''
       this.checkbox = ''
     },
     submitNewAccount () {
-      this.$refs.form.validate()
+      // this.$refs.form.validate()
       // const vm = this
       // console.log(this.tahunLahir)
       axios.post('register-customer', {
@@ -601,6 +638,7 @@ export default {
         tahunlahir: this.tahunLahir,
         bersedia: this.checkbox,
         pendidikan: this.pendidikan,
+        asal: this.asal, // new field since v2.1.0
         necessity: this.necessity,
         is_show: '1',
         editable: '0',
@@ -609,16 +647,15 @@ export default {
         .then((response) => {
           if (response.status === 200) {
             // console.log(response)
-            this.phoneNumber = ''
+            /* this.phoneNumber = ''
             this.jenisKelamin = ''
             this.email = ''
             this.necessity = ''
-            this.phoneNumber = ''
             this.pendidikan = ''
-            this.pekerjaan = ''
-            // this.$router.push({
-            //   name: 'list-guest'
-            // })
+            this.asal = '' // add new field since v2.1.0
+            this.pekerjaan = '' */
+            // validate form and submit ticket
+            this.$refs.form.validate()
           }
         })
         .catch((error) => {
@@ -631,9 +668,14 @@ export default {
             console.log(error.response)
           }
         })
+        .finally(() => {
+          this.$router.push({
+            name: 'list-guest'
+          })
+        })
     },
     validate () {
-      this.$refs.form.validate()
+      // this.$refs.form.validate()
       // const vm = this
       axios.post('tickets', {
         nohp: this.phoneNumber,
@@ -653,13 +695,12 @@ export default {
             axios.post('/checklog', { nohp: response.data.detail.nohp })
               .then(responseLog => {
                 console.log(responseLog)
-                this.phoneNumber = ''
+                /* this.phoneNumber = ''
                 this.jenisKelamin = ''
                 this.email = ''
                 this.necessity = ''
-                this.phoneNumber = ''
                 this.pendidikan = ''
-                this.pekerjaan = ''
+                this.pekerjaan = '' */
 
                 this.$router.push({
                   name: 'list-guest'
@@ -667,6 +708,11 @@ export default {
               })
               .catch(errorLog => {
                 console.log(errorLog)
+              })
+              .finally(() => {
+                this.$router.push({
+                  name: 'list-guest'
+                })
               })
           }
         })

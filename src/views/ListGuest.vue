@@ -1,10 +1,12 @@
 <template ref="lg">
-  <v-container>
+  <v-container fluid>
     <v-row justify="center">
       <div
         class="text-h5"
       >Daftar Pengunjung
       </div>
+    </v-row>
+    <v-row justify="center">
       <v-col cols="12" md="10">
         <v-row justify="center">
           <v-col cols="12" md="12">
@@ -204,6 +206,21 @@
                           <span>Beri Nilai</span>
                         </v-tooltip>
                         <v-spacer></v-spacer>
+                        <v-tooltip bottom color="pink lighten-4">
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              class="ml-2"
+                              fab x-small dark
+                              color="pink lighten-4"
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="showTimeline(item.noticket)"
+                            >
+                              <v-icon>mdi-timeline-text</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Show ticket's timeline</span>
+                        </v-tooltip>
                         <v-tooltip bottom color="warning" v-if="item.status_rating !== 1">
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -388,7 +405,6 @@
               color="orange"
               background-color="orange lighten-3"
               large
-              half-increments
               hover
             ></v-rating>
             <div>
@@ -479,6 +495,20 @@
                 ></v-text-field>
 
               </v-col>
+              <!-- new field {asal} since v2.1.0 -->
+              <v-col
+                cols="12"
+                md="12"
+              >
+                <v-text-field v-if="isAsalEmpty===true"
+                  v-model="asal"
+                  :rules="asalRules"
+                  :counter="200"
+                  label="Asal Instansi/Sekolah/Universitas Anda"
+                  prepend-icon="mdi-home"
+                  required
+                ></v-text-field>
+              </v-col>
               <v-col
                 cols="12"
                 md="12"
@@ -497,14 +527,13 @@
               </v-col>
             </v-row>
             <p class="text-overline">Pernyataan *)</p>
-        <p class="text-caption">Apakah Anda setuju dengan syarat dan ketentuan yang berlaku dalam standar pelayanan ini serta bersedia untuk dihubungi kembali terkait survei kepuasan data yang dilakukan oleh BPS.</p>
-        <v-checkbox
-          v-model="checkbox"
-          :rules="[v => !!v || 'You must agree to continue!']"
-          label="Apakah Anda bersedia?"
-          required
-        ></v-checkbox>
-
+            <p class="text-caption">Apakah Anda setuju dengan syarat dan ketentuan yang berlaku dalam standar pelayanan ini serta bersedia untuk dihubungi kembali terkait survei kepuasan data yang dilakukan oleh BPS.</p>
+            <v-checkbox
+              v-model="checkbox"
+              :rules="[v => !!v || 'You must agree to continue!']"
+              label="Apakah Anda bersedia?"
+              required
+            ></v-checkbox>
           </v-form>
 
         </v-card-text>
@@ -795,6 +824,7 @@ export default {
     cookie_web: '',
     token_web: '',
     nohp: '',
+    asal: '', // add new field since v2.1.0
     necessity: '',
     checkbox: '',
     nohpRules: [
@@ -804,6 +834,11 @@ export default {
     necessityRules: [
       v => !!v || 'Keperluan harus diisi',
       v => (v && v.length <= 500) || 'Deskripsi Keperluan Maksimal 500 karakter'
+    ],
+    asalRules: [
+      v => !!v || 'Asal harus diisi',
+      v => (v && v.length >= 3) || 'Keperluan minimal 3 karakter',
+      v => (v && v.length <= 200) || 'Keperluan maksimal 200 karakter'
     ],
     detailHeaders: [
       {
@@ -871,6 +906,7 @@ export default {
       axios.put('updatesync/' + noticket, {
         nohp: this.nohp,
         necessity: this.necessity,
+        asal: this.asal,
         bersedia: this.checkbox,
         editable: '0',
         user_id: this.$store.getters['userAuth/activeUserId'],
@@ -1226,7 +1262,7 @@ export default {
     askRating (nohp, nama, noticket) {
       // alert('Comming soon!')
       // this.$router.push({ name: 'rating', params: { noticket } })
-      var msg = 'Hi, kak ' + nama + '\nTerima kasih sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nPermohonan Anda dengan nomor tiket: ' + noticket + ' sudah selesai.\n' + 'Sebagai bentuk komitmen kami untuk terus meningkatkan pelayanan, kami sangat mengharap feedback dari kakak. Tolong isi survei kepuasan layanan kami melalui link berikut y kak: \n\n' + this.$appBaseUrl + 'rating/' + noticket + '\n\nTerima kasih 🙏'
+      var msg = 'Hi, kak ' + nama + '\nTerima kasih sudah menghubungi layanan SiCantik BPS Prov. Kalimantan Tengah\n\nPermohonan Anda dengan nomor tiket: ' + noticket + ' sudah selesai.\n' + 'Sebagai bentuk komitmen kami untuk terus meningkatkan pelayanan, kami sangat mengharap feedback dari kakak. Tolong isi survei kepuasan layanan kami melalui link berikut y kak: \n\n' + this.$appBaseUrl + '/rating/' + noticket + '\n\nTerima kasih 🙏'
       // I use link api.whatsapp.com instead of wa.me because there is a problem in redirect from wa.me for emoji shortcode
       window.open('https://api.whatsapp.com/send/?phone=62' + nohp.substring('1') + '&text=' + encodeURI(msg) + '&type=phone_number&app_absent=0')
     },

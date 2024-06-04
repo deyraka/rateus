@@ -17,7 +17,7 @@
             md="12"
           >
             <div class="ticket">
-              <h2>Buat tiket</h2>
+              <h2>Registrasi dan Buat Tiket</h2>
               <!-- <h4>Silahkan lakukan pendaftaran</h4> -->
             </div>
           </v-col>
@@ -25,11 +25,12 @@
         <v-row>
           <v-col
             cols="12"
-            md="12"
+            md="6"
           >
             <v-text-field
               v-model="name"
               :counter="50"
+              :rules="[v => !!v || 'Nama Lengkap harus terisi']"
               label="Nama Lengkap"
               prepend-icon="mdi-face-man"
               required
@@ -86,21 +87,6 @@
             cols="12"
             md="6"
           >
-          <v-text-field
-              v-model="phoneNumber"
-                :rules="nohpRules"
-                :counter="14"
-                @keypress="numberOnly"
-              label="No Handphone (WhatsApp)"
-              prepend-icon="mdi-whatsapp"
-              required
-            ></v-text-field>
-          </v-col>
-
-          <v-col
-            cols="12"
-            md="6"
-          >
             <v-select
                 v-model="job"
                 :items="jobItems"
@@ -111,6 +97,36 @@
                 prepend-icon="mdi-briefcase"
                 required
               ></v-select>
+          </v-col>
+
+          <!-- new field {asal} since v2.1.0 -->
+          <v-col
+            cols="12"
+            md="6"
+          >
+            <v-text-field
+              v-model="asal"
+              :counter="200"
+              :rules="[v => !!v || 'Asal harus terisi']"
+              label="Asal Instansi/Sekolah/Universitas"
+              prepend-icon="mdi-home"
+              required
+            ></v-text-field>
+          </v-col>
+
+          <v-col
+            cols="12"
+            md="6"
+          >
+          <v-text-field
+              v-model="phoneNumber"
+                :rules="nohpRules"
+                :counter="14"
+                @keypress="numberOnly"
+              label="No Handphone (WhatsApp)"
+              prepend-icon="mdi-whatsapp"
+              required
+            ></v-text-field>
           </v-col>
 
           <v-col
@@ -351,6 +367,7 @@ export default {
     jenisKelamin: '',
     phoneNumber: '',
     customer_id: '',
+    asal: '', // new field since v2.10
     loading: false,
     errorMessages: {
       email: null
@@ -384,7 +401,7 @@ export default {
     ],
     // isSearchDisabled: true,
     necessityRules: [
-      v => !!v || 'Keperluan is required',
+      v => !!v || 'Keperluan harus diisi',
       v => (v && v.length >= 20) || 'Keperluan minimal 20 karakter',
       v => (v && v.length <= 500) || 'Keperluan must be less than 500 characters'
     ]
@@ -457,7 +474,8 @@ export default {
         pendidikan: this.pendidikan,
         necessity: this.necessity,
         editable: '0',
-        job: this.job
+        job: this.job,
+        asal: this.asal // new field since v2.1.0
       })
         .then((response) => {
           if (response.status === 200) {
@@ -482,6 +500,7 @@ export default {
                 this.necessity = ''
                 this.phoneNumber = ''
                 this.pendidikan = ''
+                this.asal = '' // add new field since v2.1.0
                 this.pekerjaan = ''
                 this.checkbox = ''
                 vm.$router.push({
